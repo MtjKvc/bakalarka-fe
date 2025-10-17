@@ -1,0 +1,87 @@
+<!-- Fixed Canvas Background -->
+<canvas #canvasDigitalRain class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
+
+<!-- Main Header / Navbar Container -->
+<div class="flex justify-between items-center p-4 m-8 relative z-10">
+
+  <!-- Left: Title -->
+  <div class="text-white text-3xl xl:text-4xl font-bold">
+    Architektúra počítačov
+  </div>
+
+  <!-- Hamburger Button (mobile only) -->
+  <button (click)="toggleMenu()" class="xl:hidden text-white focus:outline-none">
+    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path *ngIf="!menuOpen" d="M4 6h16M4 12h16M4 18h16" />
+      <path *ngIf="menuOpen" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+
+  <!-- Full Horizontal Navbar (only on xl and up) -->
+  <nav class="hidden xl:flex bg-transparent text-white">
+    <ul class="flex space-x-6">
+            <li><a routerLink="first-exercise" routerLinkActive="text-green-500 border-green-500"
+             class="font-semibold text-xl border-b-2 border-transparent hover:border-green-500">Úvodné cvičenie</a></li>
+      <li><a routerLink="blok-1" routerLinkActive="text-green-500 border-green-500"
+             class="font-semibold text-xl border-b-2 border-transparent hover:border-green-500">Blok 1</a></li>
+      <li><a routerLink="blok-2" routerLinkActive="text-green-500 border-green-500"
+             class="font-semibold text-xl border-b-2 border-transparent hover:border-green-500">Blok 2</a></li>
+      <li><a routerLink="blok-3" routerLinkActive="text-green-500 border-green-500"
+             class="font-semibold text-xl border-b-2 border-transparent hover:border-green-500">Blok 3</a></li>
+      <li><a routerLink="questions" routerLinkActive="text-green-500 border-green-500"
+             class="font-semibold text-xl border-b-2 border-transparent hover:border-green-500">Kontrolné otázky</a></li>
+      <li><a routerLink="manuals" routerLinkActive="text-green-500 border-green-500"
+             class="font-semibold text-xl border-b-2 border-transparent hover:border-green-500">Návody</a></li>
+      <li><a routerLink="rules" routerLinkActive="text-green-500 border-green-500"
+             class="font-semibold text-xl border-b-2 border-transparent hover:border-green-500">Pravidlá</a></li>
+      <li><a routerLink="contacts" routerLinkActive="text-green-500 border-green-500"
+             class="font-semibold text-xl border-b-2 border-transparent hover:border-green-500">Kontakty</a></li>
+    </ul>
+  </nav>
+</div>
+
+<!-- Mobile Overlay (click to close) -->
+<div
+  *ngIf="menuOpen"
+  (click)="toggleMenu()"
+  class="fixed inset-0 bg-black/10 backdrop-blur-xs z-40 xl:hidden">
+</div>
+
+<!-- Sidebar Menu (always in DOM for animation) -->
+<div
+  class="fixed top-0 right-0 h-full w-64 bg-black/50 backdrop-blur-md text-white z-50 shadow-lg transform transition-transform duration-300 xl:hidden"
+  [ngClass]="{ 'translate-x-0': menuOpen, 'translate-x-full': !menuOpen }">
+
+  <div class="p-6 space-y-4 h-full relative">
+    <!-- Close button -->
+    <button (click)="toggleMenu()" class="absolute top-4 right-4 text-white focus:outline-none">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+           viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+
+    <!-- Mobile Nav Links -->
+     <a routerLink="first-exercise" (click)="toggleMenu()"
+       class="block text-lg font-semibold border-b border-gray-500 hover:text-green-300">Úvodné cvičenie</a>
+    <a routerLink="blok-1" (click)="toggleMenu()"
+       class="block text-lg font-semibold border-b border-gray-500 hover:text-green-300">Blok 1</a>
+    <a routerLink="blok-2" (click)="toggleMenu()"
+       class="block text-lg font-semibold border-b border-gray-500 hover:text-green-300">Blok 2</a>
+    <a routerLink="blok-3" (click)="toggleMenu()"
+       class="block text-lg font-semibold border-b border-gray-500 hover:text-green-300">Blok 3</a>
+    <a routerLink="questions" (click)="toggleMenu()"
+       class="block text-lg font-semibold border-b border-gray-500 hover:text-green-300">Kontrolné otázky</a>
+    <a routerLink="manuals" (click)="toggleMenu()"
+       class="block text-lg font-semibold border-b border-gray-500 hover:text-green-300">Návody</a>
+    <a routerLink="rules" (click)="toggleMenu()"
+       class="block text-lg font-semibold border-b border-gray-500 hover:text-green-300">Pravidlá</a>
+    <a routerLink="contacts" (click)="toggleMenu()"
+       class="block text-lg font-semibold border-b border-gray-500 hover:text-green-300">Kontakty</a>
+  </div>
+</div>
+
+<!-- Routed Page Content -->
+<div>
+  <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,163 @@
+<main class="px-4 sm:px-6 lg:px-12 py-8 space-y-16">
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <h2 class="text-green-500 text-2xl font-semibold">
+            Multimédiá vo Windows
+        </h2>
+        <section>
+            Bez multimédií si Windows asi nedokážeme predstaviť. Užitočným spôsobom rozširujú možnosti PC od tradičnej
+            práce s číslami a textom. Ale nie je to ich súčasťou odjakživa. Najprv v r. 1991 pribudli tzv. Multimedia
+            Extensions, v r. 1992 boli vložené do Windows 3.1. Dnes sú ich úplne bežnou súčasťou (ale napr. CD-ROM bol
+            ešte r. 1993 vcelku raritou).
+        </section>
+    </article>
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <h2 class="text-green-500 text-2xl font-semibold">
+            Multimediálne zariadenia
+        </h2>
+        <section>
+            Asi netreba špeciálne vysvetĺovať, že na výstup zvuku z počítača slúži zvuková karta. Prevádza postupnosť
+            čísiel (vzoriek) na analógové hodnoty, ktoré tvoria výslednú akustickú “vlnu”. Okrem toho je zvuková karta
+            schopná prevádzať dáta aj opačným smerom, teda zo zdroja (mikrofón) na postupnosť čísiel, vzoriek. Tie sa
+            potom uložia do súboru, (napr. hlas.wav).<br>
+
+            CD-ROM mechanika je tiež schopná prehrávať zvuk, označuje sa ako audio cd.<br>
+
+            Špeciálna časť, ktorá je schopná prehrávať video sa označuje ako video avi, resp. Video for Windows.<br>
+
+            K všetkým týmto zariadeniam možno pristupovať prostredníctvom tzv. Media Control Interface (mci). Je to
+            rozhranie “vyššej” úrovne, ktoré obsahuje sadu príkazov, ktoré sa zhodujú pre všetky zariadenia. Vychádzajú
+            z princípu, že všetky možno ovládať podobne ako magnetofón — štart/stop, nahrávaj/prehrávaj, otvor/zatvor a
+            pod.<br>
+
+            Zoznam niekoľkých príkazov (všetky <a
+                class="inline-block text-center text-white font-semibold bg-green-600 hover:bg-green-500 active:bg-green-800 px-1 py-1 rounded-md shadow-md transition duration-200"
+                href="https://docs.microsoft.com/en-us/previous-versions//ms712587(v=vs.85)?redirectedfrom=MSDN">mci
+                príkazy
+            </a> na stránke msdn).<br>
+        </section>
+        <div
+            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            <pre #text01>
+open / close
+play / pause / stop
+status / set
+            </pre>
+            <app-copy-button [sourceElement]="text01"></app-copy-button>
+        </div>
+        <section>
+            Najprv preskúmame možnosti pomocou programu TESTmci.exe (<a
+                class="inline-block text-center text-white font-semibold bg-green-600 hover:bg-green-500 active:bg-green-800 px-1 py-1 rounded-md shadow-md transition duration-200"
+                href="http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe">download
+            </a>) - neinštaluje sa, len spustí. Uložte si
+            ho do rovnakého adresára ako zvukový, resp. video- súbor Po spustení vidíte okno s troma oblasťami. Do prvej
+            môžete zapisovať príkazy, ktoré sa ihneď vykonajú. V druhom okienku vidno návratové kódy (ak nie je 1, niečo
+            je zle) a v treťom ich význam (chybové hlásenia).
+        </section>
+        <h2 class="text-green-500 text-2xl font-semibold">
+            Príklady
+        </h2>
+        k máte už vytvorený adresár a v ňom uložený program aj video, skúsime si ho pozrieť:
+        <div
+            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            <pre #text02>
+open mys.mpg alias file1   — otvoríte súbor, zároveň zistíte, či sa dá
+play file1                 — začne sa prehrávať od začiatku
+pause file1                — prestávka
+play file1                 — pokračujeme
+close file 1               — skončíme
+            </pre>
+            <app-copy-button [sourceElement]="text02"></app-copy-button>
+        </div>
+        Iný príklad: prehrávanie CD (vložte CD a ukončite prehrávač, ktorý sa vám automaticky spustil).
+        <div
+            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            <pre #text03>
+open cdaudio               — otvoríte zariadenie, zistíte, či sa dá
+play cdaudio               — začne sa prehrávať prvá skladba na CD
+pause cdaudio              — prestávka
+play cdaudio               — pokračujeme
+
+status cdaudio position    — otázka, kde sme?
+01:15:25                     pozor, nie je to hh:mm:ss, ale:
+
+status cdaudio time format
+msf                        = minutes-seconds-frames
+                            Vo formáte cdaudio býva 75 frames za sekundu,
+                            teda číslo môže byť 0-74.
+
+status cdaudio length
+39:28:19                   — celková dĺžka albumu
+
+status cdaudio number of tracks
+8                          — koľko skladieb tam je
+
+status cdaudio length track 5
+04:30:22                   — aká je dlhá 5. skladba (číslujú sa od jednotky)
+
+status cdaudio position track 5
+17:36:35                   — kde začína skladba 5
+                             teda končí 17:36:35+04:30:22 = 22:06:57 overte to:
+
+status cdaudio position track 6
+
+play cdaudio from 17:36:35 to 22:06:57 — zahrá len 5. skladbu
+
+                           — Lepší je niekedy formát času v tvare tracks-minutes-  seconds-frames
+
+set cdaudio format tmfs    — potom môžeme písať
+
+play cdaudio from 5:0:0:0 to 6:0:0:0 — alebo len
+
+play cdaudio from 5 to 6
+
+                           — Každý príkaz môže mať na konci ešte wait alebo notify.
+
+play cdaudio from 5:0:0 to 6:0:10 wait
+                           — tento príkaz sa skončí až po skončení
+prehrávania, t.j. po 10 sekundách
+
+Aby ste mohli prehrávanie predsa len prerušiť, nastavte si najprv
+break cdaudio on 27        — prerušovacia klávesa bude 27 = .
+
+play cdaudio from 5:0:0 to 6:0:10 notify
+                           — tento príkaz sa skončí hneď, ale po
+                             skončení prehrávania, t.j. po 10
+                             sekundách, o tom pošle správu.
+
+Keď vás to prestane baviť, napíšete
+
+stop cdaudio               — zastavenie prehrávania
+eject cdaudio              — vysunie CD, nemusí fungovať
+close cdaudio              — ukončenie práce so zariadením.
+
+status cdaudio mode        — zistí, či sa ešte stále prehráva
+status cdaudio position    — ak áno, kde sme teraz?    
+
+            </pre>
+            <app-copy-button [sourceElement]="text03"></app-copy-button>
+        </div>
+        <section>
+            Teraz môžete napísať svoj vlastný program v jazyku C. Len namiesto okienok programu TestMCI použijete
+            príkaz:<br>
+
+            <strong>error = mciSendString(“prikaz”,szReturn, sizeof(szRetrun)/sizeof(TCHAR), hwnd);</strong> <br>
+
+            okrem toho sa zíde aj funkcia mciGetErrorString Nezabudnite pred kompiláciou povedať prekladaču, že
+            potrebujete prilinkovať aj knižnicu WINMM.LIB (Project / Settings / Links)<br>
+
+            Príkladom použitia je krátky program, ktorý otvorí dvierka na CD mechanike:<br>
+        </section>
+        <div
+    class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+    <pre #text04>
+mciSendString(“open CDAudio”, NULL, 0, NULL);          // otvor pristup k zariadeniu
+mciSendString(“set CDAudio door open”, NULL, 0, NULL); // otvor dvierka
+mciSendString(“close CDAudio”, NULL, 0, NULL);         // ukonci pristup k zariadeniu
+
+            </pre>
+    <app-copy-button [sourceElement]="text04"></app-copy-button>
+</div>
+    </article>
+</main>

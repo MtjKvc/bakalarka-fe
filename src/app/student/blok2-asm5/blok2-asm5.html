@@ -1,0 +1,34 @@
+<main class="px-4 sm:px-6 lg:px-12 py-8 space-y-16">
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <h1 class="text-green-500 text-2xl font-semibold">
+            Error C2443: operand size conflict
+        </h1>
+        <section class="space-y-4">
+Význam: inštrukcia vyžaduje, aby oba operandy boli rovnakej veľkosti. Musíte jeden z operandov zmeniť tak, aby oba mali rovnakú veľkosť.<br>
+
+Táto chyba môže znamenať aj to, že kompilátor NEVIE akú veľkosť máte na mysli, musíte mu dať pomôcku ktorou presne špecifikujete veľkosť premennej.<br>
+
+Príklad:<br>
+        </section>
+                <div
+            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            <pre #error>
+char str[4];
+
+int main()
+&#123;
+
+
+        __asm mov str, EAX // chyba
+        __asm mov BYTE PTR str, AL // OK, presunie do str jeden byte
+        __asm mov WORD PTR str, AX // OK, presunie do str 2 byte
+        __asm mov DWORD PTR str, EAX // OK, presunie do str 4 byte
+
+
+&#125;
+            </pre>
+            <app-copy-button [sourceElement]="error"></app-copy-button>
+        </div>
+    </article>
+</main>

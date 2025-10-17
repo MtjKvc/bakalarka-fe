@@ -1,0 +1,76 @@
+<main class="px-4 sm:px-6 lg:px-12 py-8 space-y-16">
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <h1 class="text-green-500 text-2xl font-semibold">
+            conio.h, alebo ENTER a problémy s ním
+        </h1>
+        <section>Viacerí z vás narazili pri riešení úloh na problém, ako načítať aktuálne stlačenú klávesu bez toho, aby
+            ste museli jej stlačenie potvrdiť . Typicky ide o ovládanie programu (voľby z menu, koniec programu, klávesy
+            F1, F2 a pod.).
+
+            Pri použití klasických funkcí ako napr. getchar() musíte na konci zadávani údajov stlačiť Enter. Bez toho
+            funkcia neskončí a zbytočne tak komplikuje komunikáciu.
+
+            Jedno z možných riešení je použitie vstupno-výstupných funkcií z knižnice conio.h podobne ako v nasledujúcej
+            ukážke.
+
+        </section>
+        <div
+            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            <pre #conio>
+
+#include &lg;conio.h&gt; // V tejto kniznici najdete co potrebujete
+#include &lg;stdio.h&gt;
+
+int main()
+&#123;
+      char ch;
+
+      do
+      &#123;
+           if(kbhit())                        // Ak je nieco stlacene
+           &#123; 
+                ch = getch();                 // Tak to nacitame do ch
+                switch(ch)                    // A potom testujeme… 
+
+                &#123;
+                   case '1': printf(“Ahoj”);  // Ak ch == '1' => Ahoj
+                             break;
+                   case '2': printf(“Hello”); // Ak ch == '2' => Hello
+                             break;
+                   case 13 : printf(“\n”);    // Finta s koncom riadku
+                             break;
+                   default: printf(“%c”,ch);  // Inac zobraz pismenko
+                &#125;
+           &#125;
+      &#125; while(ch != 27); // Stale dokola, az po &lg;ESC&gt;
+
+      printf(“\n\nKoniec…\n\n”);
+      return 0;
+&#125;
+
+            </pre>
+            <app-copy-button [sourceElement]="conio"></app-copy-button>
+        </div>
+        <section class="space-y-4">
+            Pozor: najprv sa snažte program pochopiť, potom si naštudujte ako dané funkcie fungujú v msdn a až potom ich
+            použite vo vlastnom programe.
+
+            Pri práci s týmito funkciami zistíte, že majú oproti <strong class="text-green-400">getchar()</strong> aj ďalšie príjemné vlastnosti - napríklad
+            dokážu zistiť aj kódy funkčných a špeciálnych kláves. Je tu však malý zádrhel: v prípade, že stlačíte
+            napríklad [F1], funkcia <strong class="text-green-400">getch()</strong> vráti hodnotu 0 (čím signalizuje stlačenie niečoho špeciálneho) a kód
+            klávesy musíte zistiť ešte jedným čítaním. Podobne je to aj ak stlačíte napríklad šipku nahor: tiež sa
+            prečítajú dva znaky, lenže prvý nie je nula, ale 0xE0 a druhý je opäť kód klávesy.<br>
+
+            Ešte jeden malý zádrhel je s klávesou Enter, ktorá vracia tiež vždy dva znaky: návrat na začiatok riadku
+            (CR) a posun na ďalší riadok (LF). Našťastie v C-čku týmto dvom znakom zodpovedá zasa len jeden znak: <strong class="text-green-400">\n</strong>.<br>
+<span class="font-bold text-[#00ff00] drop-shadow-[0_0_6px_#00ff00]">💡 Tip: </span>
+                <span class="drop-shadow-[0_0_5px_#00ff00]">
+ Najlepšia možnosť, ako to pochopiť, je skúsiť si to. Stiahnite a vyskúšajte si <a rel="noopener noreferrer"
+                class="inline-block text-center text-white font-semibold bg-green-600 hover:bg-green-500 active:bg-green-800 px-1 py-1 rounded-md shadow-md transition duration-200"
+                href="http://ap.urk.fei.stuba.sk/wp-content/uloha29conio.c.html">vzorový program
+            </a> na prácu
+            s klávesnicou a knižnicou <strong class="text-green-400">conio.h</strong> V ňom je vidno, ako sa načítavajú bežné i špeciálne znaky z klávesnice.</span>
+        </section>
+    </article>
+</main>

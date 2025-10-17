@@ -1,0 +1,36 @@
+<main class="px-4 sm:px-6 lg:px-12 py-8 space-y-16">
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <h1 class="text-green-500 text-2xl font-semibold">
+            Rozdiely v kódovaniach slovenčiny
+        </h1>
+        <section>
+            Podľa medzinárodnej normalizačnej organizácie ISO je štandardom pre kódovanie stredoeurópskych jazykov norma
+            ISO 8859-2. Firma Microsoft si pre systém Windows vybrala svoje vlastné kódovanie, ktoré je prakticky
+            zhodné, až na kódy 8 znakov. Ich kódy sú uvedené v tabuľke:
+        </section>
+        <div
+            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            <pre #znaky>
+       ISO-8859-2     Windows-1250
+znak    hex dec         hex dec
+
+ Ľ      A5  165         BC  188
+ Š      A9  169         8A  138
+ Ť      AB  171         8D  141
+ Ž      AE  174         8E  142
+
+ ľ      B5  181         BE  190
+ š      B9  185         9A  154
+ ť      BB  187         9D  157
+ ž      BE  190         9E  158 
+            </pre>
+            <app-copy-button [sourceElement]="znaky"></app-copy-button>
+        </div>
+        <section>
+            Úloha vášho prekódovacieho programu spočíva v nahradení znakov s kódom v ľavom stĺpci kódmi z pravého
+            stĺpca. Napríklad slovo uši je na disku v súbore uložené ako postupnosť ASCII kódov v kódovaní ISO-8859-2
+            takto [75 B9 69]H, resp. (117 185 105)D a treba ju nahradiť postupnosťou [75 9A 69]H, resp. (117 154 105)D.
+        </section>
+    </article>
+</main>

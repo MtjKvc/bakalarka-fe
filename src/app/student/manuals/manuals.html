@@ -1,0 +1,55 @@
+<main class="flex flex-col items-center px-4 sm:px-6 lg:px-12 py-8 space-y-16 text-center">
+    <h1
+        class="text-green-500 text-3xl sm:text-4xl md:text-5xl font-bold text-center mx-auto drop-shadow-[0_0_2px_#00ff00] max-w-full">
+        Návody
+    </h1>
+    <article
+        class="bg-gray-700/10 text-white text-base sm:text-lg p-4 sm:p-6 backdrop-blur-xs rounded-md border border-gray-500 leading-relaxed space-y-4 max-w-5xl mx-auto text-left">
+        <section>
+            Ak chcete použiť kompilátor na súkromnom počítači, stiahnite si gcc <a rel="noopener noreferrer"
+                class="inline-block text-center text-white font-semibold bg-green-600 hover:bg-green-500 active:bg-green-800 px-1 py-1 rounded-md shadow-md transition duration-200"
+                href="https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-12.0.0-ucrt-r3/winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64ucrt-12.0.0-r3.zip">tu.
+            </a> Súbor gcc.exe sa nachádza v adresári
+            mingw64\bin. Ideálne je pridať si adresár mingw64\bin do PATH a potom môžete gcc.exe používať odkiaľkoľvek.
+            To spravíte takto:
+        </section>
+        <section>
+            <ol class="list-decimal list-inside text-white space-y-2">
+                <li> Otvorte “Nastavenia systému”:
+                    <ul class="list-disc list-inside ps-6 space-y-1 marker:text-green-500">
+                        <li> Kliknite pravým tlačidlom myši na Tento počítač alebo Počítač (alebo stlačte klávesy Windows +
+                    Pause/Break) a vyberte Vlastnosti.</li>
+                        <li>Alebo stlačte Windows + I, prejdite na Systém → O aplikácii → Systémové informácie → Rozšírené
+                    nastavenia systému.</li>
+                    </ul>
+                    </li>
+                <li>Kliknite na Rozšírené nastavenia systému.</li>
+                <li>V časti Rozšírené kliknite na tlačidlo Premenné prostredia.</li>
+                <li>Nájdite systémovú premennú Path:
+                    <ul class="list-disc list-inside ps-6 space-y-1 marker:text-green-500">
+                        <li>V časti Systémové premenné vyberte premennú Path a kliknite na Upraviť.</li>
+                    </ul>
+                   </li>
+                <li> Pridajte nový adresár:
+                    <ul class="list-disc list-inside ps-6 space-y-1 marker:text-green-500">
+                        <li>Kliknite na Nový a vložte cestu k adresáru, ktorý chcete pridať.</li>
+                        <li>Napríklad: C:\mingw64\bin.</li>
+                    </ul>
+                </li>
+                <li>Kliknite na OK, aby sa zmeny uložili.</li>
+                <li>Reštartujte terminál (príkazový riadok/PowerShell), aby sa zmeny prejavili.</li>
+            </ol>
+        </section>
+        <section>
+<h2 class="text-green-500 text-xl sm:text-2xl font-semibold text-center">Založenie projektu v MS Visual Studio</h2>
+        Kliknie na File/New/Project
+        <img class="max-w-full sm:w-4/5 rounded-md" src="images/manual1.png" alt="postup je 1." width="768" height="400">
+        2. Kliknite vľavo na Visual C++ a potom na Windows Console Application. Zvoľte si názov projektu a uložte si ho
+        do adresára Documents.
+        <img class="max-w-full sm:w-4/5 rounded-md" src="images/manual2.png" alt="postup je 2." width="768" height="439">
+        3. Aby ste mohli v MS Visual Studio bez problémov používať funkciu scanf je potrebné napísať riadok z obrázka
+        dolu presne na dané miesto.
+        <img class="max-w-full sm:w-4/5 rounded-md" src="images/manual3.png" alt="postup je 3." width="765" height="351">
+        </section>
+    </article>
+</main>

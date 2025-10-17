@@ -1,0 +1,168 @@
+<main class="px-4 sm:px-6 lg:px-12 py-8 space-y-16">
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <h2 class="text-green-500 text-2xl font-semibold">
+            Vysvetlivky k vzorovému príkladu
+        </h2>
+        <section>
+            Aby sme sa nemuseli príliš detailne zaoberať štruktúrou programu v assembleri, t.j. čo všetko okrem nášho
+            algoritmu musí obsahovať, aby sa vôbec dal spustiť v danom operačnom systéme, budeme používať tzv. vložený
+            (embedded) assembler. To znamená, že to bude len akýsi fragment kódu vložený do štandartného C-programu.
+        </section>
+    </article>
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <h2 class="text-green-500 text-2xl font-semibold">
+            Microsoft Visual C++
+        </h2>
+        <section>
+            Vo Visual C sa vkladá assembler medzi krútené zátvorky uvedené kľúčovým slovom <strong
+                class="text-green-400">__asm &#123; &#125;</strong> . Nasledujú jednotlivé
+            inštrukcie, prípadne s komentárom. Premenné z C-programu, môžete používať priamo. Je však potrebné mať na
+            pamäti, že do registrov môžete presúvať len premenné zodpovedajúcej veľkosti. Nemôžete teda napr. do
+            registra
+            EAX presunúť premennú typu double. Výsledok práce programu odovzdáte C-programu tiež jednoducho cez
+            premenné.
+        </section>
+    </article>
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <div
+            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            <pre #asmCode1>
+// zaciatok bloku asm
+ __asm            
+&#123;
+     MOV EAX, iCislo // do EAX vloz hodnotu premennej iCislo (z pamate)
+     INC EAX // pripocitaj 1
+     MOV iVysledok,EAX // do premennej iVysledok vloz vysledok z registra EAX
+&#125; // koniec bloku asm
+            </pre>
+            <app-copy-button [sourceElement]="asmCode1"></app-copy-button>
+        </div>
+    </article>
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <h2 class="text-green-500 text-2xl font-semibold">
+            DEV-C++ (gcc)
+        </h2>
+        <section>
+            Kompilátor gcc má trocha odlišnú syntax pre vložený assembler. Je to vlastne funkcia <strong
+                class="text-green-400">asm ("retazec")</strong> , kde
+            samotné inštrukcie musíme písať ako textový reťazec. Pretože takýto blok sa priamo podsunie prekladaču
+            assembleru, musí vložený kúsok vyzerať presne rovnako ako zdrojový kód pre assembler. To znamená, že každá
+            inštrukcia musí končiť \n. Nepríjemná komplikácia je, že gcc používa inú syntax (tzv. AT&T), dosť odlišnú od
+            Intel syntaxe. Napríklad operandy zdroj, cieľ sa uvádzajú v opačnom poradí. Našťastie sa to dá prenaučiť
+            príkazom .intel_syntax noprefix.
+
+            Premenné z C-programu, môžete používať priamo, len musíte pridať znak podtržítko pred názov premennej.
+            Premenné z C-programu, ktoré chcete používať v assembleri však musia byť zadefinované ako globálne.
+
+            Podobne ako vo Visual C však musíte mať na pamäti, že do registrov môžete presúvať len premenné
+            zodpovedajúcej veľkosti. Nemôžete teda napr. do registra EAX presunúť premennú typu double. Výsledok práce
+            programu odovzdáte C-programu tiež jednoducho cez premenné.
+
+            Príklad:
+        </section>
+    </article>
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <div
+            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            <pre #asmCode2>
+asm(“.intel_syntax noprefix \n” // Prepneme z AT&T syntaxe na na Intel
+
+     “mov eax,_iCislo \n” // iCislo -> EAX
+     “inc eax \n” // EAX ++
+     “mov _iVysledok,eax \n” // EAX -> iVysledok
+
+“.att_syntax \n”); // Dame vsetko do povodneho stavu
+            </pre>
+            <app-copy-button [sourceElement]="asmCode2"></app-copy-button>
+        </div>
+    </article>
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <h2 class="text-green-500 text-2xl font-semibold">
+            CLion
+        </h2>
+        Študenti pracujúci v prostredí CLion mávali problém s oboma predošlými syntaxami. Existuje ešte tretia možnosť.
+
+        Príklad:
+    </article>
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <div
+            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            <pre #asmCode3>
+__asm__ (
+            “movl %[iCislo], %%eax;” //movl kopiruje udaje z premennej do registra
+            “inc %%eax;” //pripocitame 1
+            “movl %%eax, %[iVysledok];” //do premennej iVysledok vloz vysledok z 
+registra EAX
+            : [iVysledok] “=r” (iVysledok) //:toto je apersand //rozdiel medzi “r” a
+ “=r” je v tom, že prvý sa používa pre vstupné operandy a druhý pre výstupné 
+operandy. “r” umožňuje kompilátoru vybrať akýkoľvek dostupný
+    // register na uloženie hodnoty operandu, zatiaľ čo “=r” zabezpečuje, že hodnota 
+výstupného operandu sa zapíše späť do pamäte.
+    : [iCislo] “r” (iCislo)
+    );
+            </pre>
+            <app-copy-button [sourceElement]="asmCode3"></app-copy-button>
+        </div>
+    </article>
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <h2 class="text-green-500 text-2xl font-semibold">
+            Microsoft Visual C++ Ladenie
+        </h2>
+        Pri práci s assemblerom možno oceníte možnosť spustenia programu krok za krokom, pričom môžete sledovať zmeny v
+        jednotlivých registroch. Debugovanie sa spustí po preložení programu z menu postupnosťou Debug >> Start Debug >>
+        Step Into. V programe sa pohybujete vpred klávesou F10 (Step Over). Vaše okno môže vyzerať napr. takto:
+    </article>
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <div
+            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            <pre #asmCode4>
+#include &lt;stdio.h&gt;
+
+static int iCislo, iVysledok;         // Niektore verzie potrebuju globalne premenne
+
+int main(int argc, char* argv[])
+&#123;
+    iCislo = 27;
+    iVysledok = 0;
+    printf("\nCislo: %d  Vysledok: %d",iCislo,iVysledok);
+
+#ifdef __GNUC__                      // Tato cast sa preklada len v Dev-C++ (gcc)
+
+   asm(".intel_syntax noprefix \n"   // Prepneme z AT&T syntaxe na na Intel 
+   
+       "mov eax,_iCislo        \n"   // iCislo -> EAX
+       "inc eax                \n"   // EAX ++ 
+       "mov _iVysledok,eax     \n"   // EAX  -> iVysledok  
+
+       ".att_syntax            \n"); // Dame vsetko do povodneho stavu      
+
+#elif _MSC_VER                       // Tato cast sa preklada iba v MS Visual C++
+
+    __asm &#123;                          // zaciatok bloku asm
+    MOV EAX, iCislo                  // do EAX vloz hodnotu premennej iCislo (z pamate)
+    INC EAX                           // pripocitaj 1
+    MOV iVysledok,EAX                // do premennej iVysledok vloz vysledok z registra EAX
+    &#125;                                // koniec bloku asm
+
+#endif
+  
+    printf("\nCislo: %d  Vysledok: %d",iCislo,iVysledok);
+    
+    printf("\n\nStlac ENTER a skoncime...");
+    scanf("?");    
+    return(0);
+&#125;
+</pre>
+            <app-copy-button [sourceElement]="asmCode4"></app-copy-button>
+        </div>
+    </article>
+</main>
