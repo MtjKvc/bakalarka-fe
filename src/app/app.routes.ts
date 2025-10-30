@@ -131,6 +131,12 @@ export const routes: Routes = [
           import('./student/blok2-asm13/blok2-asm13').then(m => m.Blok2Asm13),
 
       },
+      {
+        path: 'frontpage',
+        loadComponent: () =>
+          import('./student/frontpage/frontpage').then(m => m.Frontpage),
+
+      },
     ],
   },
   {
