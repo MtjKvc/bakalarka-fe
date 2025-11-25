@@ -65,7 +65,7 @@ export class Login {
             // 3. Uložíme si dáta do localStorage pre TeacherComponent
             localStorage.setItem('user_role', payload.role); 
             localStorage.setItem('user_id', payload.id); 
-            localStorage.setItem('user_sub', payload.sub); // 'sub' je email/username
+            localStorage.setItem('user_fullName', payload.sub); // 'sub' je email/username
           }
 
           // 4. Navigujeme

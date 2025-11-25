@@ -1,221 +1,157 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-// 1. Router sa importuje tu, aby ho 'inject' poznal
+import { CommonModule, NgIf, TitleCasePipe } from '@angular/common'; // Pridávam NgIf a TitleCasePipe
 import { Router } from '@angular/router';
-// --- PRIDANÉ ---
-// Importujeme HttpClient, aby sme mohli robiť GET požiadavky
 import { HttpClient } from '@angular/common/http';
+// Predpokladané štruktúry - musia byť importované
+import { TeacherHeader, UserInfo } from './components/teacher-header/teacher-header'; 
+import { TeacherSidebarComponent } from './components/teacher-side-bar/teacher-side-bar';
+import { Blocks } from './components/blocks/blocks';
 
-// Ak tvoj teacher.html používa [routerLink], odkomentuj toto:
-// import { RouterLink } from '@angular/router'; 
 
-// Ak tvoj teacher.html má <router-outlet>, odkomentuj toto:
-// import { RouterOutlet } from '@angular/router';
-
-// Definície typov
-interface DynamicButton {
-  label: string;
-}
+// Rozhranie (pre konzistenciu)
 interface SidebarButton {
   label: string;
   isAdminOnly: boolean; 
 }
-// --- PRIDANÉ ---
-// Definujeme si typ, ako vyzerajú dáta vracajúce sa z backendu
+
 interface UserDetails {
   meno: string;
-  priezvisko: string;
-  // ...prípadne ďalšie polia ako email, atď.
 }
-
-// --- PRIDANÉ ---
-// Definícia pre dáta z /api/v1/exercise
-interface Exercise {
-  id: number;
-  dayOfWeek: string;    // "MONDAY"
-  startTime: string;    // "20:07:30.489Z"
-  endTime: string;
-  roomEnum: string;
-}
-
 
 @Component({
   selector: 'app-teacher',
   standalone: true,
   imports: [
     CommonModule,
-    // 2. Odstránili sme 'Router' odtiaľto.
-    
-    // Ak tvoj teacher.html používa [routerLink], odkomentuj toto:
-    // RouterLink,
-    
-    // Ak tvoj teacher.html má <router-outlet>, odkomentuj toto:
-    // RouterOutlet
+    NgIf, // Pre *ngIf
+    TitleCasePipe, // Pre | titlecase
+    TeacherHeader,
+    Blocks, 
+    TeacherSidebarComponent,
   ],
-  templateUrl: './teacher.html',
-  styleUrl: './teacher.css'
+  templateUrl: './teacher.html', 
+  // V reálnej aplikácii by toto bol súbor 'teacher.component.css', 
+  // ale pre jednoduchosť necháme názov 'teacher.css'
+  styleUrl: './teacher.css' 
 })
 export class Teacher implements OnInit {
 
-  router = inject(Router);
-  // --- PRIDANÉ ---
-  // Vložíme (inject) HttpClient
-  http = inject(HttpClient);
-  isSidebarOpen: boolean = false; 
-
-  // --- ZMENENÉ ---
-  // Inicializujeme s predvolenými hodnotami, kým sa nenačítajú skutočné
-  currentUser = {
+  // Aktuálny používateľ
+  currentUser: UserInfo & { id: number | null } = { 
     id: null as number | null,
-    meno: 'Používateľ', // Načíta sa z 'user_sub' (email)
-    priezvisko: '', // Token neobsahuje priezvisko
-    rola: 'USER' // Predvolená rola, ak by načítanie zlyhalo
-  };
+    meno: 'Používateľ',
+    rola: 'USER'
+  }
+  
+  // KĽÚČOVÝ STAV: Drží aktívny pohľad
+  activeView: string = 'default';
+  
+  router = inject(Router);
+  http = inject(HttpClient);
+  isSidebarOpen: boolean = false; // Stav pre bočný panel
 
-  // --- ZMENENÉ ---
-  // Teraz je to prázdne pole, naplní sa z backendu
-  dynamicScheduleButtons: DynamicButton[] = [];
-
-  // Kompletný zoznam bočných tlačidiel
+  // Definovanie tlačidiel sidebaru
   sidebarButtons: SidebarButton[] = [
     { label: 'student upload', isAdminOnly: false },
     { label: 'dochadzka', isAdminOnly: false },
     { label: 'users', isAdminOnly: true },
     { label: 'students', isAdminOnly: true },
-    { label: 'cvika', isAdminOnly: true },
-    { label: 'bloky', isAdminOnly: true },
-    { label: 'ulohy', isAdminOnly: true },
+    { label: 'exercises', isAdminOnly: true },
+    { label: 'blocks', isAdminOnly: true },
+    { label: 'assigments', isAdminOnly: true },
   ];
 
   constructor() { }
 
   ngOnInit(): void {
-    // --- UPRAVENÉ ---
-    // Tu si Teacher "vyzdvihne" informácie, ktoré uložil Login
+    // Simulácia načítania používateľa z localStorage
     const role = localStorage.getItem('user_role');
     const id = localStorage.getItem('user_id');
-    const sub = localStorage.getItem('user_sub'); // 'sub' je zvyčajne email
+    const sub = localStorage.getItem('user_sub');
 
-    // 1. Nastavíme dočasné hodnoty, ktoré máme hneď k dispozícii
     if (role) {
       this.currentUser.rola = role;
     }
     if (id) {
-      this.currentUser.id = parseInt(id, 10); // localStorage ukladá stringy
+      this.currentUser.id = parseInt(id, 10);
     }
     if (sub) {
-      // Zatiaľ použijeme email ako meno
       this.currentUser.meno = sub;
     }
 
-    // 2. Ak máme ID, zavoláme backend pre plné detaily používateľa
+    // Simulácia načítania detailov používateľa cez HTTP
     if (this.currentUser.id) {
-      // TOTO JE TEN HTTP GET CALL
-      // Tvoj AuthInterceptor sa postará o pridanie tokenu do hlavičky
+      // NOTE: Toto je len simulácia, pretože nebeží server na localhoste.
+      // Pre funkčnosť to v Immersive prostredí nemusí prebehnúť úspešne, ale logika je správna.
       this.http.get<UserDetails>(`http://localhost:8080/api/v1/user?id=${this.currentUser.id}`)
         .subscribe({
           next: (userDetails) => {
-            // Úspech: Prepíšeme dočasné hodnoty skutočnými dátami
             this.currentUser.meno = userDetails.meno;
-            this.currentUser.priezvisko = userDetails.priezvisko;
             console.log('Načítané detaily používateľa:', this.currentUser);
           },
           error: (err) => {
-            // Chyba: Vypíšeme do konzoly, ale meno zostane ako email
             console.error('Nepodarilo sa načítať detaily používateľa:', err);
           }
         });
     } else {
       console.log('Používateľ bez ID, detaily sa nenahrali:', this.currentUser);
     }
-
-    // --- PRIDANÉ ---
-    // 3. Zavoláme funkciu na načítanie rozvrhu
-    this.fetchScheduleButtons();
   }
 
-  // --- PRIDANÉ ---
   /**
-   * Načíta rozvrh cvičení z backendu a naplní pole dynamicScheduleButtons.
+   * Reaguje na udalosť odhlásenia.
    */
-  fetchScheduleButtons(): void {
-    this.http.get<Exercise[]>('http://localhost:8080/api/v1/exercise')
-      .subscribe({
-        next: (sessions) => {
-          // Prejdeme všetky sessions a zmeníme ich na formát, aký potrebuje tlačidlo
-          this.dynamicScheduleButtons = sessions.map(session => {
-            return {
-              label: this.formatScheduleLabel(session.dayOfWeek, session.startTime)
-            };
-          });
-          console.log('Načítané rozvrhové tlačidlá:', this.dynamicScheduleButtons);
-        },
-        error: (err) => {
-          console.error('Nepodarilo sa načítať rozvrh:', err);
-          // Môžeš tu nastaviť nejaké predvolené alebo chybové tlačidlá
-          this.dynamicScheduleButtons = [{ label: 'Chyba načítania' }];
-        }
-      });
-  }
-
-  // --- PRIDANÉ ---
-  /**
-   * Pomocná funkcia na formátovanie labelu pre tlačidlo rozvrhu.
-   * Premení ("MONDAY", "20:07:30...") na "pon 20:07"
-   */
-  private formatScheduleLabel(day: string, time: string): string {
-    // 1. Preložíme deň
-    const dayMap: { [key: string]: string } = {
-      'MONDAY': 'pon',
-      'TUESDAY': 'ut',
-      'WEDNESDAY': 'str',
-      'THURSDAY': 'štv',
-      'FRIDAY': 'pia',
-      'SATURDAY': 'so',
-      'SUNDAY': 'ne'
-    };
-    const translatedDay = dayMap[day.toUpperCase()] || day.substring(0, 3).toLowerCase();
-
-    // 2. Sformátujeme čas (zoberieme len hodiny a minúty)
-    const [hours, minutes] = time.split(':');
-    const formattedTime = `${hours}:${minutes}`;
-
-    return `${translatedDay} ${formattedTime}`;
-  }
-
-
   onLogout(): void {
-    this.isSidebarOpen = false; // Zatvorí menu
-
-    // --- UPRAVENÉ ---
-    // Musíme zmazať VŠETKY dáta, ktoré sme uložili
+    this.isSidebarOpen = false;
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_role');
     localStorage.removeItem('user_id');
     localStorage.removeItem('user_sub');
 
+    // Použi konzolové logy namiesto alert()
+    console.log('Udalosť odhlásenia zachytená a spracovaná. Presmerovanie na /login.');
     this.router.navigate(['/login']);
   }
 
+  /**
+   * Reaguje na udalosť prepnutia bočného panelu.
+   */
+  onToggleSidebar(): void {
+      this.isSidebarOpen = !this.isSidebarOpen;
+  }
+  
+  /**
+   * Spracuje vyhľadávací dotaz odoslaný z hlavičky (desktop).
+   */
+  onSearchSubmit(query: string): void {
+      console.log(`Vyhľadávanie spustené s dotazom: "${query}"`);
+      // Použi konzolové logy namiesto alert()
+      // alert(`Vyhľadávanie spustená s dotazom: "${query}"`);
+  }
+
+  /**
+   * Spracuje kliknutie na ikonu vyhľadávania (mobil).
+   */
+  onSearchIconClick(): void {
+      // Použi konzolové logy namiesto alert()
+      console.log('Akcia: Otvorenie full-screen vyhľadávania pre mobil.');
+  }
+
   isAdmin(): boolean {
-    // --- UPRAVENÉ ---
-    // Kontrola je teraz robustnejšia (nerobí rozdiel medzi 'admin' a 'ADMIN')
     return this.currentUser.rola.toUpperCase() === 'ADMIN';
   }
-
+  
+  /**
+   * KĽÚČOVÁ METÓDA: Reaguje na kliknutie tlačidla zo TeacherSidebarComponent.
+   */
   onSidebarButtonClick(buttonLabel: string): void {
-    alert(`Klikli ste na: ${buttonLabel} (routovanie je vypnuté)`);
+    // 1. Aktualizuje activeView, čo zmení zvýraznenie v sidebare a obsah v main
+    this.activeView = buttonLabel; 
+    
+    // 2. Zatvorí sidebar (pre mobilný režim)
     this.isSidebarOpen = false; 
-  }
-
-  onScheduleButtonClick(buttonLabel: string): void {
-    alert(`Klikli ste na: ${buttonLabel} (routovanie je vypnuté)`);
-  }
-
-  // --- NOVÁ FUNKCIA PRE IKONU LUPY ---
-  // --- OPRAVENÉ --- (bolo tu :void: void)
-  onSearchClick(): void {
-    alert('Klikli ste na lupu! (Tu sa môže otvoriť vyhľadávaní)');
+    
+    console.log(`Pohľad prepnutý na: ${buttonLabel}`);
+    // console.log(`Klikli ste na: ${buttonLabel} (routovanie je vypnuté)`);
   }
 }
-

@@ -1,115 +1,85 @@
-<div class="min-h-screen bg-gray-100 flex flex-col">
+<div class="min-h-screen bg-gray-50 flex flex-col font-sans"> <div class="max-w-[2048px] mx-auto w-full flex-grow flex flex-col">
 
-  <header class="bg-white text-gray-800 p-4 flex items-center justify-between shadow-md">
-
-    <div class="flex items-center">
-      <button (click)="isSidebarOpen = !isSidebarOpen" class="text-gray-600 hover:text-gray-800 md:hidden mr-3">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-      </button>
-      <div class="text-xl font-semibold text-gray-800">Architektúra počítačov</div>
+    <div class="bg-white shadow-xl sticky top-0 z-40 transition-all duration-300 border-b border-gray-100">
+        <app-teacher-header 
+          [currentUser]="currentUser" 
+          [isSidebarOpen]="isSidebarOpen" 
+          (toggleSidebar)="onToggleSidebar()"
+          (logout)="onLogout()" 
+          (searchSubmit)="onSearchSubmit($event)" 
+          (searchIconClick)="onSearchIconClick()"
+          class="block"> </app-teacher-header>
     </div>
 
-    <div class="hidden md:flex-grow md:block mx-8">
-      <input 
-        type="text" 
-        placeholder="search bar" 
-        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700
-               focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-    </div>
+    <div class="flex-grow flex relative">
 
-    <div class="flex items-center space-x-4">
-      
-      <button (click)="onSearchClick()" class="text-gray-600 hover:text-gray-800 md:hidden">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-      </button>
+      <div *ngIf="isSidebarOpen" (click)="isSidebarOpen = false"
+        class="fixed inset-0 bg-gray-900 bg-opacity-60 z-20 md:hidden transition-opacity duration-300">
+      </div>
 
-      <div class="hidden md:flex items-center space-x-4">
-        <div class="text-right">
-          <p class="font-medium text-gray-800">{{ currentUser.meno }} {{ currentUser.priezvisko }}</p>
-          <p class="text-sm text-gray-500">{{ currentUser.rola }}</p>
+      <app-teacher-sidebar 
+        [currentUser]="currentUser" 
+        [isSidebarOpen]="isSidebarOpen" 
+        [sidebarButtons]="sidebarButtons"
+        (logout)="onLogout()" 
+        (buttonClick)="onSidebarButtonClick($event)"
+        [activeView]="activeView" 
+        class="bg-gray-800 text-white md:flex-shrink-0">
+      </app-teacher-sidebar>
+
+      <main class="flex-grow bg-gray-50 p-4 md:p-8 transition-all duration-300">
+
+        <div class="bg-white p-6 md:p-10 rounded-2xl shadow-xl min-h-full border border-gray-100">
+
+          <ng-container *ngIf="activeView === 'blocks'">
+            <app-blocks></app-blocks>
+          </ng-container>
+
+          <ng-container *ngIf="activeView === 'default'">
+            <div class="space-y-6">
+              <h2 class="text-3xl font-extrabold text-gray-800 border-b pb-2 border-emerald-500/50">
+                👋 Vitajte v Administrácii
+              </h2>
+              <p class="text-lg text-gray-600">
+                **Moderný a čistý dizajn** zaručuje prehľadné prostredie pre správu obsahu.
+              </p>
+              <div class="mt-8 p-6 bg-emerald-50 border-l-4 border-emerald-500 rounded-xl shadow-inner">
+                <p class="text-gray-700 font-semibold flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"></path>
+                </svg>
+                  Začnite prácu
+                </p>
+                <p class="text-gray-600 mt-2">
+                  Pre pokračovanie kliknite na tlačidlo **Blocks** v ľavom navigačnom paneli (sidebare).
+                </p>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="activeView !== 'default' && activeView !== 'blocks'">
+
+            <h2 class="text-3xl font-extrabold text-gray-800 mb-6 border-b pb-2 border-gray-300">
+              Pohľad: <span class="text-emerald-600">{{ activeView | titlecase }}</span>
+            </h2>
+            <p class="text-gray-700 text-lg">
+              Tu by sa zobrazil špecializovaný komponent pre entitu "<span class="font-bold text-gray-800">{{ activeView
+                }}</span>".
+            </p>
+            <p class="text-gray-500 mt-4">
+              Táto oblasť je pripravená na dynamické načítanie komponentov.
+            </p>
+          </ng-container>
+
         </div>
-        <button 
-          (click)="onLogout()"
-          class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md 
-                 focus:outline-none focus:ring-2 focus:ring-red-500 
-                 focus:ring-offset-2 focus:ring-offset-white"
-        >
-          Log out
-        </button>
-      </div>
+
+      </main>
+
     </div>
-  </header>
 
-  <div class="bg-gray-100 p-2 flex space-x-2 border-b border-gray-200 overflow-x-auto whitespace-nowrap">
-    <button *ngFor="let button of dynamicScheduleButtons"
-      (click)="onScheduleButtonClick(button.label)"
-      class="bg-white text-gray-700 py-2 px-4 rounded-md border border-gray-300 shadow-sm
-             hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 
-             focus:ring-offset-2 flex-shrink-0"
-    >
-      {{ button.label }}
-    </button>
-  </div>
+  </div> 
 
-  <div class="flex-grow flex relative">
-    
-    <div *ngIf="isSidebarOpen" (click)="isSidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"></div>
-    
-    <aside 
-      class="w-64 bg-white p-4 flex flex-col space-y-3 shadow-lg 
-             fixed inset-y-0 left-0 z-30
-             transform -translate-x-full transition-transform duration-300 ease-in-out
-             md:relative md:translate-x-0"
-      [ngClass]="{'translate-x-0': isSidebarOpen}"
-    >
-      
-      <button *ngFor="let button of sidebarButtons"
-        (click)="onSidebarButtonClick(button.label)"
-        class="w-full py-2 px-4 rounded-md text-left text-white font-semibold 
-               focus:outline-none focus:ring-2 focus:ring-offset-2 
-               focus:ring-offset-white
-               bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
-        [ngClass]="{ 'hidden': button.isAdminOnly && !isAdmin() }"
-        [disabled]="button.isAdminOnly && !isAdmin()"
-      >
-        {{ button.label }}
-      </button>
-
-      <div class="flex-grow"></div> 
-
-      <div class="md:hidden border-t border-gray-200 pt-4">
-        <div class="text-left mb-2 p-2">
-          <p class="font-medium text-gray-800">{{ currentUser.meno }} {{ currentUser.priezvisko }}</p>
-          <p class="text-sm text-gray-500">{{ currentUser.rola }}</p>
-        </div>
-        <button 
-          (click)="onLogout()"
-          class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md 
-                 focus:outline-none focus:ring-2 focus:ring-red-500 
-                 focus:ring-offset-2 focus:ring-offset-white"
-        >
-          Log out
-        </button>
-      </div>
-      </aside>
-
-    
-    <main class="flex-grow bg-gray-100 p-6">
-      
-      <div class="bg-white p-8 rounded-lg shadow-md min-h-full">
-        
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Obsahová oblasť</h2>
-        <p class="text-gray-700">
-          Toto je miesto (veľká sivá plocha), kde sa budú v budúcnosti dynamicky zobrazovať tabuľky
-          a komponenty na základe toho, ktoré tlačidlo sa stlačí.
-        </p>
-        <p class="text-gray-700 mt-4">
-          Momentálne je routovanie vypnuté a toto je len statický text.
-        </p>
-
-      </div>
-    </main>
-
-  </div>
 </div>
