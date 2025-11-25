@@ -25,15 +25,15 @@
     Spracúvam požiadavku, prosím počkajte...
   </div>
 
-  <div *ngIf="error && !isDeleteConfirmModalOpen"
-    class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold mb-4 shadow-sm text-sm">
-    CHYBA: {{ error }}
+  <div *ngIf="error && !isDeleteConfirmModalOpen && !isCreateBlokModalOpen"
+    class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold mb-4 shadow-sm text-sm whitespace-pre-wrap">
+    {{ error }}
   </div>
 
   <div *ngIf="message"
-    class="p-3 bg-emerald-50 border border-emerald-400 text-emerald-700 rounded-lg font-medium mb-4 shadow-sm text-sm">
-    <svg class="w-5 h-5 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-    {{ message }}
+    class="p-3 bg-emerald-50 border border-emerald-400 text-emerald-700 rounded-lg font-medium mb-4 shadow-sm text-sm whitespace-pre-wrap flex items-start">
+    <svg class="w-5 h-5 mr-2 inline-block flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <span>{{ message }}</span>
   </div>
 
 
@@ -51,38 +51,35 @@
 
         <tr *ngFor="let blok of blocks" class="hover:bg-emerald-50/50 transition duration-150">
 
-          <td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-700 cursor-pointer"
-            [ngClass]="{'bg-yellow-100 ring-1 ring-amber-500': isEditing(blok.id, 'name')}"
+          <td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-700 cursor-pointer relative"
+            [ngClass]="{'z-10': isEditing(blok.id, 'name')}"
             (dblclick)="onCellEdit(blok, 'name')"
-            longPress (longPress)="onCellEdit(blok, 'name')"> <ng-container *ngIf="isEditing(blok.id, 'name'); else viewName">
+            longPress (longPress)="onCellEdit(blok, 'name')"> 
+            <ng-container *ngIf="isEditing(blok.id, 'name'); else viewName">
               <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(blok)" (keydown.enter)="onCellSave(blok)"
-                type="text" class="w-full border-0 bg-transparent p-0 focus:outline-none" />
+                type="text" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold -m-2" />
             </ng-container>
             <ng-template #viewName>{{ blok.name }}</ng-template>
           </td>
 
-          <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-600 cursor-pointer"
-            [ngClass]="{'bg-yellow-100 ring-1 ring-amber-500': isEditing(blok.id, 'maxPoints')}"
+          <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-600 cursor-pointer relative"
+            [ngClass]="{'z-10': isEditing(blok.id, 'maxPoints')}"
             (dblclick)="onCellEdit(blok, 'maxPoints')"
-            longPress (longPress)="onCellEdit(blok, 'maxPoints')"> <ng-container *ngIf="isEditing(blok.id, 'maxPoints'); else viewMaxPoints">
+            longPress (longPress)="onCellEdit(blok, 'maxPoints')"> 
+            <ng-container *ngIf="isEditing(blok.id, 'maxPoints'); else viewMaxPoints">
               <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(blok)" (keydown.enter)="onCellSave(blok)"
-                type="number" step="0.1" class="w-full border-0 bg-transparent p-0 focus:outline-none 
-                       [appearance:textfield] 
-                       [&::-webkit-inner-spin-button]:appearance-none 
-                       [&::-webkit-outer-spin-button]:appearance-none" />
+                type="text" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold -m-2" />
             </ng-container>
             <ng-template #viewMaxPoints>{{ blok.maxPoints | number:'1.0-2' }}</ng-template>
           </td>
 
-          <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-600 cursor-pointer"
-            [ngClass]="{'bg-yellow-100 ring-1 ring-amber-500': isEditing(blok.id, 'requiredPoints')}"
+          <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-600 cursor-pointer relative"
+            [ngClass]="{'z-10': isEditing(blok.id, 'requiredPoints')}"
             (dblclick)="onCellEdit(blok, 'requiredPoints')"
-            longPress (longPress)="onCellEdit(blok, 'requiredPoints')"> <ng-container *ngIf="isEditing(blok.id, 'requiredPoints'); else viewRequiredPoints">
+            longPress (longPress)="onCellEdit(blok, 'requiredPoints')"> 
+            <ng-container *ngIf="isEditing(blok.id, 'requiredPoints'); else viewRequiredPoints">
               <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(blok)" (keydown.enter)="onCellSave(blok)"
-                type="number" step="0.1" class="w-full border-0 bg-transparent p-0 focus:outline-none 
-                       [appearance:textfield] 
-                       [&::-webkit-inner-spin-button]:appearance-none 
-                       [&::-webkit-outer-spin-button]:appearance-none" />
+                type="text" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold -m-2" />
             </ng-container>
             <ng-template #viewRequiredPoints>{{ blok.requiredPoints | number:'1.0-2' }}</ng-template>
           </td>
@@ -119,6 +116,8 @@
     (click)="$event.stopPropagation()"> <div class="p-8">
       <h3 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2 border-emerald-300">Vytvoriť nový blok</h3>
 
+      <div *ngIf="error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
+
       <form (ngSubmit)="onSubmitNovyBlok()">
 
         <div class="mb-4">
@@ -132,18 +131,14 @@
           <label for="maxPoints" class="block text-sm font-semibold text-gray-700 mb-1">Max. bodov</label>
           <input id="maxPoints" name="maxPoints" type="number" step="0.1" [(ngModel)]="novyBlok.maxPoints" required
             class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-150 
-                   [appearance:textfield] 
-                   [&::-webkit-inner-spin-button]:appearance-none 
-                   [&::-webkit-outer-spin-button]:appearance-none">
+                   [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
         </div>
 
         <div class="mb-6">
           <label for="requiredPoints" class="block text-sm font-semibold text-gray-700 mb-1">Požadované bodov</label>
           <input id="requiredPoints" name="requiredPoints" type="number" step="0.1"
             [(ngModel)]="novyBlok.requiredPoints" required class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-150 
-                   [appearance:textfield] 
-                   [&::-webkit-inner-spin-button]:appearance-none 
-                   [&::-webkit-outer-spin-button]:appearance-none">
+                   [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
         </div>
 
         <div class="flex justify-end space-x-3 pt-4">
@@ -178,10 +173,7 @@
         <h3 class="text-2xl font-bold text-red-700">Potvrďte trvalé vymazanie</h3>
       </div>
 
-      <div *ngIf="error"
-        class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold mb-4 shadow-sm text-sm">
-        CHYBA: {{ error }}
-      </div>
+      <div *ngIf="error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
 
       <p class="text-gray-700 mb-4">
         Naozaj chcete **natrvalo vymazať** blok:

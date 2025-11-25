@@ -1,4 +1,5 @@
-<div class="min-h-screen bg-gray-50 flex flex-col font-sans"> <div class="max-w-[2048px] mx-auto w-full flex-grow flex flex-col">
+<div class="min-h-screen bg-gray-50 flex flex-col font-sans">
+  <div class="max-w-[2048px] mx-auto w-full flex-grow flex flex-col">
 
     <div class="bg-white shadow-xl sticky top-0 z-40 transition-all duration-300 border-b border-gray-100">
         <app-teacher-header 
@@ -35,42 +36,27 @@
             <app-blocks></app-blocks>
           </ng-container>
 
+          <ng-container *ngIf="activeView === 'assigments'">
+            <app-assignments></app-assignments>
+          </ng-container>
+
           <ng-container *ngIf="activeView === 'default'">
             <div class="space-y-6">
               <h2 class="text-3xl font-extrabold text-gray-800 border-b pb-2 border-emerald-500/50">
                 👋 Vitajte v Administrácii
               </h2>
               <p class="text-lg text-gray-600">
-                **Moderný a čistý dizajn** zaručuje prehľadné prostredie pre správu obsahu.
+                Vyberte si položku z menu vľavo pre správu obsahu.
               </p>
-              <div class="mt-8 p-6 bg-emerald-50 border-l-4 border-emerald-500 rounded-xl shadow-inner">
-                <p class="text-gray-700 font-semibold flex items-center">
-                  <svg class="w-5 h-5 mr-2 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                      clip-rule="evenodd"></path>
-                </svg>
-                  Začnite prácu
-                </p>
-                <p class="text-gray-600 mt-2">
-                  Pre pokračovanie kliknite na tlačidlo **Blocks** v ľavom navigačnom paneli (sidebare).
-                </p>
-              </div>
             </div>
           </ng-container>
 
-          <ng-container *ngIf="activeView !== 'default' && activeView !== 'blocks'">
-
+          <ng-container *ngIf="activeView !== 'default' && activeView !== 'blocks' && activeView !== 'assigments'">
             <h2 class="text-3xl font-extrabold text-gray-800 mb-6 border-b pb-2 border-gray-300">
               Pohľad: <span class="text-emerald-600">{{ activeView | titlecase }}</span>
             </h2>
             <p class="text-gray-700 text-lg">
-              Tu by sa zobrazil špecializovaný komponent pre entitu "<span class="font-bold text-gray-800">{{ activeView
-                }}</span>".
-            </p>
-            <p class="text-gray-500 mt-4">
-              Táto oblasť je pripravená na dynamické načítanie komponentov.
+              Komponent pre "<span class="font-bold text-gray-800">{{ activeView }}</span>" ešte nie je implementovaný.
             </p>
           </ng-container>
 
@@ -81,5 +67,4 @@
     </div>
 
   </div> 
-
 </div>
