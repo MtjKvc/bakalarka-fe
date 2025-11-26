@@ -40,6 +40,10 @@
             <app-assignments></app-assignments>
           </ng-container>
 
+          <ng-container *ngIf="activeView === 'exercises'">
+            <app-exercises></app-exercises>
+          </ng-container>
+
           <ng-container *ngIf="activeView === 'default'">
             <div class="space-y-6">
               <h2 class="text-3xl font-extrabold text-gray-800 border-b pb-2 border-emerald-500/50">
@@ -51,7 +55,7 @@
             </div>
           </ng-container>
 
-          <ng-container *ngIf="activeView !== 'default' && activeView !== 'blocks' && activeView !== 'assigments'">
+          <ng-container *ngIf="activeView !== 'default' && activeView !== 'blocks' && activeView !== 'assigments' && activeView !== 'exercises'">
             <h2 class="text-3xl font-extrabold text-gray-800 mb-6 border-b pb-2 border-gray-300">
               Pohľad: <span class="text-emerald-600">{{ activeView | titlecase }}</span>
             </h2>

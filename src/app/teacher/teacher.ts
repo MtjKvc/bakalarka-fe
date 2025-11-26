@@ -7,8 +7,9 @@ import { HttpClient } from '@angular/common/http';
 import { TeacherHeader, UserInfo } from './components/teacher-header/teacher-header'; 
 import { TeacherSidebarComponent } from './components/teacher-side-bar/teacher-side-bar';
 import { Blocks } from './components/blocks/blocks';
-// !!! PRIDANÉ: Import Assignments komponentu (upravte cestu podľa reality)
 import { AssignmentsComponent } from './components/assignments/assignments'; 
+// !!! NOVÝ IMPORT:
+import { ExercisesComponent } from './components/exercises/exercises';
 
 interface SidebarButton {
   label: string;
@@ -29,7 +30,8 @@ interface UserDetails {
     TeacherHeader,
     Blocks, 
     TeacherSidebarComponent,
-    AssignmentsComponent // !!! PRIDANÉ: Registrácia komponentu
+    AssignmentsComponent,
+    ExercisesComponent // !!! PRIDANÉ: Registrácia tu
   ],
   templateUrl: './teacher.html', 
   styleUrl: './teacher.css' 
@@ -53,9 +55,9 @@ export class Teacher implements OnInit {
     { label: 'dochadzka', isAdminOnly: false },
     { label: 'users', isAdminOnly: true },
     { label: 'students', isAdminOnly: true },
-    { label: 'exercises', isAdminOnly: true },
+    { label: 'exercises', isAdminOnly: true }, // Toto tlačidlo aktivuje pohľad 'exercises'
     { label: 'blocks', isAdminOnly: true },
-    { label: 'assigments', isAdminOnly: true }, // Pozor na preklep, v HTML ho musíme zhodovať
+    { label: 'assigments', isAdminOnly: true }, 
   ];
 
   constructor() { }
