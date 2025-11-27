@@ -2,11 +2,19 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
 
-// Definícia, ako vyzerá cvičenie (Interface)
+// --- INTERFACE PRE CVIČENIA ---
 export interface ExerciseSession {
   exerciseId: number;
-  sessionDay: string; // napr. "Pondelok"
-  startTime: string;  // napr. "08:00"
+  sessionDay: string;
+  startTime: string;
+}
+
+// --- NOVÝ INTERFACE PRE BLOKY ---
+export interface Block {
+  id: number;
+  name: string;
+  maxPoints: number;
+  requiredPoints: number;
 }
 
 @Injectable({
@@ -14,19 +22,18 @@ export interface ExerciseSession {
 })
 export class TeacherContextService {
   private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:8080/api/v1';
 
-  // 1. Zoznam všetkých cvičení (pre Header)
+  // ==========================================
+  // ČASŤ 1: CVIČENIA (DOCHÁDZKA / HEADERY)
+  // ==========================================
   exercises = signal<ExerciseSession[]>([]);
-
-  // 2. Aktuálne vybraté cvičenie (pre Tabuľky/Bloky)
   selectedExercise = signal<ExerciseSession | null>(null);
 
-  // Stiahne dáta z API
   loadCurrentExercises() {
-    return this.http.get<ExerciseSession[]>('http://localhost:8080/api/v1/user-exercise/current').pipe(
+    return this.http.get<ExerciseSession[]>(`${this.apiUrl}/user-exercise/current`).pipe(
       tap(data => {
         this.exercises.set(data);
-        // Ak sme ešte nič nevybrali a prišli nejaké dáta, vyberieme automaticky prvé
         if (data.length > 0 && !this.selectedExercise()) {
           this.selectedExercise.set(data[0]);
         }
@@ -34,8 +41,35 @@ export class TeacherContextService {
     );
   }
 
-  // Túto metódu zavolá Header, keď klikneš na tlačidlo
   selectExercise(exercise: ExerciseSession) {
     this.selectedExercise.set(exercise);
+  }
+
+  // ==========================================
+  // ČASŤ 2: BLOKY (GRADING / HODNOTENIE)
+  // ==========================================
+  
+  // Zoznam všetkých blokov (pre tlačidlá v Grading)
+  blocks = signal<Block[]>([]);
+
+  // Aktuálne vybraté blok (podľa ktorého sa filtruje tabuľka)
+  selectedBlock = signal<Block | null>(null);
+
+  // Načíta bloky z API
+  loadBlocks() {
+    return this.http.get<Block[]>(`${this.apiUrl}/block`).pipe(
+      tap(data => {
+        this.blocks.set(data);
+        // Automaticky vyberieme prvý blok, ak nejaký existuje a nič nie je vybraté
+        if (data.length > 0 && !this.selectedBlock()) {
+          this.selectedBlock.set(data[0]);
+        }
+      })
+    );
+  }
+
+  // Prepnutie bloku
+  selectBlock(block: Block) {
+    this.selectedBlock.set(block);
   }
 }

@@ -12,8 +12,10 @@ import { UsersComponent } from './components/users/users';
 import { Students } from './components/students/students'; 
 import { StudentUploadComponent } from './components/student-upload/student-upload'; 
 import { Attendance } from './components/attendance/attendance';
-import { TeacherContextService } from '../services/teacher-context';
 
+// !!! NOVÝ IMPORT !!!
+import { GradingComponent } from './components/grading/grading';
+import { TeacherContextService } from '../services/teacher-context';
 
 interface SidebarButton {
   label: string;
@@ -35,13 +37,17 @@ interface SidebarButton {
     UsersComponent,
     Students,
     StudentUploadComponent,
-    Attendance
+    Attendance,
+    // !!! PRIDANÉ DO ZOZNAMU !!!
+    GradingComponent
   ],
   templateUrl: './teacher.html', 
   styleUrl: './teacher.css' 
 })
 export class Teacher implements OnInit {
-
+  
+  // ... zvyšok tvojho kódu bez zmeny ...
+  
   currentUser: UserInfo & { id: number | null } = { 
     id: null,
     meno: 'Používateľ',
@@ -56,7 +62,7 @@ export class Teacher implements OnInit {
 
   isSidebarOpen: boolean = false; 
 
- sidebarButtons: SidebarButton[] = [
+  sidebarButtons: SidebarButton[] = [
     { label: 'nahrávanie', isAdminOnly: false },    
     { label: 'dochádzka', isAdminOnly: false },     
     { label: 'používatelia', isAdminOnly: true },   
@@ -64,7 +70,7 @@ export class Teacher implements OnInit {
     { label: 'cvičenia', isAdminOnly: true },       
     { label: 'bloky', isAdminOnly: true },          
     { label: 'zadania', isAdminOnly: true },        
-    { label: 'hodnotenie', isAdminOnly: true }, 
+    { label: 'hodnotenie', isAdminOnly: true }, // activeView bude 'hodnotenie'
   ];
 
   constructor() { }
@@ -77,29 +83,21 @@ export class Teacher implements OnInit {
       console.log('Dekódovaný token:', userData);
 
       if (userData) {
-        // 1. ID
         if (userData.id) this.currentUser.id = userData.id;
-
-        // 2. MENO (V tokene je "fullName")
         if (userData.fullName) {
            this.currentUser.meno = userData.fullName;
         }
-
-        // 3. ROLA (V tokene je "role") - TOTO BOLA CHYBA
         if (userData.role) {
            this.currentUser.rola = userData.role;
         } else if (userData.roleEnum) {
-           // Fallback, ak by sa to zmenilo
            this.currentUser.rola = userData.roleEnum;
         }
       }
     } else {
-        // Fallback na localStorage len ak nemáme token
         const storedRole = localStorage.getItem('user_role');
         if (storedRole) this.currentUser.rola = storedRole;
     }
 
-    // Načítanie cvičení
     this.contextService.loadCurrentExercises().subscribe({
       error: (err) => console.error('Chyba pri načítaní cvičení:', err)
     });
@@ -119,8 +117,6 @@ export class Teacher implements OnInit {
       return null;
     }
   }
-
-  // --- Ostatné metódy ---
 
   onLogout(): void {
     this.isSidebarOpen = false;
