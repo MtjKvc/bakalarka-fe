@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, output, ChangeDetectionStrategy } from '@angular/core'; 
+import { ExerciseSession } from '../../../services/teacher-context';
+// Importujeme interface zo servisy
 
-// Definujeme rozhranie pre vstupné dáta
 export interface UserInfo {
   meno: string;
   rola: string;
@@ -12,8 +13,7 @@ export interface UserInfo {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './teacher-header.html', 
-  styleUrl: './teacher-header.css', // Ak máte samostatné CSS
-  // Používame OnPush, lebo komponent prijíma len vstupy (inputs)
+  styleUrl: './teacher-header.css', 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeacherHeader {
@@ -21,17 +21,20 @@ export class TeacherHeader {
   currentUser = input.required<UserInfo>();
   isSidebarOpen = input<boolean>(false); 
 
+  // NOVÉ: Zoznam cvičení a ID aktívneho cvičenia
+  exercises = input<ExerciseSession[]>([]);
+  activeExerciseId = input<number | undefined>(undefined);
 
   // --- VÝSTUPY (Outputs) ---
   toggleSidebar = output<void>();
   logout = output<void>();
-  /** Emituje vyhľadávací dotaz z inputu po stlačení Enter. */
   searchSubmit = output<string>();
-  /** Emituje kliknutie na ikonu lupy (mobilná akcia). */
   searchIconClick = output<void>();
 
+  // NOVÉ: Emitujeme, keď sa klikne na cvičenie
+  exerciseSelected = output<ExerciseSession>();
 
-  // --- Metódy na spracovanie udalostí z template ---
+  // --- Metódy ---
   
   onToggleSidebar() {
     this.toggleSidebar.emit();
@@ -48,5 +51,10 @@ export class TeacherHeader {
   onSearchSubmit(event: Event) {
      const inputElement = event.target as HTMLInputElement;
      this.searchSubmit.emit(inputElement.value); 
+  }
+
+  // NOVÉ: Handler pre kliknutie na tlačidlo
+  onExerciseClick(ex: ExerciseSession) {
+    this.exerciseSelected.emit(ex);
   }
 }

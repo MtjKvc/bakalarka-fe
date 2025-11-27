@@ -8,7 +8,7 @@ import { LongPressDirective } from '../../../shared/long-press/long-press';
 interface Exercise {
   id: number;
   firstSessionDate: string;
-  startTime: string; // Backend vracia HH:mm:ss
+  startTime: string; 
   roomEnum: string;
 }
 
@@ -35,7 +35,8 @@ type EditableField = 'startTime';
   selector: 'app-exercises',
   standalone: true,
   imports: [CommonModule, FormsModule, LongPressDirective],
-  templateUrl: './exercises.html',
+  // !!! OPRAVENÉ: Musí odkazovať na exercises.html
+  templateUrl: './exercises.html', 
   styleUrl: './exercises.css'
 })
 export class ExercisesComponent implements OnInit, AfterViewChecked {
@@ -85,19 +86,15 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
 
         const rawExercises = exercisesData || [];
         this.exercises = rawExercises.map(e => {
-            // Dátum orežeme o čas (ak tam je T)
             if (e.firstSessionDate && e.firstSessionDate.includes('T')) {
                 e.firstSessionDate = e.firstSessionDate.split('T')[0];
             }
-            // Čas necháme tak ako príde (HH:mm:ss), v HTML ho orežeme cez slice
             return e;
         });
 
         this.exercises.sort((a, b) => a.id - b.id);
         this.availableRooms = roomsData || [];
-        
         this.cdr.detectChanges();
-
     } catch (err: any) { 
         console.error(err);
         this.error = 'Nepodarilo sa načítať dáta.'; 
@@ -106,7 +103,6 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  // --- LOGIKA DNI ---
   getWorkDaysForWeek(currentDateStr: string): DayOption[] {
       if (!currentDateStr) return [];
       const cleanDateStr = currentDateStr.split('T')[0]; 
@@ -130,7 +126,6 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
       return options;
   }
 
-  // --- ZMENA DÁTUMU/MIESTNOSTI ---
   async onDateChange(exercise: Exercise, newDate: string): Promise<void> {
       if (exercise.firstSessionDate === newDate) return;
       this.updateExercise(exercise.id, {
@@ -149,7 +144,6 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
       }, () => { exercise.roomEnum = newRoom; }, `Miestnosť zmenená na ${newRoom}.`);
   }
 
-  // --- UNIVERZÁLNY UPDATE HELPER ---
   async updateExercise(id: number, payload: UpdateExercisePayload, onSuccess: () => void, successMsg: string) {
       this.isLoading = true; this.error = null; this.message = null;
       try {
@@ -162,7 +156,6 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
       } finally { this.isLoading = false; }
   }
 
-  // --- CREATE ---
   onCreateExerciseClick(): void {
     this.newExercise = { firstSessionDate: '', startTime: '', roomEnum: '' };
     this.isCreateModalOpen = true; 
@@ -174,7 +167,6 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     if (!this.newExercise.firstSessionDate || !this.newExercise.startTime || !this.newExercise.roomEnum) return;
     this.isLoading = true;
     
-    // Formátovanie času: pridáme :00, ak chýba
     let timeToSend = this.newExercise.startTime;
     if (timeToSend.length === 5) timeToSend += ":00";
 
@@ -198,7 +190,6 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  // --- DELETE ---
   onDeleteExerciseClick(exercise: Exercise): void { 
       this.exerciseToDelete = exercise; 
       this.deleteConfirmationInput = ''; 
@@ -213,9 +204,8 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
   async onConfirmDelete(): Promise<void> {
       if (!this.exerciseToDelete || this.deleteConfirmationInput.trim() !== this.deleteConfirmText) return;
       this.isLoading = true; 
-      const idToDelete = this.exerciseToDelete.id; // Uložíme ID pred zatvorením
+      const idToDelete = this.exerciseToDelete.id;
       this.onCloseDeleteConfirmModal();
-      
       try {
           await lastValueFrom(this.http.delete(`${this.exercisesApiUrl}/${idToDelete}`));
           this.exercises = this.exercises.filter(a => a.id !== idToDelete);
@@ -228,13 +218,11 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
       }
   }
 
-  // --- TEXT CELL EDIT (TIME) ---
   isEditing(id: number, field: string): boolean { return this.editingId === id && this.editingField === field; }
   
   onCellEdit(exercise: Exercise, field: EditableField): void {
       if (this.isSaving) return;
       this.editingId = exercise.id; this.editingField = field; 
-      // Pri editácii orežeme sekundy, aby sa input time "chytil" (očakáva HH:mm)
       this.editingValue = exercise[field].substring(0, 5); 
       this.shouldFocus = true; this.cdr.detectChanges();
   }
@@ -242,17 +230,12 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
   async onCellSave(exercise: Exercise): Promise<void> {
       this.shouldFocus = false;
       if (this.isSaving || this.editingId === null) return;
-      
       const newValue = String(this.editingValue).trim();
       const oldValue = exercise.startTime.substring(0, 5);
 
-      if (newValue === oldValue) {
-          this.editingId = null; return;
-      }
+      if (newValue === oldValue) { this.editingId = null; return; }
 
       this.isSaving = true; this.isLoading = true;
-      
-      // Pridáme sekundy pre backend
       const timeToSend = newValue.length === 5 ? newValue + ":00" : newValue;
 
       const payload = {

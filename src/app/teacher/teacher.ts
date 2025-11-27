@@ -3,21 +3,20 @@ import { CommonModule, NgIf, TitleCasePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
-// Importy komponentov
 import { TeacherHeader, UserInfo } from './components/teacher-header/teacher-header'; 
 import { TeacherSidebarComponent } from './components/teacher-side-bar/teacher-side-bar';
 import { Blocks } from './components/blocks/blocks';
 import { AssignmentsComponent } from './components/assignments/assignments'; 
-// !!! NOVÝ IMPORT:
 import { ExercisesComponent } from './components/exercises/exercises';
+import { UsersComponent } from './components/users/users';
+import { Students } from './components/students/students'; 
+import { StudentUploadComponent } from './components/student-upload/student-upload'; 
+import { TeacherContextService } from '../services/teacher-context';
+
 
 interface SidebarButton {
   label: string;
   isAdminOnly: boolean; 
-}
-
-interface UserDetails {
-  meno: string;
 }
 
 @Component({
@@ -31,7 +30,10 @@ interface UserDetails {
     Blocks, 
     TeacherSidebarComponent,
     AssignmentsComponent,
-    ExercisesComponent // !!! PRIDANÉ: Registrácia tu
+    ExercisesComponent,
+    UsersComponent,
+    Students,
+    StudentUploadComponent 
   ],
   templateUrl: './teacher.html', 
   styleUrl: './teacher.css' 
@@ -39,7 +41,7 @@ interface UserDetails {
 export class Teacher implements OnInit {
 
   currentUser: UserInfo & { id: number | null } = { 
-    id: null as number | null,
+    id: null,
     meno: 'Používateľ',
     rola: 'USER'
   }
@@ -48,46 +50,78 @@ export class Teacher implements OnInit {
   
   router = inject(Router);
   http = inject(HttpClient);
+  public contextService = inject(TeacherContextService);
+
   isSidebarOpen: boolean = false; 
 
-  sidebarButtons: SidebarButton[] = [
-    { label: 'student upload', isAdminOnly: false },
-    { label: 'dochadzka', isAdminOnly: false },
-    { label: 'users', isAdminOnly: true },
-    { label: 'students', isAdminOnly: true },
-    { label: 'exercises', isAdminOnly: true }, // Toto tlačidlo aktivuje pohľad 'exercises'
-    { label: 'blocks', isAdminOnly: true },
-    { label: 'assigments', isAdminOnly: true }, 
+ sidebarButtons: SidebarButton[] = [
+    { label: 'nahrávanie', isAdminOnly: false },    // Pôvodne: student upload
+    { label: 'dochádzka', isAdminOnly: false },     // Pôvodne: dochadzka
+    { label: 'používatelia', isAdminOnly: true },   // Pôvodne: users
+    { label: 'študenti', isAdminOnly: true },       // Pôvodne: students
+    { label: 'cvičenia', isAdminOnly: true },       // Pôvodne: exercises
+    { label: 'bloky', isAdminOnly: true },          // Pôvodne: blocks
+    { label: 'zadania', isAdminOnly: true },        // Pôvodne: assigments
   ];
 
   constructor() { }
 
   ngOnInit(): void {
-    const role = localStorage.getItem('user_role');
-    const id = localStorage.getItem('user_id');
-    const sub = localStorage.getItem('user_sub');
+    const token = localStorage.getItem('auth_token');
 
-    if (role) this.currentUser.rola = role;
-    if (id) this.currentUser.id = parseInt(id, 10);
-    if (sub) this.currentUser.meno = sub;
+    if (token) {
+      const userData = this.parseJwt(token);
+      console.log('Dekódovaný token:', userData);
 
-    if (this.currentUser.id) {
-      this.http.get<UserDetails>(`http://localhost:8080/api/v1/user?id=${this.currentUser.id}`)
-        .subscribe({
-          next: (userDetails) => {
-            this.currentUser.meno = userDetails.meno;
-          },
-          error: (err) => console.error(err)
-        });
+      if (userData) {
+        // 1. ID
+        if (userData.id) this.currentUser.id = userData.id;
+
+        // 2. MENO (V tokene je "fullName")
+        if (userData.fullName) {
+           this.currentUser.meno = userData.fullName;
+        }
+
+        // 3. ROLA (V tokene je "role") - TOTO BOLA CHYBA
+        if (userData.role) {
+           this.currentUser.rola = userData.role;
+        } else if (userData.roleEnum) {
+           // Fallback, ak by sa to zmenilo
+           this.currentUser.rola = userData.roleEnum;
+        }
+      }
+    } else {
+        // Fallback na localStorage len ak nemáme token
+        const storedRole = localStorage.getItem('user_role');
+        if (storedRole) this.currentUser.rola = storedRole;
+    }
+
+    // Načítanie cvičení
+    this.contextService.loadCurrentExercises().subscribe({
+      error: (err) => console.error('Chyba pri načítaní cvičení:', err)
+    });
+  }
+
+  private parseJwt(token: string): any {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      console.error('Chyba pri parsovaní tokenu:', e);
+      return null;
     }
   }
 
+  // --- Ostatné metódy ---
+
   onLogout(): void {
     this.isSidebarOpen = false;
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_role');
-    localStorage.removeItem('user_id');
-    localStorage.removeItem('user_sub');
+    localStorage.clear();
     this.router.navigate(['/login']);
   }
 
@@ -104,7 +138,7 @@ export class Teacher implements OnInit {
   }
 
   isAdmin(): boolean {
-    return this.currentUser.rola.toUpperCase() === 'ADMIN';
+    return this.currentUser.rola?.toUpperCase() === 'ADMIN';
   }
   
   onSidebarButtonClick(buttonLabel: string): void {

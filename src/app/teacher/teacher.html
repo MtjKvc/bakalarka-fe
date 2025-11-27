@@ -5,11 +5,17 @@
         <app-teacher-header 
           [currentUser]="currentUser" 
           [isSidebarOpen]="isSidebarOpen" 
+          
+          [exercises]="contextService.exercises()"
+          [activeExerciseId]="contextService.selectedExercise()?.exerciseId"
+          (exerciseSelected)="contextService.selectExercise($event)"
+
           (toggleSidebar)="onToggleSidebar()"
           (logout)="onLogout()" 
           (searchSubmit)="onSearchSubmit($event)" 
           (searchIconClick)="onSearchIconClick()"
-          class="block"> </app-teacher-header>
+          class="block"> 
+        </app-teacher-header>
     </div>
 
     <div class="flex-grow flex relative">
@@ -32,16 +38,28 @@
 
         <div class="bg-white p-6 md:p-10 rounded-2xl shadow-xl min-h-full border border-gray-100">
 
-          <ng-container *ngIf="activeView === 'blocks'">
+          <ng-container *ngIf="activeView === 'bloky'">
             <app-blocks></app-blocks>
           </ng-container>
 
-          <ng-container *ngIf="activeView === 'assigments'">
+          <ng-container *ngIf="activeView === 'zadania'">
             <app-assignments></app-assignments>
           </ng-container>
 
-          <ng-container *ngIf="activeView === 'exercises'">
+          <ng-container *ngIf="activeView === 'cvičenia'">
             <app-exercises></app-exercises>
+          </ng-container>
+
+          <ng-container *ngIf="activeView === 'používatelia'">
+            <app-users></app-users>
+          </ng-container>
+
+          <ng-container *ngIf="activeView === 'študenti'">
+            <app-students></app-students>
+          </ng-container>
+
+          <ng-container *ngIf="activeView === 'nahrávanie'">
+            <app-student-upload></app-student-upload>
           </ng-container>
 
           <ng-container *ngIf="activeView === 'default'">
@@ -55,20 +73,25 @@
             </div>
           </ng-container>
 
-          <ng-container *ngIf="activeView !== 'default' && activeView !== 'blocks' && activeView !== 'assigments' && activeView !== 'exercises'">
+          <ng-container *ngIf="activeView !== 'default' && 
+                               activeView !== 'bloky' && 
+                               activeView !== 'zadania' && 
+                               activeView !== 'cvičenia' && 
+                               activeView !== 'používatelia' && 
+                               activeView !== 'študenti' && 
+                               activeView !== 'nahrávanie'">
+            
             <h2 class="text-3xl font-extrabold text-gray-800 mb-6 border-b pb-2 border-gray-300">
               Pohľad: <span class="text-emerald-600">{{ activeView | titlecase }}</span>
             </h2>
             <p class="text-gray-700 text-lg">
-              Komponent pre "<span class="font-bold text-gray-800">{{ activeView }}</span>" ešte nie je implementovaný.
+              Komponent pre "<span class="font-bold text-gray-800">{{ activeView }}</span>" ešte nie je implementovaný (alebo chýba v podmienke).
             </p>
           </ng-container>
 
         </div>
-
       </main>
 
     </div>
-
   </div> 
 </div>
