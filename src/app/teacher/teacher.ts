@@ -11,6 +11,7 @@ import { ExercisesComponent } from './components/exercises/exercises';
 import { UsersComponent } from './components/users/users';
 import { Students } from './components/students/students'; 
 import { StudentUploadComponent } from './components/student-upload/student-upload'; 
+import { Attendance } from './components/attendance/attendance';
 import { TeacherContextService } from '../services/teacher-context';
 
 
@@ -33,7 +34,8 @@ interface SidebarButton {
     ExercisesComponent,
     UsersComponent,
     Students,
-    StudentUploadComponent 
+    StudentUploadComponent,
+    Attendance
   ],
   templateUrl: './teacher.html', 
   styleUrl: './teacher.css' 
@@ -55,13 +57,14 @@ export class Teacher implements OnInit {
   isSidebarOpen: boolean = false; 
 
  sidebarButtons: SidebarButton[] = [
-    { label: 'nahrávanie', isAdminOnly: false },    // Pôvodne: student upload
-    { label: 'dochádzka', isAdminOnly: false },     // Pôvodne: dochadzka
-    { label: 'používatelia', isAdminOnly: true },   // Pôvodne: users
-    { label: 'študenti', isAdminOnly: true },       // Pôvodne: students
-    { label: 'cvičenia', isAdminOnly: true },       // Pôvodne: exercises
-    { label: 'bloky', isAdminOnly: true },          // Pôvodne: blocks
-    { label: 'zadania', isAdminOnly: true },        // Pôvodne: assigments
+    { label: 'nahrávanie', isAdminOnly: false },    
+    { label: 'dochádzka', isAdminOnly: false },     
+    { label: 'používatelia', isAdminOnly: true },   
+    { label: 'študenti', isAdminOnly: true },       
+    { label: 'cvičenia', isAdminOnly: true },       
+    { label: 'bloky', isAdminOnly: true },          
+    { label: 'zadania', isAdminOnly: true },        
+    { label: 'hodnotenie', isAdminOnly: true }, 
   ];
 
   constructor() { }
