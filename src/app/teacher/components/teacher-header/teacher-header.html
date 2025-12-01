@@ -1,5 +1,6 @@
 <header class="bg-white text-gray-800 p-3 md:p-4 flex items-center justify-between shadow-lg sticky top-0 z-40 border-b border-gray-100">
   
+  <!-- 1. Ľavá časť: Toggle a Logo -->
   <div class="flex items-center">
     <button 
       (click)="onToggleSidebar()" 
@@ -12,11 +13,12 @@
     </div>
   </div>
 
-  <div class="flex items-center space-x-3 mx-6">
+  <!-- 2. Stredná časť: Tlačidlá cvičení -->
+  <div class="flex items-center space-x-3 mx-6 overflow-x-auto scrollbar-hide">
     @for (ex of exercises(); track ex.exerciseId) {
       <button 
         (click)="onExerciseClick(ex)"
-        class="flex flex-col items-center justify-center px-4 py-1.5 rounded-lg border transition-all duration-200 shadow-sm"
+        class="flex flex-col items-center justify-center px-4 py-1.5 rounded-lg border transition-all duration-200 shadow-sm whitespace-nowrap"
         [ngClass]="{
           'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-100': activeExerciseId() === ex.exerciseId,
           'bg-white text-gray-600 border-gray-200 hover:border-emerald-400 hover:text-emerald-600 hover:bg-emerald-50': activeExerciseId() !== ex.exerciseId
@@ -32,23 +34,16 @@
     }
   </div>
 
+  <!-- 3. NOVÉ: Inteligentný Search Bar (namiesto starého inputu) -->
   <div class="hidden md:flex-grow md:block mx-8 max-w-xl">
-    <div class="relative">
-      <input 
-        type="text" 
-        placeholder="Vyhľadať..." 
-        class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-inner text-gray-700
-               focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-150"
-        (keyup.enter)="onSearchSubmit($event)"
-      >
-      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-      </div>
-    </div>
+      <!-- Tu sme vložili tvoj komponent -->
+      <app-search-bar (studentSelected)="onStudentSelected($event)"></app-search-bar>
   </div>
 
+  <!-- 4. Pravá časť: Profil a Logout -->
   <div class="flex items-center space-x-4">
     
+    <!-- Mobilná lupa (zatiaľ len ikona) -->
     <button (click)="onSearchIconClick()" class="text-gray-500 hover:text-emerald-600 md:hidden p-1 rounded-full transition duration-150 ease-in-out">
       <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
     </button>

@@ -6,6 +6,11 @@ import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './auth/auth-interceptor';
 
+import { registerLocaleData } from '@angular/common'; // <--- NOVÝ IMPORT
+import localeSk from '@angular/common/locales/sk'; // <--- NOVÝ IMPORT
+import { LOCALE_ID } from '@angular/core';
+registerLocaleData(localeSk);
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -16,6 +21,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([authInterceptor])
     ),
+    { provide: LOCALE_ID, useValue: 'sk' }
 
   ]
 };
