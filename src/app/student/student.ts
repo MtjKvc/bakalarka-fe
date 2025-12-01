@@ -51,7 +51,7 @@ toggleMenu() {
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
     this.ctx.fillRect(0, 0, this.width, this.height);
 
-    this.ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+    this.ctx.fillStyle = 'rgba(0, 255, 0, 0.4)';
     this.ctx.font = `${this.fontSize}px monospace`;
 
     for (let i = 0; i < this.drops.length; i++) {
