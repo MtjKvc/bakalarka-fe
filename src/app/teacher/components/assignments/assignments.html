@@ -1,8 +1,11 @@
 <div class="p-4 rounded-xl bg-white border border-gray-100 shadow-md font-sans">
   <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-200 pb-3">
     <h3 class="text-3xl font-extrabold text-gray-800 mb-4 md:mb-0 flex items-center">
-      <svg class="w-8 h-8 mr-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+      <svg class="w-8 h-8 mr-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+        </path>
       </svg>
       Správa Zadaní
     </h3>
@@ -34,7 +37,11 @@
 
   <div *ngIf="message"
     class="p-3 bg-emerald-50 border border-emerald-400 text-emerald-700 rounded-lg font-medium mb-4 shadow-sm text-sm whitespace-pre-wrap flex items-start">
-    <svg class="w-5 h-5 mr-2 inline-block flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <svg class="w-5 h-5 mr-2 inline-block flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
     <span>{{ message }}</span>
   </div>
 
@@ -42,7 +49,8 @@
     <table class="min-w-full divide-y divide-gray-200">
       <thead class="bg-gray-50">
         <tr>
-          <th class="px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Názov zadania</th>
+          <th class="px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Názov zadania
+          </th>
           <th class="px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider w-1/4">Blok</th>
           <th class="px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Max. bodov</th>
           <th class="px-6 py-3 text-right text-xs font-extrabold text-gray-700 uppercase tracking-wider">Akcie</th>
@@ -53,35 +61,33 @@
         <tr *ngFor="let assign of assignments" class="hover:bg-emerald-50/50 transition duration-150">
 
           <td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-700 cursor-pointer relative"
-            [ngClass]="{'z-10': isEditing(assign.id, 'name')}"
-            (dblclick)="onCellEdit(assign, 'name')"
-            longPress (longPress)="onCellEdit(assign, 'name')"> 
+            [ngClass]="{'z-10': isEditing(assign.id, 'name')}" (dblclick)="onCellEdit(assign, 'name')" longPress
+            (longPress)="onCellEdit(assign, 'name')">
             <ng-container *ngIf="isEditing(assign.id, 'name'); else viewName">
-              <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(assign)" (keydown.enter)="onCellSave(assign)"
-                type="text" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold -m-2" />
+              <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(assign)"
+                (keydown.enter)="onCellSave(assign)" type="text"
+                class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold -m-2" />
             </ng-container>
             <ng-template #viewName>{{ assign.name }}</ng-template>
           </td>
 
           <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
-            <select 
-                [ngModel]="assign.block?.id" 
-                (ngModelChange)="onBlockChange(assign, $event)"
-                class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm transition-colors hover:border-emerald-400 cursor-pointer">
-                <option [ngValue]="null" disabled>Vyberte blok...</option>
-                <option *ngFor="let b of availableBlocks" [value]="b.id">
-                    {{ b.name }}
-                </option>
+            <select [ngModel]="assign.block?.id" (ngModelChange)="onBlockChange(assign, $event)"
+              class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm transition-colors hover:border-emerald-400 cursor-pointer">
+              <option [ngValue]="null" disabled>Vyberte blok...</option>
+              <option *ngFor="let b of availableBlocks" [value]="b.id">
+                {{ b.name }}
+              </option>
             </select>
           </td>
 
           <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-600 cursor-pointer relative"
-            [ngClass]="{'z-10': isEditing(assign.id, 'maxPoints')}"
-            (dblclick)="onCellEdit(assign, 'maxPoints')"
-            longPress (longPress)="onCellEdit(assign, 'maxPoints')"> 
+            [ngClass]="{'z-10': isEditing(assign.id, 'maxPoints')}" (dblclick)="onCellEdit(assign, 'maxPoints')"
+            longPress (longPress)="onCellEdit(assign, 'maxPoints')">
             <ng-container *ngIf="isEditing(assign.id, 'maxPoints'); else viewMaxPoints">
-              <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(assign)" (keydown.enter)="onCellSave(assign)"
-                type="text" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold -m-2" />
+              <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(assign)"
+                (keydown.enter)="onCellSave(assign)" type="text"
+                class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold -m-2" />
             </ng-container>
             <ng-template #viewMaxPoints>{{ assign.maxPoints | number:'1.0-2' }}</ng-template>
           </td>
@@ -98,7 +104,7 @@
             </button>
           </td>
         </tr>
-        
+
         <tr *ngIf="assignments.length === 0 && !isLoading && !error">
           <td colspan="4" class="px-6 py-4 text-center text-sm font-semibold text-gray-500 bg-gray-50">
             Žiadne zadania neboli nájdené. <span (click)="onCreateAssignmentClick()"
@@ -110,31 +116,71 @@
   </div>
 </div>
 
-<div *ngIf="isCreateModalOpen" (click)="onBackdropClick($event)" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl border-t-8 border-emerald-600" (click)="$event.stopPropagation()"> 
+<div *ngIf="isCreateModalOpen" (click)="onBackdropClick($event)"
+  class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl border-t-8 border-emerald-600"
+    (click)="$event.stopPropagation()">
     <div class="p-8">
       <h3 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2 border-emerald-300">Vytvoriť nové zadanie</h3>
-      <div *ngIf="error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
+      <div *ngIf="error"
+        class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold shadow-sm text-sm whitespace-pre-wrap">
+        {{ error }}</div>
       <form (ngSubmit)="onSubmitNewAssignment()">
-        <div class="mb-4"><label class="block text-sm font-semibold text-gray-700 mb-1">Priradiť k bloku</label><select name="blockId" [(ngModel)]="newAssignment.blockId" required class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"><option [ngValue]="null" disabled>Vyberte blok...</option><option *ngFor="let blok of availableBlocks" [ngValue]="blok.id">{{ blok.name }} (ID: {{blok.id}})</option></select></div>
-        <div class="mb-4"><label class="block text-sm font-semibold text-gray-700 mb-1">Názov zadania</label><input name="name" type="text" [(ngModel)]="newAssignment.name" required class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"></div>
-        <div class="mb-6"><label class="block text-sm font-semibold text-gray-700 mb-1">Max. bodov</label><input name="maxPoints" type="number" step="0.1" [(ngModel)]="newAssignment.maxPoints" required class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"></div>
-        <div class="flex justify-end space-x-3 pt-4"><button type="button" (click)="onCloseModal()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Zrušiť</button><button type="submit" [disabled]="isLoading || newAssignment.name.trim() === '' || !newAssignment.blockId" class="px-6 py-3 text-sm font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50">Vytvoriť Zadanie</button></div>
+        <div class="mb-4"><label class="block text-sm font-semibold text-gray-700 mb-1">Priradiť k bloku</label><select
+            name="blockId" [(ngModel)]="newAssignment.blockId" required
+            class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white">
+            <option [ngValue]="null" disabled>Vyberte blok...</option>
+            <option *ngFor="let blok of availableBlocks" [ngValue]="blok.id">{{ blok.name }}</option>
+          </select></div>
+        <div class="mb-4"><label class="block text-sm font-semibold text-gray-700 mb-1">Názov zadania</label><input
+            name="name" type="text" [(ngModel)]="newAssignment.name" required
+            class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+        </div>
+        <div class="mb-6"><label class="block text-sm font-semibold text-gray-700 mb-1">Max. bodov</label><input
+            name="maxPoints" type="number" step="0.1" [(ngModel)]="newAssignment.maxPoints" required
+            class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
+        </div>
+        <div class="flex justify-end space-x-3 pt-4"><button type="button" (click)="onCloseModal()"
+            class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Zrušiť</button><button
+            type="submit" [disabled]="isLoading || newAssignment.name.trim() === '' || !newAssignment.blockId"
+            class="px-6 py-3 text-sm font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50">Vytvoriť
+            Zadanie</button></div>
       </form>
     </div>
   </div>
 </div>
 
-<div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg border-t-8 border-red-700" (click)="$event.stopPropagation()"> 
+<div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)"
+  class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg border-t-8 border-red-700"
+    (click)="$event.stopPropagation()">
     <div class="p-8">
-      <div class="flex items-center space-x-4 mb-6"><svg class="w-8 h-8 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z"></path></svg><h3 class="text-2xl font-bold text-red-700">Potvrďte trvalé vymazanie</h3></div>
-      <div *ngIf="error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
-      <p class="text-gray-700 mb-4">Naozaj chcete **natrvalo vymazať** zadanie: <span class="font-bold text-red-600 block my-1">"{{ assignToDelete?.name }}"</span></p>
-      <p class="text-sm text-gray-600 mb-4">**Táto akcia je nezvratná.** Pre potvrdenie prosím napíšte presne slovo <span class="font-mono bg-gray-200 px-2 py-0.5 rounded text-red-700 font-semibold">{{ deleteConfirmText }}</span> do poľa nižšie:</p>
+      <div class="flex items-center space-x-4 mb-6"><svg class="w-8 h-8 text-red-600 flex-shrink-0" fill="none"
+          stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z">
+          </path>
+        </svg>
+        <h3 class="text-2xl font-bold text-red-700">Potvrďte trvalé vymazanie</h3>
+      </div>
+      <div *ngIf="error"
+        class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold shadow-sm text-sm whitespace-pre-wrap">
+        {{ error }}</div>
+      <p class="text-gray-700 mb-4">Naozaj chcete **natrvalo vymazať** zadanie: <span
+          class="font-bold text-red-600 block my-1">"{{ assignToDelete?.name }}"</span></p>
+      <p class="text-sm text-gray-600 mb-4">**Táto akcia je nezvratná.** Pre potvrdenie prosím napíšte presne slovo
+        <span class="font-mono bg-gray-200 px-2 py-0.5 rounded text-red-700 font-semibold">{{ deleteConfirmText
+          }}</span> do poľa nižšie:</p>
       <form (ngSubmit)="onConfirmDelete()">
-        <div class="mb-6"><input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm" placeholder="Sem napíšte CONFIRM" class="block w-full px-4 py-3 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-lg font-mono tracking-wider"></div>
-        <div class="flex justify-end space-x-3 pt-4"><button type="button" (click)="onCloseDeleteConfirmModal()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Zrušiť</button><button type="submit" [disabled]="isLoading || deleteConfirmationInput.trim() !== deleteConfirmText" class="px-6 py-3 text-sm font-semibold text-white bg-red-700 rounded-lg hover:bg-red-800 disabled:opacity-50">Vymazať natrvalo</button></div>
+        <div class="mb-6"><input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm"
+            placeholder="Sem napíšte CONFIRM"
+            class="block w-full px-4 py-3 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-lg font-mono tracking-wider">
+        </div>
+        <div class="flex justify-end space-x-3 pt-4"><button type="button" (click)="onCloseDeleteConfirmModal()"
+            class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Zrušiť</button><button
+            type="submit" [disabled]="isLoading || deleteConfirmationInput.trim() !== deleteConfirmText"
+            class="px-6 py-3 text-sm font-semibold text-white bg-red-700 rounded-lg hover:bg-red-800 disabled:opacity-50">Vymazať
+            natrvalo</button></div>
       </form>
     </div>
   </div>

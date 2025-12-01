@@ -103,7 +103,7 @@ export class Attendance implements OnInit {
       const enums = await lastValueFrom(this.http.get<string[]>(`${this.apiUrl}/enum/attendance`));
       this.attendanceOptions = enums || [];
     } catch (err) {
-      this.attendanceOptions = ['PRESENT', 'ABSENT', 'EXCUSED', 'LATE']; 
+      this.attendanceOptions = ['PRESENT', 'ABSENT', 'SUBSTITUTED']; 
     }
   }
   
@@ -133,7 +133,6 @@ export class Attendance implements OnInit {
 
     try {
       const url = `${this.apiUrl}/student-attendance/attendance?exerciseId=${targetId}&current=${isCurrentParam}`;
-      console.log('GET', url);
 
       const data = await lastValueFrom(
         this.http.get<StudentRowDto[]>(url)
@@ -142,7 +141,6 @@ export class Attendance implements OnInit {
       this.processData(data);
 
     } catch (err) {
-      console.error(err);
       this.error = 'Nepodarilo sa načítať záznamy.';
     } finally {
       this.isLoading = false;
@@ -177,7 +175,6 @@ export class Attendance implements OnInit {
                 
                 let columnLabel = '';
                 
-                // Formátovanie názvu: "27.11. (7. týždeň)" alebo "Týždeň 7"
                 if (att.sessionDate) {
                     const formattedDate = this.formatDate(att.sessionDate);
                     columnLabel = `${formattedDate} (${syntheticSessionId}. týždeň)`;
@@ -290,8 +287,6 @@ export class Attendance implements OnInit {
       case 'PRESENT': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       case 'ABSENT': return 'bg-red-100 text-red-800 border-red-200';
       case 'SUBSTITUTED': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'EXCUSED': return 'bg-amber-100 text-amber-800 border-amber-200';
-      case 'LATE': return 'bg-blue-100 text-blue-800 border-blue-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   }

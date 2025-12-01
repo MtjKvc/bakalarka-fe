@@ -12,10 +12,10 @@ import { UsersComponent } from './components/users/users';
 import { Students } from './components/students/students'; 
 import { StudentUploadComponent } from './components/student-upload/student-upload'; 
 import { Attendance } from './components/attendance/attendance';
-
-// !!! NOVÝ IMPORT !!!
 import { GradingComponent } from './components/grading/grading';
 import { TeacherContextService } from '../services/teacher-context';
+import { SearchBarModalComponent, StudentSearchResult } from './components/search-bar-modal/search-bar-modal';
+import { Logs } from './components/logs/logs'; 
 
 interface SidebarButton {
   label: string;
@@ -38,16 +38,15 @@ interface SidebarButton {
     Students,
     StudentUploadComponent,
     Attendance,
-    // !!! PRIDANÉ DO ZOZNAMU !!!
-    GradingComponent
+    GradingComponent,
+    Logs,
+    SearchBarModalComponent
   ],
   templateUrl: './teacher.html', 
   styleUrl: './teacher.css' 
 })
 export class Teacher implements OnInit {
-  
-  // ... zvyšok tvojho kódu bez zmeny ...
-  
+
   currentUser: UserInfo & { id: number | null } = { 
     id: null,
     meno: 'Používateľ',
@@ -62,6 +61,9 @@ export class Teacher implements OnInit {
 
   isSidebarOpen: boolean = false; 
 
+  // PREMENNÁ PRE VYBRATÉHO ŠTUDENTA (null = modal zatvorený)
+  selectedStudent: StudentSearchResult | null = null;
+
   sidebarButtons: SidebarButton[] = [
     { label: 'nahrávanie', isAdminOnly: false },    
     { label: 'dochádzka', isAdminOnly: false },     
@@ -70,7 +72,8 @@ export class Teacher implements OnInit {
     { label: 'cvičenia', isAdminOnly: true },       
     { label: 'bloky', isAdminOnly: true },          
     { label: 'zadania', isAdminOnly: true },        
-    { label: 'hodnotenie', isAdminOnly: true }, // activeView bude 'hodnotenie'
+    { label: 'hodnotenie', isAdminOnly: true },
+    { label: 'záznamy', isAdminOnly: true },  
   ];
 
   constructor() { }
@@ -82,11 +85,16 @@ export class Teacher implements OnInit {
       const userData = this.parseJwt(token);
       console.log('Dekódovaný token:', userData);
 
+      // TOTO JE ČASŤ, KTORÁ CHÝBALA A SPÔSOBOVALA CHYBU
       if (userData) {
         if (userData.id) this.currentUser.id = userData.id;
+        
+        // Priradenie mena
         if (userData.fullName) {
            this.currentUser.meno = userData.fullName;
         }
+        
+        // Priradenie roly
         if (userData.role) {
            this.currentUser.rola = userData.role;
         } else if (userData.roleEnum) {
@@ -98,6 +106,7 @@ export class Teacher implements OnInit {
         if (storedRole) this.currentUser.rola = storedRole;
     }
 
+    // Načítanie cvičení pre hlavičku
     this.contextService.loadCurrentExercises().subscribe({
       error: (err) => console.error('Chyba pri načítaní cvičení:', err)
     });
@@ -128,8 +137,15 @@ export class Teacher implements OnInit {
       this.isSidebarOpen = !this.isSidebarOpen;
   }
   
-  onSearchSubmit(query: string): void {
-      console.log(`Vyhľadávanie: "${query}"`);
+  // OTVORENIE MODÁLU
+  onStudentFound(student: StudentSearchResult): void {
+      console.log('Vybraný študent:', student);
+      this.selectedStudent = student;
+  }
+
+  // ZATVORENIE MODÁLU
+  onModalClose(): void {
+      this.selectedStudent = null;
   }
 
   onSearchIconClick(): void {

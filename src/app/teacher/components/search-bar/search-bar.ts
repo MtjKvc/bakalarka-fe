@@ -1,0 +1,105 @@
+import { Component, inject, OnDestroy, ElementRef, HostListener, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { Subject, Subscription, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, catchError, tap } from 'rxjs/operators';
+
+interface StudentSearchResult {
+  id: number;
+  fullName: string;
+  aisId?: number;
+}
+
+@Component({
+  selector: 'app-search-bar',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './search-bar.html',
+  styleUrl: './search-bar.css'
+})
+export class SearchBar implements OnDestroy {
+  
+  private http = inject(HttpClient);
+  private elementRef = inject(ElementRef);
+  
+  // !!! 1. INJECT CHANGE DETECTOR !!!
+  private cdr = inject(ChangeDetectorRef);
+  
+  private apiUrl = 'http://localhost:8080/api/v1/student';
+
+  @Output() studentSelected = new EventEmitter<StudentSearchResult>();
+
+  private searchSubject = new Subject<string>();
+  private searchSubscription: Subscription;
+
+  public searchTerm: string = '';
+  public results: StudentSearchResult[] = [];
+  public isLoading: boolean = false;
+  public showDropdown: boolean = false;
+
+  constructor() {
+    this.searchSubscription = this.searchSubject.pipe(
+      debounceTime(300), 
+      distinctUntilChanged(), 
+      tap(() => {
+          this.isLoading = true;
+          this.showDropdown = true;
+          this.cdr.markForCheck(); 
+      }),
+      switchMap((term) => {
+        if (!term || term.trim().length < 1) {
+            return of([]); 
+        }
+        return this.fetchStudents(term).pipe(
+            catchError(err => {
+                console.error(err);
+                return of([]); 
+            })
+        );
+      })
+    ).subscribe((data) => {
+      
+      // !!! ZMENA: Žiadne filtrovanie na frontende.
+      // Zobrazíme presne to, čo poslal backend.
+      this.results = data || [];
+
+      this.isLoading = false;
+      this.cdr.detectChanges(); 
+    });
+  }
+
+  onSearch(term: string): void {
+    this.searchSubject.next(term);
+  }
+
+  private fetchStudents(term: string) {
+    const url = `${this.apiUrl}/search?q=${encodeURIComponent(term.trim())}`;
+    return this.http.get<StudentSearchResult[]>(url);
+  }
+
+  selectStudent(student: StudentSearchResult): void {
+    this.searchTerm = student.fullName; 
+    this.showDropdown = false;
+    this.studentSelected.emit(student);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.showDropdown = false;
+    }
+  }
+
+  onFocus() {
+      if (this.searchTerm.length >= 1) {
+          this.showDropdown = true;
+      }
+  }
+
+  ngOnDestroy() {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
+}

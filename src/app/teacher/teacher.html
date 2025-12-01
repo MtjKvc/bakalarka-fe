@@ -12,30 +12,28 @@
 
           (toggleSidebar)="onToggleSidebar()"
           (logout)="onLogout()" 
-          (searchSubmit)="onSearchSubmit($event)" 
+          (studentFound)="onStudentFound($event)" 
           (searchIconClick)="onSearchIconClick()"
           class="block"> 
         </app-teacher-header>
     </div>
 
     <div class="flex-grow flex relative">
-
       <div *ngIf="isSidebarOpen" (click)="isSidebarOpen = false"
         class="fixed inset-0 bg-gray-900 bg-opacity-60 z-20 md:hidden transition-opacity duration-300">
       </div>
 
       <app-teacher-sidebar 
-        [currentUser]="currentUser" 
-        [isSidebarOpen]="isSidebarOpen" 
-        [sidebarButtons]="sidebarButtons"
-        (logout)="onLogout()" 
-        (buttonClick)="onSidebarButtonClick($event)"
-        [activeView]="activeView" 
-        class="bg-gray-800 text-white md:flex-shrink-0">
+         [currentUser]="currentUser" 
+         [isSidebarOpen]="isSidebarOpen" 
+         [sidebarButtons]="sidebarButtons"
+         (logout)="onLogout()" 
+         (buttonClick)="onSidebarButtonClick($event)"
+         [activeView]="activeView" 
+         class="bg-gray-800 text-white md:flex-shrink-0">
       </app-teacher-sidebar>
 
       <main class="flex-grow bg-gray-50 p-4 md:p-8 transition-all duration-300">
-
         <div class="bg-white p-6 md:p-10 rounded-2xl shadow-xl min-h-full border border-gray-100">
 
           <ng-container *ngIf="activeView === 'bloky'">
@@ -69,7 +67,10 @@
           <ng-container *ngIf="activeView === 'hodnotenie'">
             <app-grading></app-grading>
           </ng-container>
-
+          
+          <ng-container *ngIf="activeView === 'záznamy'">
+            <app-logs></app-logs>
+          </ng-container>
           <ng-container *ngIf="activeView === 'default'">
             <div class="space-y-6">
               <h2 class="text-3xl font-extrabold text-gray-800 border-b pb-2 border-emerald-500/50">
@@ -82,26 +83,27 @@
           </ng-container>
 
           <ng-container *ngIf="activeView !== 'default' && 
-                               activeView !== 'bloky' && 
-                               activeView !== 'zadania' && 
-                               activeView !== 'cvičenia' && 
-                               activeView !== 'používatelia' && 
-                               activeView !== 'študenti' && 
-                               activeView !== 'nahrávanie' &&
-                               activeView !== 'dochádzka' &&
-                               activeView !== 'hodnotenie'">
-            
-            <h2 class="text-3xl font-extrabold text-gray-800 mb-6 border-b pb-2 border-gray-300">
-              Pohľad: <span class="text-emerald-600">{{ activeView | titlecase }}</span>
-            </h2>
-            <p class="text-gray-700 text-lg">
-              Komponent pre "<span class="font-bold text-gray-800">{{ activeView }}</span>" ešte nie je implementovaný (alebo chýba v podmienke).
-            </p>
-          </ng-container>
+                                activeView !== 'bloky' && 
+                                activeView !== 'zadania' && 
+                                activeView !== 'cvičenia' && 
+                                activeView !== 'používatelia' && 
+                                activeView !== 'študenti' && 
+                                activeView !== 'nahrávanie' &&
+                                activeView !== 'dochádzka' &&
+                                activeView !== 'hodnotenie' &&
+                                activeView !== 'záznamy'">
+             </ng-container>
 
         </div>
       </main>
-
     </div>
   </div> 
+  
+  <ng-container *ngIf="selectedStudent">
+    <app-search-bar-modal 
+      [student]="selectedStudent" 
+      (close)="onModalClose()">
+    </app-search-bar-modal>
+  </ng-container>
+
 </div>
