@@ -1,0 +1,44 @@
+<main class="px-4 sm:px-6 lg:px-12 py-8 space-y-16">
+    <article
+        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
+        <h1 class="text-green-500 text-2xl font-semibold">
+            Asme…, Assem… Čo? Aký assembler?
+        </h1>
+        <section class="space-y-4">
+            <strong>Assembler</strong> (angl. assembler) je počítačový program na preklad z jazyka symbolických inštrukcií do strojového
+            kódu. Každá inštrukcia priamo hovorí stroju - procesoru, čo má vykonať. Z toho vyplýva, že jazyk
+            symbolických inštrukcií (mov, add, sub a pod.) je vždy určený pre konkrétny typ procesora, programy nie sú
+            prenositeľné a závisia vždy na konkrétnej konfigurácii a architektúre.<br>
+
+            Na cvičeniach budeme písať veľmi jednoduché programy, ktoré využívajú len malú časť z kompletného
+            inštrukčného súboru procesorov rodiny x86. Všetky (okrem CPUID) by mali fungovať aj na najstaršom procesore
+            8086 až po najnovšie Intel Core i9 .<br>
+
+            Na nasledujúcom obrázku je nakreslená vnútorná štruktúra procesora 80386. Je to základ, ktorý možno nájsť aj
+            v jeho nasledovníkoch. Keďže prakticky všetko, čo procesor robí sa odohráva v registroch, nájdeme ich tu
+            hneď niekoľko.<br>
+
+
+            Registre procesorov x386.<br>
+
+            Predovšetkým je tu sada univerzálnych registrov A-D, ktoré vykonávajú prakticky všetku prácu. Niektoré majú
+            špeciálne určenie, ale vo väčšine inštrukcií môžete použiť ľubovoľný z nich. V pôvodnom procesore 8086 boli
+            tieto registre 16-bitové (AX, BX, CX a DX), pričom každý z nich sa dal použiť aj ako 8-bitový (napr. AX = AH
+            + AL). S nástupom 32-bitových procesorov sa rozšírili aj tieto registre, takže dnes sú všetky 32-bitové,
+            pričom ale ostala zachovaná možnosť pristúpiť k spodnej polovici obsahu cez pôvodné označenie (teda napr.
+            32-bitový register EAX má spodných 16 bitov označených ako AX, ktoré sa dajú rozdeliť zasa na dve polovice
+            AH a AL).<br>
+
+            Okrem univerzálnych registrov sú v procesore dva indexové registre ESI a EDI, ktoré sa používajú napríklad
+            pri počítadláach. Ďalej tri ukazovacie registre EBP, ESP a EIP (EBP je bázový pointer, ktorý sa používa pri
+            výpočte adresy, ESP je zásobníkový - stack pointer, ktorý ukazuje na vrchol zásobníka a EIP je inštrukčný,
+            ktorý ukazuje na práve vykonávanú inštrukciu).<br>
+
+            Pri práci s pamäťou sa intenzívne využíva ďalšia skupina, tzv. segmentových registrov (SS - stack segment,
+            CS - code segment, DS - data segment, ES - extra segment, FS a GS).<br>
+
+            Významné postavenie má tzv. príznakový register (FLAGS), v ktorom má každý bit špeciálny význam. Napríklad
+            nultý, najnižší bit CF (Carry Flag) sa automaticky nastaví do log. 1, ak pri aritmetickej operácii nastal
+            prenos do vyššieho rádu. Jednotlivé bity tohoto registra je možné testovať a vetviť tak program na základe
+            rozličných podmienok.
+        </section>
