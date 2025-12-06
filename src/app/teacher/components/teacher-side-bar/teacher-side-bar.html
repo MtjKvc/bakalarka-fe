@@ -1,0 +1,47 @@
+<aside 
+  class="w-64 bg-gray-900 p-4 flex flex-col space-y-3 shadow-2xl 
+         fixed inset-y-0 left-0 z-30
+         transform -translate-x-full transition-transform duration-300 ease-in-out
+         md:relative md:translate-x-0 md:flex-shrink-0"
+  [ngClass]="{'translate-x-0': isSidebarOpen}"
+>
+  
+  <button *ngFor="let button of sidebarButtons"
+    (click)="onButtonClick(button.label)"
+    class="w-full py-2.5 px-4 rounded-lg text-left font-semibold text-xl 
+           flex items-center transition duration-150 ease-in-out
+           focus:outline-none focus:ring-2 focus:ring-offset-2 
+           focus:ring-offset-gray-900"
+    [ngClass]="{ 
+
+        'hidden': button.isAdminOnly && !isAdmin(),
+        
+
+        'text-gray-300 hover:bg-gray-800 focus:ring-emerald-00': button.label !== activeView,
+        
+
+        'bg-emerald-600 text-white hover:bg-emerald-800 focus:ring-emerald-600 shadow-lg border-l-4 border-white': button.label === activeView
+
+    }"
+    [disabled]="button.isAdminOnly && !isAdmin()"
+  >
+    {{ button.label }}
+  </button>
+
+  <div class="flex-grow"></div> 
+
+  <div class="md:hidden border-t border-gray-700 pt-4">
+    <div class="text-left mb-2 p-2">
+      <p class="font-medium text-white">{{ currentUser.meno }}</p>
+      <p class="text-sm text-gray-400">{{ currentUser.rola }}</p>
+    </div>
+    <button 
+      (click)="onLogoutClick()"
+      class="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 px-4 rounded-lg 
+             focus:outline-none focus:ring-4 focus:ring-red-500 
+             focus:ring-offset-2 focus:ring-offset-gray-900 shadow-md transition duration-150"
+    >
+      Log out
+    </button>
+  </div>
+</aside>

@@ -1,0 +1,144 @@
+<!-- Overlay -->
+<div class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in" (click)="onClose()">
+  
+  <!-- Modal Okno -->
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in duration-200" (click)="$event.stopPropagation()">
+    
+    <!-- HEADER -->
+    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
+      <div>
+        <h2 class="text-2xl font-extrabold text-gray-800">{{ student().fullName }}</h2>
+        <p class="text-sm text-gray-500" *ngIf="student().aisId">AIS ID: <span class="font-mono text-emerald-600 font-bold">{{ student().aisId }}</span></p>
+      </div>
+      <button (click)="onClose()" class="text-gray-400 hover:text-gray-600 transition-colors rounded-full p-1 hover:bg-gray-200">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="p-6 overflow-y-auto space-y-8 flex-grow">
+      
+      <!-- HODNOTENIE -->
+      <section>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+           
+           <div class="flex items-center">
+             <div class="p-2 bg-emerald-100 rounded-lg mr-3 text-emerald-700">
+               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+             </div>
+             <div>
+                 <h3 class="text-xl font-bold text-gray-800 leading-tight">Hodnotenie</h3>
+                 <p class="text-sm text-gray-500" *ngIf="contextService.selectedBlock() as block">Blok: {{ block.name }}</p>
+             </div>
+           </div>
+
+           <!-- Výber bloku -->
+           <div class="flex space-x-2 overflow-x-auto pb-1 scrollbar-hide">
+             <button *ngFor="let block of contextService.blocks()"
+                     (click)="onSelectBlock(block)"
+                     [class.bg-emerald-600]="contextService.selectedBlock()?.id === block.id"
+                     [class.text-white]="contextService.selectedBlock()?.id === block.id"
+                     [class.bg-gray-100]="contextService.selectedBlock()?.id !== block.id"
+                     [class.text-gray-700]="contextService.selectedBlock()?.id !== block.id"
+                     class="px-3 py-1.5 rounded-lg font-medium text-xs sm:text-sm transition-colors whitespace-nowrap border border-transparent hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200">
+                 {{ block.name }}
+             </button>
+           </div>
+        </div>
+
+        <!-- Správy -->
+        <div *ngIf="message" class="mb-4 p-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-sm flex items-center animate-pulse">
+            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            {{ message }}
+        </div>
+        <div *ngIf="error" class="mb-4 p-2 bg-red-50 text-red-700 border border-red-200 rounded text-sm flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            {{ error }}
+        </div>
+
+        <!-- Tabuľka Hodnotenie -->
+        <div *ngIf="!isLoading && gradingAssignments.length > 0" class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th *ngFor="let assign of gradingAssignments" class="px-4 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider border-r border-gray-200 min-w-[100px]">
+                  {{ assign.name }} <br> <span class="font-normal text-gray-400">Max: {{ assign.maxPoints }}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+              <tr>
+                <td *ngFor="let assign of gradingAssignments" 
+                    class="px-1 py-1 text-center text-sm font-bold text-gray-800 border-r border-gray-100 relative h-12 min-w-[100px]"
+                    [class.cursor-pointer]="!editingAssignmentId"
+                    [class.hover:bg-gray-50]="!editingAssignmentId"
+                    (click)="onEditPoint(assign.id)">
+                  
+                  <div *ngIf="editingAssignmentId !== assign.id" class="w-full h-full flex items-center justify-center">
+                      {{ getPoints(assign.id) }}
+                  </div>
+
+                  <input *ngIf="editingAssignmentId === assign.id"
+                         #editInput
+                         type="number"
+                         [(ngModel)]="editingValue"
+                         (blur)="onSavePoint(assign.id)"
+                         (keydown.enter)="onSavePoint(assign.id)"
+                         class="w-full h-full text-center border-2 border-emerald-500 focus:outline-none bg-white rounded-none p-0 m-0"
+                         min="0"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div *ngIf="!isLoading && gradingAssignments.length === 0" class="text-gray-500 italic text-sm pl-2 py-4">
+           Pre tento blok nie sú definované žiadne zadania.
+        </div>
+      </section>
+
+      <!-- DOCHÁDZKA (Kliknutím) -->
+      <section class="mt-8 pt-6 border-t border-gray-100">
+        <div class="flex items-center mb-4">
+           <div class="p-2 bg-blue-100 rounded-lg mr-3 text-blue-700">
+             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+           </div>
+           <div>
+               <h3 class="text-xl font-bold text-gray-800 leading-tight">Dochádzka</h3>
+               <p class="text-xs text-gray-400">Kliknutím na stav ho zmeníte</p>
+           </div>
+        </div>
+
+        <div *ngIf="attendanceSessions.length > 0" class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm min-h-[100px]">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th *ngFor="let session of attendanceSessions" class="px-3 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider border-r border-gray-200 min-w-[100px]">
+                  {{ session.label }}
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+              <tr>
+                <td *ngFor="let session of attendanceSessions" 
+                    class="px-2 py-2 text-center border-r border-gray-100 relative h-14 min-w-[100px] cursor-pointer hover:bg-gray-50 transition-colors select-none"
+                    (click)="onAttendanceClick(session.id)">
+                  
+                  <div class="w-full h-full flex items-center justify-center">
+                    <span [ngClass]="getStatusColor(getAttendanceStatus(session.id))" class="px-2 py-1 rounded text-xs font-bold uppercase tracking-wide">
+                      {{ getAttendanceStatus(session.id) }}
+                    </span>
+                  </div>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="attendanceSessions.length === 0" class="text-gray-500 italic text-sm pl-2">Žiadne záznamy dochádzky.</div>
+      </section>
+
+    </div>
+  </div>
+</div>

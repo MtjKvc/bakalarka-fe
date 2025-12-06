@@ -1,1 +1,109 @@
-<p>teacher works!</p>
+<div class="min-h-screen bg-gray-50 flex flex-col font-sans">
+  <div class="max-w-[2048px] mx-auto w-full flex-grow flex flex-col">
+
+    <div class="bg-white shadow-xl sticky top-0 z-40 transition-all duration-300 border-b border-gray-100">
+        <app-teacher-header 
+          [currentUser]="currentUser" 
+          [isSidebarOpen]="isSidebarOpen" 
+          
+          [exercises]="contextService.exercises()"
+          [activeExerciseId]="contextService.selectedExercise()?.exerciseId"
+          (exerciseSelected)="contextService.selectExercise($event)"
+
+          (toggleSidebar)="onToggleSidebar()"
+          (logout)="onLogout()" 
+          (studentFound)="onStudentFound($event)" 
+          (searchIconClick)="onSearchIconClick()"
+          class="block"> 
+        </app-teacher-header>
+    </div>
+
+    <div class="flex-grow flex relative">
+      <div *ngIf="isSidebarOpen" (click)="isSidebarOpen = false"
+        class="fixed inset-0 bg-gray-900 bg-opacity-60 z-20 md:hidden transition-opacity duration-300">
+      </div>
+
+      <app-teacher-sidebar 
+         [currentUser]="currentUser" 
+         [isSidebarOpen]="isSidebarOpen" 
+         [sidebarButtons]="sidebarButtons"
+         (logout)="onLogout()" 
+         (buttonClick)="onSidebarButtonClick($event)"
+         [activeView]="activeView" 
+         class="bg-gray-800 text-white md:flex-shrink-0">
+      </app-teacher-sidebar>
+
+      <main class="flex-grow bg-gray-50 p-4 md:p-8 transition-all duration-300">
+        <div class="bg-white p-6 md:p-10 rounded-2xl shadow-xl min-h-full border border-gray-100">
+
+          <ng-container *ngIf="activeView === 'bloky'">
+            <app-blocks></app-blocks>
+          </ng-container>
+
+          <ng-container *ngIf="activeView === 'zadania'">
+            <app-assignments></app-assignments>
+          </ng-container>
+
+          <ng-container *ngIf="activeView === 'cvičenia'">
+            <app-exercises></app-exercises>
+          </ng-container>
+
+          <ng-container *ngIf="activeView === 'používatelia'">
+            <app-users></app-users>
+          </ng-container>
+
+          <ng-container *ngIf="activeView === 'študenti'">
+            <app-students></app-students>
+          </ng-container>
+
+          <ng-container *ngIf="activeView === 'nahrávanie'">
+            <app-student-upload></app-student-upload>
+          </ng-container>
+
+          <ng-container *ngIf="activeView === 'dochádzka'">
+            <app-attendance></app-attendance>
+          </ng-container>
+
+          <ng-container *ngIf="activeView === 'hodnotenie'">
+            <app-grading></app-grading>
+          </ng-container>
+          
+          <ng-container *ngIf="activeView === 'záznamy'">
+            <app-logs></app-logs>
+          </ng-container>
+          <ng-container *ngIf="activeView === 'default'">
+            <div class="space-y-6">
+              <h2 class="text-3xl font-extrabold text-gray-800 border-b pb-2 border-emerald-500/50">
+                👋 Vitajte v Administrácii
+              </h2>
+              <p class="text-lg text-gray-600">
+                Vyberte si položku z menu vľavo pre správu obsahu.
+              </p>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="activeView !== 'default' && 
+                                activeView !== 'bloky' && 
+                                activeView !== 'zadania' && 
+                                activeView !== 'cvičenia' && 
+                                activeView !== 'používatelia' && 
+                                activeView !== 'študenti' && 
+                                activeView !== 'nahrávanie' &&
+                                activeView !== 'dochádzka' &&
+                                activeView !== 'hodnotenie' &&
+                                activeView !== 'záznamy'">
+             </ng-container>
+
+        </div>
+      </main>
+    </div>
+  </div> 
+  
+  <ng-container *ngIf="selectedStudent">
+    <app-search-bar-modal 
+      [student]="selectedStudent" 
+      (close)="onModalClose()">
+    </app-search-bar-modal>
+  </ng-container>
+
+</div>

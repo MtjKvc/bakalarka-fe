@@ -1,0 +1,209 @@
+<div class="p-4 rounded-xl bg-white border border-gray-100 shadow-md font-sans">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-200 pb-3">
+    <h3 class="text-3xl font-extrabold text-gray-800 mb-4 md:mb-0 flex items-center">
+      <svg class="w-8 h-8 mr-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+      Správa Blokov
+    </h3>
+
+    <button
+      class="flex items-center px-5 py-2.5 bg-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:bg-emerald-700 transition duration-150 focus:outline-none focus:ring-4 focus:ring-emerald-300 transform hover:scale-[1.02] shadow-emerald-500/30"
+      (click)="onCreateBlokClick()">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
+      Vytvoriť nový Block
+    </button>
+  </div>
+
+  <div *ngIf="isLoading"
+    class="flex items-center justify-center p-3 bg-amber-50 border border-amber-300 text-amber-700 rounded-lg text-center text-sm font-medium mb-4 shadow-inner animate-pulse">
+    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    Spracúvam požiadavku, prosím počkajte...
+  </div>
+
+  <div *ngIf="error && !isDeleteConfirmModalOpen && !isCreateBlokModalOpen"
+    class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold mb-4 shadow-sm text-sm whitespace-pre-wrap">
+    {{ error }}
+  </div>
+
+  <div *ngIf="message"
+    class="p-3 bg-emerald-50 border border-emerald-400 text-emerald-700 rounded-lg font-medium mb-4 shadow-sm text-sm whitespace-pre-wrap flex items-start">
+    <svg class="w-5 h-5 mr-2 inline-block flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <span>{{ message }}</span>
+  </div>
+
+
+  <div class="overflow-x-auto bg-white rounded-lg shadow-xl mt-4 border border-gray-100">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Názov bloku</th>
+          <th class="px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Max. bodov</th>
+          <th class="px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Požad. bodov</th>
+          <th class="px-6 py-3 text-right text-xs font-extrabold text-gray-700 uppercase tracking-wider">Akcie</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-100">
+
+        <tr *ngFor="let blok of blocks" class="hover:bg-emerald-50/50 transition duration-150">
+
+          <td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-700 cursor-pointer relative"
+            [ngClass]="{'z-10': isEditing(blok.id, 'name')}"
+            (dblclick)="onCellEdit(blok, 'name')"
+            longPress (longPress)="onCellEdit(blok, 'name')"> 
+            <ng-container *ngIf="isEditing(blok.id, 'name'); else viewName">
+              <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(blok)" (keydown.enter)="onCellSave(blok)"
+                type="text" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold -m-2" />
+            </ng-container>
+            <ng-template #viewName>{{ blok.name }}</ng-template>
+          </td>
+
+          <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-600 cursor-pointer relative"
+            [ngClass]="{'z-10': isEditing(blok.id, 'maxPoints')}"
+            (dblclick)="onCellEdit(blok, 'maxPoints')"
+            longPress (longPress)="onCellEdit(blok, 'maxPoints')"> 
+            <ng-container *ngIf="isEditing(blok.id, 'maxPoints'); else viewMaxPoints">
+              <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(blok)" (keydown.enter)="onCellSave(blok)"
+                type="text" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold -m-2" />
+            </ng-container>
+            <ng-template #viewMaxPoints>{{ blok.maxPoints | number:'1.0-2' }}</ng-template>
+          </td>
+
+          <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-600 cursor-pointer relative"
+            [ngClass]="{'z-10': isEditing(blok.id, 'requiredPoints')}"
+            (dblclick)="onCellEdit(blok, 'requiredPoints')"
+            longPress (longPress)="onCellEdit(blok, 'requiredPoints')"> 
+            <ng-container *ngIf="isEditing(blok.id, 'requiredPoints'); else viewRequiredPoints">
+              <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(blok)" (keydown.enter)="onCellSave(blok)"
+                type="text" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold -m-2" />
+            </ng-container>
+            <ng-template #viewRequiredPoints>{{ blok.requiredPoints | number:'1.0-2' }}</ng-template>
+          </td>
+
+          <td class="px-6 py-3 whitespace-nowrap text-right text-sm font-medium">
+            <button (click)="onDeleteBlokClick(blok)"
+              class="text-red-500 hover:text-red-700 transition duration-150 p-2 rounded-full hover:bg-red-50">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                </path>
+              </svg>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="blocks.length === 0 && !isLoading && !error">
+          <td colspan="6" class="px-6 py-4 text-center text-sm font-semibold text-gray-500 bg-gray-50">
+            Žiadne bloky neboli nájdené. <span (click)="onCreateBlokClick()"
+              class="text-emerald-500 cursor-pointer hover:underline">Vytvorte prvý blok.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<div *ngIf="isCreateBlokModalOpen" (click)="onBackdropClick($event)"
+  class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+  <div
+    class="bg-white rounded-2xl shadow-2xl w-full max-w-xl transition-all duration-300 transform scale-100 opacity-100 border-t-8 border-emerald-600"
+    (click)="$event.stopPropagation()"> <div class="p-8">
+      <h3 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2 border-emerald-300">Vytvoriť nový blok</h3>
+
+      <div *ngIf="error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
+
+      <form (ngSubmit)="onSubmitNovyBlok()">
+
+        <div class="mb-4">
+          <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">Názov bloku</label>
+          <input id="name" name="name" type="text" [(ngModel)]="novyBlok.name" required
+            placeholder="Napr. Úvod do programovania"
+            class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-150">
+        </div>
+
+        <div class="mb-4">
+          <label for="maxPoints" class="block text-sm font-semibold text-gray-700 mb-1">Max. bodov</label>
+          <input id="maxPoints" name="maxPoints" type="number" step="0.1" [(ngModel)]="novyBlok.maxPoints" required
+            class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-150 
+                   [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
+        </div>
+
+        <div class="mb-6">
+          <label for="requiredPoints" class="block text-sm font-semibold text-gray-700 mb-1">Požadované bodov</label>
+          <input id="requiredPoints" name="requiredPoints" type="number" step="0.1"
+            [(ngModel)]="novyBlok.requiredPoints" required class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-150 
+                   [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" (click)="onCloseBlokModal()"
+            class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150">
+            Zrušiť
+          </button>
+          <button type="submit" [disabled]="isLoading || novyBlok.name.trim() === ''"
+            class="px-6 py-3 text-sm font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-emerald-500/20">
+            {{ isLoading ? 'Vytváram...' : 'Vytvoriť Blok' }}
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)"
+  class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+  <div
+    class="bg-white rounded-2xl shadow-2xl w-full max-w-lg transition-all duration-300 transform scale-100 opacity-100 border-t-8 border-red-700"
+    (click)="$event.stopPropagation()"> <div class="p-8">
+
+      <div class="flex items-center space-x-4 mb-6">
+        <svg class="w-8 h-8 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z">
+          </path>
+        </svg>
+        <h3 class="text-2xl font-bold text-red-700">Potvrďte trvalé vymazanie</h3>
+      </div>
+
+      <div *ngIf="error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
+
+      <p class="text-gray-700 mb-4">
+        Naozaj chcete **natrvalo vymazať** blok:
+        <span class="font-bold text-red-600 block my-1">"{{ blokToDelete?.name }}"</span>
+      </p>
+
+      <p class="text-sm text-gray-600 mb-4">
+        **Táto akcia je nezvratná.** Pre potvrdenie prosím napíšte presne slovo <span
+          class="font-mono bg-gray-200 px-2 py-0.5 rounded text-red-700 font-semibold">{{ deleteConfirmText }}</span> do
+        poľa nižšie:
+      </p>
+
+      <form (ngSubmit)="onConfirmDelete()">
+        <div class="mb-6">
+          <input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm"
+            placeholder="Sem napíšte CONFIRM"
+            class="block w-full px-4 py-3 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-150 text-lg font-mono tracking-wider">
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" (click)="onCloseDeleteConfirmModal()"
+            class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150">
+            Zrušiť
+          </button>
+          <button type="submit" [disabled]="isLoading || deleteConfirmationInput.trim() !== deleteConfirmText"
+            class="px-6 py-3 text-sm font-semibold text-white bg-red-700 rounded-lg hover:bg-red-800 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-red-500/20">
+            {{ isLoading ? 'Mažem...' : 'Vymazať natrvalo' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
