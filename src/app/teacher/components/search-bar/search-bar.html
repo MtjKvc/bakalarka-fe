@@ -1,8 +1,6 @@
 <div class="relative w-full max-w-md">
-    
-    <!-- Input Pole -->
+
     <div class="relative">
-        <!-- Ikona lupy vľavo -->
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -17,8 +15,6 @@
             class="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm transition duration-150 ease-in-out shadow-sm"
             placeholder="Meno alebo AIS ID..."
             autocomplete="off">
-            
-        <!-- Loading Spinner vpravo -->
         <div *ngIf="isLoading" class="absolute inset-y-0 right-0 pr-3 flex items-center">
             <svg class="animate-spin h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -26,12 +22,8 @@
             </svg>
         </div>
     </div>
-
-    <!-- Dropdown s výsledkami -->
     <div *ngIf="showDropdown && (results.length > 0 || (searchTerm.length >= 1 && !isLoading))" 
          class="absolute mt-1 w-full bg-white shadow-xl rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto max-h-60 focus:outline-none sm:text-sm z-50 animate-fade-in-down">
-        
-        <!-- Zoznam študentov -->
         <ul *ngIf="results.length > 0" class="divide-y divide-gray-100">
             <li *ngFor="let student of results" 
                 (click)="selectStudent(student)"
@@ -48,7 +40,6 @@
             </li>
         </ul>
 
-        <!-- Ak sa nič nenašlo -->
         <div *ngIf="results.length === 0 && !isLoading" class="py-3 px-4 text-center text-gray-500 text-sm italic">
             Žiadni študenti sa nenašli.
         </div>

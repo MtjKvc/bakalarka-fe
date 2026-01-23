@@ -22,8 +22,7 @@ export class SearchBar implements OnDestroy {
   
   private http = inject(HttpClient);
   private elementRef = inject(ElementRef);
-  
-  // !!! 1. INJECT CHANGE DETECTOR !!!
+
   private cdr = inject(ChangeDetectorRef);
   
   private apiUrl = 'http://localhost:8080/api/v1/student';
@@ -59,9 +58,7 @@ export class SearchBar implements OnDestroy {
         );
       })
     ).subscribe((data) => {
-      
-      // !!! ZMENA: Žiadne filtrovanie na frontende.
-      // Zobrazíme presne to, čo poslal backend.
+
       this.results = data || [];
 
       this.isLoading = false;

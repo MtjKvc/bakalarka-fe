@@ -36,7 +36,7 @@ export class Blocks implements OnInit, AfterViewChecked {
   
   @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
   private shouldFocus: boolean = false; 
-  private isSaving: boolean = false; // Zámok
+  private isSaving: boolean = false;
 
   private blocksApiUrl = 'http://localhost:8080/api/v1/block'; 
 
@@ -60,17 +60,15 @@ export class Blocks implements OnInit, AfterViewChecked {
   ngOnInit(): void {
     this.fetchBloky();
   }
-  
-  // Načítanie existujúcich blokov
+
   async fetchBloky(): Promise<void> {
     this.isLoading = true;
-    this.error = null; // Reset erroru
+    this.error = null;
     const apiUrl = `${this.blocksApiUrl}?sort=id,asc`;
     
     try {
       const data = await lastValueFrom(this.http.get<Block[]>(apiUrl));
       this.blocks = data;
-      // Zoradenie v prehliadači pre istotu
       this.blocks.sort((a, b) => a.id - b.id);
     } catch (err: any) {
       console.error('Nepodarilo sa načítať bloky:', err);
@@ -81,7 +79,6 @@ export class Blocks implements OnInit, AfterViewChecked {
     }
   }
 
-  // --- Funkcie pre modálne okno (Create) ---
   onCreateBlokClick(): void {
     this.novyBlok = { name: '', maxPoints: 0, requiredPoints: 0 };
     this.error = null;
@@ -116,7 +113,7 @@ export class Blocks implements OnInit, AfterViewChecked {
       if (createdBloky && createdBloky.length > 0) {
         this.message = `Blok '${createdBloky[0].name}' bol úspešne vytvorený.`;
         this.onCloseBlokModal();
-        await this.fetchBloky(); // Reload dát
+        await this.fetchBloky();
       } else {
         this.error = 'Vytvorenie bloku zlyhalo.';
       }
@@ -126,8 +123,6 @@ export class Blocks implements OnInit, AfterViewChecked {
       this.isLoading = false;
     }
   }
-
-  // --- Funkcie pre DELETE ---
   onDeleteBlokClick(blok: Block): void {
       this.blokToDelete = blok;
       this.deleteConfirmationInput = '';
@@ -162,14 +157,12 @@ export class Blocks implements OnInit, AfterViewChecked {
         this.isLoading = false;
       }
   }
-
-  // --- Funkcie pre Inline Editáciu ---
   isEditing(id: number, field: string): boolean {
     return this.editingBlokId === id && this.editingField === field;
   }
 
   onCellEdit(blok: Block, field: keyof Block): void {
-    if (this.isSaving) return; // Zámok
+    if (this.isSaving) return;
     
     this.error = null;
     this.message = null;
@@ -183,25 +176,22 @@ export class Blocks implements OnInit, AfterViewChecked {
 
   async onCellSave(blok: Block): Promise<void> {
     this.shouldFocus = false;
-    if (this.isSaving) return; // Zámok
+    if (this.isSaving) return;
     if (this.editingBlokId === null || this.editingField === null) return;
 
     const idToSave = this.editingBlokId;
     const fieldToSave = this.editingField as keyof Block;
     const rawValue = this.editingValue;
 
-    // Porovnanie (stringová zhoda)
     if (String(blok[fieldToSave]) === String(rawValue).trim()) {
       this.editingBlokId = null;
       this.editingField = null;
       return;
     }
 
-    // Príprava hodnoty
     let newValue: any = String(rawValue).trim();
     if (fieldToSave === 'maxPoints' || fieldToSave === 'requiredPoints') {
         const num = parseFloat(newValue);
-        // Ak je to číslo, pošleme číslo. Ak "dsa", pošleme string.
         newValue = !isNaN(num) ? num : newValue;
     }
     
@@ -212,7 +202,7 @@ export class Blocks implements OnInit, AfterViewChecked {
         name: blokToUpdate.name, 
         maxPoints: Number(blokToUpdate.maxPoints) || 0,
         requiredPoints: Number(blokToUpdate.requiredPoints) || 0,
-        [fieldToSave]: newValue // Tu prepíšeme starú hodnotu novou (aj s "dsa")
+        [fieldToSave]: newValue
     };
     
     if (fieldToSave !== 'name') {
@@ -227,8 +217,7 @@ export class Blocks implements OnInit, AfterViewChecked {
     try {
       const response = await lastValueFrom(this.http.put<ApiResponse<Block>>(`${this.blocksApiUrl}/${idToSave}`, updatePayload));
       const updatedBlok = response.data;
-      
-      // Validácia zhody
+
       let success = true;
       if (fieldToSave === 'maxPoints' || fieldToSave === 'requiredPoints') {
           if (Number(updatedBlok[fieldToSave]) !== Number(updatePayload[fieldToSave])) success = false;
@@ -247,14 +236,11 @@ export class Blocks implements OnInit, AfterViewChecked {
     } catch (err: any) {
       pendingErrorMessage = `Chyba: Aktualizácia bloku zlyhala.`;
     } finally {
-      // 1. Ukončiť edit
       this.editingBlokId = null;
       this.editingField = null;
-      
-      // 2. Obnoviť dáta (aby zmizlo "dsa")
+
       await this.fetchBloky();
 
-      // 3. Nastaviť chybu (ak bola)
       if (pendingErrorMessage) {
           this.error = pendingErrorMessage;
           this.message = null;

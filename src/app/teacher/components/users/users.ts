@@ -5,8 +5,6 @@ import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/long-press/long-press';
 
-// --- INTERFACY ---
-
 interface User {
   id: number;
   fullName: string;
@@ -17,14 +15,12 @@ interface User {
 interface Exercise {
   id: number;
   firstSessionDate: string;
-  startTime: string; // HH:mm:ss
+  startTime: string;
   roomEnum: string;
 }
 
-// Interface pre priradenie (prepojovacia tabuľka)
-// GET /api/v1/user-exercise vracia pole týchto objektov
 interface UserExerciseAssignment {
-  id: number;      // ID priradenia (použijeme na DELETE)
+  id: number;
   user: User;
   exercise: Exercise;
 }
@@ -59,43 +55,35 @@ export class UsersComponent implements OnInit, AfterViewChecked {
   private shouldFocus: boolean = false;
   private isSaving: boolean = false;
 
-  // --- API ENDPOINTY ---
   private usersApiUrl = 'http://localhost:8080/api/v1/user';
   private rolesApiUrl = 'http://localhost:8080/api/v1/enum/role'; 
   private passwordApiUrl = 'http://localhost:8080/api/v1/user/password';
   
-  private exercisesApiUrl = 'http://localhost:8080/api/v1/exercise';       // Zoznam všetkých cvičení
-  private userExerciseApiUrl = 'http://localhost:8080/api/v1/user-exercise'; // Priradenia (GET, POST, DELETE)
-
-  // --- DÁTA ---
+  private exercisesApiUrl = 'http://localhost:8080/api/v1/exercise';
+  private userExerciseApiUrl = 'http://localhost:8080/api/v1/user-exercise';
   public users: User[] = [];
   public availableRoles: string[] = []; 
-  
-  // Premenné pre Modal Cvičení
+
   public isExerciseModalOpen: boolean = false;
   public selectedUserForExercises: User | null = null;
   
-  public userAssignments: UserExerciseAssignment[] = []; // Aktuálne priradené cvičenia usera
-  public availableExercises: Exercise[] = [];            // Cvičenia dostupné na pridanie (v dropdowne)
+  public userAssignments: UserExerciseAssignment[] = [];
+  public availableExercises: Exercise[] = [];
   public selectedExerciseIdToAdd: number | null = null;
   
   private dayNames = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota'];
 
-  // --- STAV ---
   public isLoading: boolean = false;
   public error: string | null = null;
   public message: string | null = null;
 
-  // Create Modal
   public isCreateModalOpen: boolean = false;
   public newUser: NewUserForm = { fullName: '', email: '', roleEnum: '' };
 
-  // Inline Edit
   editingId: number | null = null;
   editingField: EditableField | null = null;
   editingValue: string = '';
 
-  // Delete Modal
   isDeleteConfirmModalOpen: boolean = false;
   userToDelete: User | null = null;
   deleteConfirmationInput: string = '';
@@ -125,9 +113,6 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  // =========================================================
-  // LOGIKA: SPRÁVA CVIČENÍ (MODAL)
-  // =========================================================
 
   getDayName(dateStr: string): string {
     if (!dateStr) return '';
@@ -145,22 +130,18 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     this.isLoading = true;
 
     try {
-        // 1. Načítame VŠETKY cvičenia (pre dropdown)
-        // 2. Načítame VŠETKY priradenia (prepojovaciu tabuľku)
+
         const [allExercises, allAssignments] = await Promise.all([
             lastValueFrom(this.http.get<Exercise[]>(this.exercisesApiUrl)),
             lastValueFrom(this.http.get<UserExerciseAssignment[]>(this.userExerciseApiUrl))
         ]);
 
-        // 3. Vyfiltrujeme priradenia len pre vybraného USERA
         this.userAssignments = (allAssignments || [])
             .filter(assignment => assignment.user && assignment.user.id === user.id)
-            .sort((a, b) => (a.exercise?.id || 0) - (b.exercise?.id || 0)); // Zoradenie
-        
-        // 4. Zistíme, ktoré ID cvičení už user má
+            .sort((a, b) => (a.exercise?.id || 0) - (b.exercise?.id || 0));
+
         const assignedExerciseIds = new Set(this.userAssignments.map(a => a.exercise?.id));
 
-        // 5. Do dropdownu dáme len tie cvičenia, ktoré user EŠTE NEMÁ
         this.availableExercises = (allExercises || [])
             .filter(e => !assignedExerciseIds.has(e.id))
             .sort((a, b) => a.id - b.id);
@@ -188,7 +169,6 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     this.error = null;
 
     try {
-        // POST payload: { "userExercises": [ { "userId": ..., "exerciseId": ... } ] }
         const payload = { 
             userExercises: [{
                 userId: this.selectedUserForExercises.id,
@@ -197,21 +177,18 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         };
 
         await lastValueFrom(this.http.post(this.userExerciseApiUrl, payload));
-        
-        // Refresh údajov v modale
+
         await this.onOpenExerciseModal(this.selectedUserForExercises);
         
     } catch (err: any) {
         console.error("Chyba pri priraďovaní:", err);
-        
-        // Ošetrenie 409 Conflict (Duplicita)
+
         if (err.status === 409) {
             this.error = "Toto cvičenie už je používateľovi priradené, alebo nastal konflikt dát.";
         } else {
             this.error = "Chyba pri priraďovaní cvičenia. Skúste znova.";
         }
 
-        // Aj pri chybe obnovíme zoznam, aby UI sedelo s databázou
         await this.onOpenExerciseModal(this.selectedUserForExercises);
         
     } finally {
@@ -226,10 +203,8 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     this.error = null;
 
     try {
-        // DELETE /api/v1/user-exercise/{id} (ID priradenia)
         await lastValueFrom(this.http.delete(`${this.userExerciseApiUrl}/${assignment.id}`));
-        
-        // Refresh údajov v modale
+
         await this.onOpenExerciseModal(this.selectedUserForExercises);
 
     } catch (err: any) {
@@ -239,19 +214,12 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     }
   }
 
-
-  // =========================================================
-  // LOGIKA: OSTATNÉ (Heslo, Rola, Create, Delete, Edit)
-  // =========================================================
-
-  // --- RESET PASSWORD ---
   async onResetPassword(user: User): Promise<void> {
     if (!confirm(`Naozaj chcete vygenerovať nové heslo pre používateľa "${user.fullName}" a poslať ho na email ${user.email}?`)) {
       return;
     }
     this.isLoading = true; this.message = null; this.error = null;
     try {
-      // PUT /api/v1/user/password/{id}
       await lastValueFrom(this.http.put(`${this.passwordApiUrl}/${user.id}`, {}));
       this.message = `Požiadavka na reset hesla pre ${user.email} bola úspešne odoslaná.`;
     } catch (err: any) {
@@ -262,7 +230,6 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  // --- ZMENA ROLY ---
   async onRoleChange(user: User, newRole: string): Promise<void> {
       if (user.roleEnum === newRole) return;
       const originalRole = user.roleEnum;
@@ -276,7 +243,6 @@ export class UsersComponent implements OnInit, AfterViewChecked {
       () => { user.roleEnum = originalRole; });
   }
 
-  // --- UNIVERZÁLNY UPDATE HELPER ---
   async updateUser(id: number, payload: UpdateUserPayload, onSuccess: () => void, successMsg: string, onError?: () => void) {
       this.isLoading = true; this.error = null; this.message = null;
       try {
@@ -291,7 +257,6 @@ export class UsersComponent implements OnInit, AfterViewChecked {
       } finally { this.isLoading = false; }
   }
 
-  // --- CREATE USER ---
   onCreateUserClick(): void {
     this.newUser = { fullName: '', email: '', roleEnum: '' };
     this.isCreateModalOpen = true; 
@@ -323,7 +288,6 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  // --- DELETE USER ---
   onDeleteUserClick(user: User): void { 
       this.userToDelete = user; 
       this.deleteConfirmationInput = ''; 
@@ -353,7 +317,6 @@ export class UsersComponent implements OnInit, AfterViewChecked {
       }
   }
 
-  // --- INLINE EDIT (Meno/Email) ---
   isEditing(id: number, field: string): boolean { return this.editingId === id && this.editingField === field; }
   
   onCellEdit(user: User, field: EditableField): void {

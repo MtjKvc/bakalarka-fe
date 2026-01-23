@@ -18,23 +18,15 @@ export class Login {
   http = inject(HttpClient);
   router = inject(Router);
 
-  /**
-   * Pomocná funkcia na dekódovanie JWT payloadu.
-   * Zoberie token, rozdelí ho a dekóduje prostrednú časť (payload).
-   */
   private decodeTokenPayload(token: string): any {
     try {
-      // 1. Zoberieme prostrednú časť (payload)
       const payloadBase64 = token.split('.')[1];
       
-      // 2. Opravíme Base64Url kódovanie (nahradíme '-' za '+' a '_' za '/')
-      //    a pridáme padding, ak chýba, aby bola dĺžka deliteľná 4
       let correctedPayload = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
       while (correctedPayload.length % 4) {
         correctedPayload += '=';
       }
 
-      // 3. Dekódujeme Base64 string a prevedieme na objekt
       const decoded = JSON.parse(atob(correctedPayload));
       
       return decoded;
@@ -50,25 +42,18 @@ export class Login {
     this.http.post("http://localhost:8080/api/v1/auth/authenticate", formValue).subscribe({
       next: (res: any) => {
         if (res.token) {
-          // --- KÓD UPRAVENÝ TU ---
-
-          // 1. Uložíme si celý token (pre interceptor)
           localStorage.setItem('auth_token', res.token);
 
-          // 2. Dekódujeme token, aby sme získali dáta
           const payload = this.decodeTokenPayload(res.token);
           
           if (payload) {
             console.log("Dekódovaný token:", payload);
-            // payload teraz obsahuje: {sub: '...', id: 1, role: 'ADMIN', ...}
             
-            // 3. Uložíme si dáta do localStorage pre TeacherComponent
             localStorage.setItem('user_role', payload.role); 
             localStorage.setItem('user_id', payload.id); 
-            localStorage.setItem('user_fullName', payload.sub); // 'sub' je email/username
+            localStorage.setItem('user_fullName', payload.sub);
           }
 
-          // 4. Navigujeme
           this.router.navigate(['/teacher']); 
         } else {
           alert(res.message);

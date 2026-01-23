@@ -9,10 +9,6 @@ import { CopyButton } from '../../shared/copy-button/copy-button';
 })
 export class Blok2Asm3 {
 
-  /**
-   * Plynulo posunie zobrazenie na HTML element so zadaným ID.
-   * @param elementId ID cieľového elementu, na ktorý sa má scrollovať.
-   */
   scrollTo(elementId: string): void {
     const element = document.getElementById(elementId);
     if (element) {

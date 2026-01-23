@@ -1,7 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core'; 
 import { CommonModule, NgClass } from '@angular/common'; 
 
-// Rozhrania (Interfaces)
 interface UserInfo { 
     meno: string; 
     rola: string; 
@@ -9,7 +8,9 @@ interface UserInfo {
 
 interface SidebarButton { 
   label: string; 
-  isAdminOnly: boolean;  
+  isAdminAvailable: boolean;
+  isTeacherAvailable: boolean;  
+  isHelperAvailable: boolean;  
 } 
 
 @Component({ 
@@ -21,33 +22,29 @@ interface SidebarButton {
 }) 
 export class TeacherSidebarComponent { 
 
-  // VSTUPY (Inputs) z rodičovského komponentu
   @Input() currentUser!: UserInfo; 
   @Input() isSidebarOpen: boolean = false; 
   @Input() sidebarButtons: SidebarButton[] = []; 
 
-  // KĽÚČOVÝ VSTUP: Uchováva názov aktívneho pohľadu na zvýraznenie tlačidla
-  @Input() activeView!: string;  // <-- Používa sa v template
+  @Input() activeView!: string;
 
-  // VÝSTUPY (Outputs) pre komunikáciu s rodičovským komponentom
   @Output() logout = new EventEmitter<void>(); 
   @Output() buttonClick = new EventEmitter<string>(); 
 
-  /** * Kontroluje, či má používateľ rolu ADMIN. 
-   */ 
   isAdmin(): boolean { 
-    // Bezpečná kontrola na null/undefined a veľké písmená
     return this.currentUser?.rola?.toUpperCase() === 'ADMIN';
-  } 
+  }
+  isTeacher(): boolean { 
+    return this.currentUser?.rola?.toUpperCase() === 'TEACHER';
+  }
+  isHelper(): boolean { 
+    return this.currentUser?.rola?.toUpperCase() === 'HELPER';
+  }  
 
-  /** * Odošle udalosť kliknutia na tlačidlo späť rodičovi s názvom pohľadu.
-   */ 
   onButtonClick(label: string): void { 
     this.buttonClick.emit(label);
   } 
 
-  /** * Odošle udalosť odhlásenia späť rodičovi.
-   */ 
   onLogoutClick(): void { 
     this.logout.emit(); 
   } 

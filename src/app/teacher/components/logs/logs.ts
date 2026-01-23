@@ -1,9 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { lastValueFrom } from 'rxjs';
 
-// Interface podľa tvojho JSON výstupu
 interface UserDTO {
   id: number;
   fullName: string;
@@ -13,8 +13,7 @@ interface UserDTO {
 
 interface StudentAssignment {
   id: number;
-  // Keďže v JSONe boli objekty prázdne {}, používam voliteľné typy pre istotu
-  assignment?: { id?: number; title?: string }; 
+  assignment?: { id?: number; name?: string }; 
   student?: { id?: number; fullName?: string };
   note: string;
   earnedPoints: number;
@@ -26,25 +25,28 @@ interface LogEntry {
   originalPoints: number;
   updatedPoints: number;
   originalUser?: UserDTO;
-  updatedByUser: UserDTO;
+  updatedByUser: UserDTO; 
   updatedAt: string;
 }
 
 @Component({
   selector: 'app-logs',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './logs.html',
   styleUrl: './logs.css'
 })
 export class Logs implements OnInit {
   private http = inject(HttpClient);
-  
   private logsApiUrl = 'http://localhost:8080/api/v1/student-assignment-log';
 
   public logs: LogEntry[] = [];
   public isLoading: boolean = false;
   public error: string | null = null;
+
+  public searchUpdatedBy: string = '';
+  public sortField: string = 'updatedAt';
+  public sortDir: 'asc' | 'desc' = 'desc';
 
   ngOnInit(): void {
     this.fetchLogs();
@@ -53,28 +55,34 @@ export class Logs implements OnInit {
   async fetchLogs(): Promise<void> {
     this.isLoading = true;
     this.error = null;
-    
-    // Pridané sortovanie, aby najnovšie logy boli hore (ak to API podporuje, inak sortneme v JS)
-    const apiUrl = `${this.logsApiUrl}`; 
+
+    let params = new HttpParams()
+      .set('sort', `${this.sortField},${this.sortDir}`);
+
+    if (this.searchUpdatedBy?.trim()) {
+      params = params.set('updatedByUserFullName', this.searchUpdatedBy.trim());
+    }
 
     try {
-      // Očakávame pole objektov priamo, podľa tvojho JSONu
-      const data = await lastValueFrom(this.http.get<LogEntry[]>(apiUrl));
-      
-      // Sortovanie na klientoch (najnovšie hore)
-      this.logs = data.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
-      
+      const data = await lastValueFrom(
+        this.http.get<LogEntry[]>(this.logsApiUrl, { params })
+      );
+      this.logs = data;
     } catch (err: any) {
-      console.error('Nepodarilo sa načítať logy:', err);
-      this.error = 'Nepodarilo sa načítať históriu zmien z API.';
-      this.logs = [];
+      console.error('Chyba:', err);
+      this.error = 'Nepodarilo sa načítať históriu zmien.';
     } finally {
       this.isLoading = false;
     }
   }
 
-  // Pomocná metóda na zistenie rozdielu bodov
-  getPointDiff(log: LogEntry): number {
-    return log.updatedPoints - log.originalPoints;
+  toggleSort(field: string): void {
+    if (this.sortField === field) {
+      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortDir = 'desc';
+    }
+    this.fetchLogs();
   }
 }

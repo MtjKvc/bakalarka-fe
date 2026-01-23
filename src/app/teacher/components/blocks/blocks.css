@@ -1,6 +1,5 @@
-/* V blocks.css alebo globálnom štýle */
 .select-none {
   user-select: none;
-  -webkit-user-select: none; /* Pre staršie iOS */
-  -webkit-touch-callout: none; /* Zakáže iOS kontextové menu */
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }

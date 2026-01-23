@@ -1,8 +1,9 @@
-import { Component, OnInit, inject, effect, ViewChildren, QueryList, ElementRef, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, effect, ViewChildren, QueryList, ElementRef, AfterViewChecked, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, forkJoin, Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../services/teacher-context';
 
 interface AssignmentHeader {
@@ -24,11 +25,6 @@ interface StudentGradingRow {
   studentAssignments: StudentAssignmentDto[];
 }
 
-interface UpdateGradePayload {
-    earnedPoints: number;
-    note: string;
-}
-
 @Component({
   selector: 'app-grading',
   standalone: true,
@@ -36,7 +32,7 @@ interface UpdateGradePayload {
   templateUrl: './grading.html',
   styleUrl: './grading.css'
 })
-export class GradingComponent implements OnInit, AfterViewChecked {
+export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
   
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
@@ -50,10 +46,10 @@ export class GradingComponent implements OnInit, AfterViewChecked {
   public studentRows: StudentGradingRow[] = []; 
   public isLoading = false;
   public isSaving = false;
+  public isSemesterMode = false;
 
-  // --- UPOZORNENIA ---
   public error: string | null = null;
-  public message: string | null = null; // Zelená správa
+  public message: string | null = null;
 
   editingRecordId: number | null = null;
   editingValue: number | null = null;
@@ -62,11 +58,15 @@ export class GradingComponent implements OnInit, AfterViewChecked {
   noteModalRecord: StudentAssignmentDto | null = null;
   noteModalText: string = '';
 
+  public studentSearchQuery: string = '';
+  private searchSubject = new Subject<string>();
+  private searchSubscription: Subscription | undefined;
+
   constructor() {
     effect(() => {
       const block = this.contextService.selectedBlock();
-      const exercise = this.contextService.selectedExercise() as ContextExercise | null;
       if (block && block.id) {
+        this.isSemesterMode = false;
         this.loadGradingData(block.id);
       }
     });
@@ -74,6 +74,19 @@ export class GradingComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.contextService.loadBlocks().subscribe();
+
+    this.searchSubscription = this.searchSubject.pipe(
+      debounceTime(400),    
+      distinctUntilChanged()  
+    ).subscribe(() => {
+      this.performSearch();  
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
   }
 
   ngAfterViewChecked(): void {
@@ -84,8 +97,103 @@ export class GradingComponent implements OnInit, AfterViewChecked {
       }
   }
 
+
+
+  onSearchInput(text: string) {
+    this.studentSearchQuery = text;
+    this.searchSubject.next(text); 
+  }
+
+  performSearch() {
+    if (this.isSemesterMode) {
+      this.loadSemesterData();
+    } else {
+      const block = this.contextService.selectedBlock();
+      if (block) this.loadGradingData(block.id);
+    }
+  }
+
+  clearFilter() {
+    this.studentSearchQuery = '';
+    this.performSearch(); 
+  }
+
+  async selectSemester() {
+    this.isSemesterMode = true;
+    this.contextService.selectBlock(null as any);
+    await this.loadSemesterData();
+  }
+
+  async loadSemesterData() {
+    this.isLoading = true;
+    this.error = null;
+    this.assignments = [];
+    this.studentRows = [];
+
+    try {
+      const blocks = this.contextService.blocks();
+      const currentExercise = this.contextService.selectedExercise() as ContextExercise | null;
+      const exerciseId = currentExercise?.exerciseId;
+
+      if (!exerciseId) {
+        this.error = 'Vyberte cvičenie pre zobrazenie semestra.';
+        return;
+      }
+
+      this.assignments = blocks.map(b => ({
+        id: b.id,
+        name: b.name,
+        maxPoints: 0 
+      }));
+
+      let commonParams = new HttpParams().set('exerciseId', exerciseId);
+      if (this.studentSearchQuery.trim()) {
+        commonParams = commonParams.set('studentFullName', this.studentSearchQuery.trim());
+      }
+      
+      const requests = blocks.map(b => 
+        this.http.get<StudentGradingRow[]>(`${this.apiUrl}/student-assignment/grading`, {
+          params: commonParams.set('blockId', b.id)
+        })
+      );
+
+      const allBlocksData = await lastValueFrom(forkJoin(requests));
+      
+      const studentsMap = new Map<string, StudentGradingRow>();
+
+      allBlocksData.forEach((blockRows, index) => {
+        const blockId = blocks[index].id;
+        
+        blockRows.forEach(row => {
+          if (!studentsMap.has(row.studentFullName)) {
+            studentsMap.set(row.studentFullName, {
+              studentFullName: row.studentFullName,
+              studentAssignments: []
+            });
+          }
+
+          const student = studentsMap.get(row.studentFullName)!;
+          const blockTotalPoints = row.studentAssignments.reduce((sum, sa) => sum + (sa.earnedPoints || 0), 0);
+          
+          student.studentAssignments.push({
+            studentAssignmentId: -1, 
+            assignmentId: blockId,
+            earnedPoints: blockTotalPoints
+          });
+        });
+      });
+
+      this.studentRows = Array.from(studentsMap.values()).sort((a, b) => a.studentFullName.localeCompare(b.studentFullName));
+
+    } catch (err) {
+      console.error(err);
+      this.error = 'Nepodarilo sa načítať dáta semestra.';
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
   async loadGradingData(blockId: number) {
-    if (!blockId) return;
     const currentExercise = this.contextService.selectedExercise() as ContextExercise | null;
     const exerciseId = currentExercise?.exerciseId;
 
@@ -96,34 +204,30 @@ export class GradingComponent implements OnInit, AfterViewChecked {
 
     this.isLoading = true;
     this.error = null;
-    this.message = null;
     this.editingRecordId = null;
 
     try {
-      // 1. Zadania (Bez sortu, veríme backendu)
-      this.assignments = await lastValueFrom(this.http.get<AssignmentHeader[]>(`${this.apiUrl}/assignment?blockId=${blockId}`)) || [];
+      let params = new HttpParams()
+        .set('blockId', blockId)
+        .set('exerciseId', exerciseId);
 
-      // 2. Hodnotenia
+      if (this.studentSearchQuery.trim()) {
+        params = params.set('studentFullName', this.studentSearchQuery.trim());
+      }
+
+      this.assignments = await lastValueFrom(this.http.get<AssignmentHeader[]>(`${this.apiUrl}/assignment?blockId=${blockId}`)) || [];
       const rawData = await lastValueFrom(
-          this.http.get<StudentGradingRow[]>(`${this.apiUrl}/student-assignment/grading?blockId=${blockId}&exerciseId=${exerciseId}`)
+          this.http.get<StudentGradingRow[]>(`${this.apiUrl}/student-assignment/grading`, { params })
       );
       
-      const mappedData = (rawData || []).map((row, index) => {
+      this.studentRows = (rawData || []).map((row, index) => {
           if (row.studentAssignments) {
-              // Párovanie podľa indexu (bez sortu)
               row.studentAssignments.forEach((sa, i) => {
-                  if (this.assignments[i]) {
-                      sa.assignmentId = this.assignments[i].id;
-                  }
+                  if (this.assignments[i]) sa.assignmentId = this.assignments[i].id;
               });
           }
-          return {
-              ...row,
-              studentId: row.studentId !== undefined ? row.studentId : index
-          };
-      });
-
-      this.studentRows = mappedData.sort((a, b) => a.studentFullName.localeCompare(b.studentFullName));
+          return { ...row, studentId: row.studentId ?? index };
+      }).sort((a, b) => a.studentFullName.localeCompare(b.studentFullName));
 
     } catch (err) {
       console.error(err);
@@ -133,122 +237,70 @@ export class GradingComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  // --- HELPERY ---
+  calculateTotalPoints(student: StudentGradingRow): number {
+    if (!student.studentAssignments) return 0;
+    const total = student.studentAssignments.reduce((sum, sa) => sum + (sa.earnedPoints || 0), 0);
+    return Math.round(total * 100) / 100;
+  }
+
   getAssignmentRecord(student: StudentGradingRow, assignmentId: number): StudentAssignmentDto | undefined {
     return student.studentAssignments?.find(a => a.assignmentId === assignmentId);
   }
 
   isEditing(record: StudentAssignmentDto | undefined): boolean {
-      return !!record && this.editingRecordId === record.studentAssignmentId;
+      return !this.isSemesterMode && !!record && this.editingRecordId === record.studentAssignmentId;
   }
 
-  // --- INLINE EDIT ---
   onCellClick(record: StudentAssignmentDto | undefined): void {
-      if (this.isSaving || !record) return;
-      if (!record.studentAssignmentId) {
-          this.error = 'Chyba: Záznam nemá ID.';
-          return;
-      }
-      
-      // Vyčistiť správy pri novom kliknutí
-      this.message = null;
-      this.error = null;
-
+      if (this.isSaving || !record || this.isSemesterMode) return;
       this.editingRecordId = record.studentAssignmentId;
       this.editingValue = record.earnedPoints;
-      
       this.shouldFocusInput = true; 
       this.cdr.detectChanges(); 
   }
 
   async onCellSave(record: StudentAssignmentDto): Promise<void> {
       const numericValue = parseFloat(String(this.editingValue));
-
-      if (this.editingValue === null || isNaN(numericValue)) {
-          this.editingRecordId = null;
-          return;
+      if (this.editingValue === null || isNaN(numericValue) || numericValue === record.earnedPoints) {
+          this.editingRecordId = null; return;
       }
-      
-      if (numericValue === record.earnedPoints) {
-          this.editingRecordId = null;
-          return;
-      }
-      
       await this.updateRecord(record, numericValue, record.note || '');
       this.editingRecordId = null;
   }
 
-  // --- MODÁL ---
   openNoteModal(record: StudentAssignmentDto, event: MouseEvent): void {
       event.stopPropagation(); 
+      if (this.isSemesterMode) return;
       this.noteModalRecord = record;
       this.noteModalText = record.note || '';
-      
-      // Reset správ
-      this.message = null; 
-      this.error = null;
-      
       this.isNoteModalOpen = true;
   }
 
   closeNoteModal(): void {
       this.isNoteModalOpen = false;
       this.noteModalRecord = null;
-      this.noteModalText = '';
   }
 
   async saveNoteFromModal(): Promise<void> {
       if (!this.noteModalRecord) return;
-      
-      const newNote = this.noteModalText ? this.noteModalText.trim() : '';
-      const oldNote = this.noteModalRecord.note ? this.noteModalRecord.note.trim() : '';
-
-      if (newNote === oldNote) {
-        this.closeNoteModal();
-        return;
-      }
-      await this.updateRecord(this.noteModalRecord, this.noteModalRecord.earnedPoints, newNote);
+      await this.updateRecord(this.noteModalRecord, this.noteModalRecord.earnedPoints, this.noteModalText.trim());
       this.closeNoteModal();
   }
 
-  // --- UPDATE (PUT) ---
   private async updateRecord(record: StudentAssignmentDto, newPoints: number, newNote: string): Promise<void> {
-    if (!record.studentAssignmentId) {
-        this.error = 'Chyba: Chýba ID záznamu.';
-        return;
-    }
-
     this.isSaving = true;
     const oldPoints = record.earnedPoints;
     const oldNote = record.note;
-    
-    // Optimistický update
     record.earnedPoints = newPoints;
     record.note = newNote;
 
     try {
-        const url = `${this.apiUrl}/student-assignment/${record.studentAssignmentId}`;
-        const payload: UpdateGradePayload = { earnedPoints: newPoints, note: newNote || "" };
-        
-        await lastValueFrom(this.http.put(url, payload));
-        
-        // !!! ÚSPECH !!!
-        this.message = 'Hodnotenie úspešne uložené.';
-        this.error = null;
-
-        // Skryť správu po 3 sekundách
-        setTimeout(() => {
-            this.message = null;
-        }, 3000);
-
+        await lastValueFrom(this.http.put(`${this.apiUrl}/student-assignment/${record.studentAssignmentId}`, { earnedPoints: newPoints, note: newNote }));
+        this.message = 'Uložené.';
+        setTimeout(() => this.message = null, 2000);
     } catch (err) {
-        console.error('Update failed', err);
-        this.error = 'Uloženie zlyhalo. Skontrolujte pripojenie.';
-        this.message = null;
-        
-        // Rollback
-        record.earnedPoints = oldPoints;
-        record.note = oldNote;
+        this.error = 'Chyba ukladania.';
+        record.earnedPoints = oldPoints; record.note = oldNote;
     } finally {
         this.isSaving = false;
     }

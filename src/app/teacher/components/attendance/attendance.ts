@@ -6,14 +6,10 @@ import { FormsModule } from '@angular/forms';
 import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../services/teacher-context';
 
 
-// --- Interfacey (Backend DTOs) ---
-
 interface AttendanceItemDto {
   attendanceId: number;
   attendance: string; 
-  // Ak backend pošle, použijeme to pre číslo týždňa
   exerciseSessionId?: number; 
-  // Ak backend pošle, použijeme to pre dátum
   sessionDate?: string;
 }
 
@@ -24,28 +20,25 @@ interface StudentRowDto {
   aisId?: number; 
 }
 
-// --- Interfacey (Frontend UI) ---
-
 interface Student {
-  id: number; // Syntetické ID (index) pre frontend
+  id: number;
   fullName: string;
   aisId?: number; 
 }
 
 interface SessionColumn {
   id: number;
-  label: string; // Text v hlavičke (napr. "Týždeň 7")
-  date?: string; // Pre zoradenie
+  label: string;
+  date?: string;
 }
 
 interface AttendanceRecord {
-  id: number | null; // Skutočné ID záznamu (pre PUT)
+  id: number | null;
   attendanceEnum: string;
   studentId: number;
   sessionId: number;
 }
 
-// Interface pre Update (PUT)
 interface UpdateAttendanceRequest {
   attendanceEnum: string;
 }
@@ -63,28 +56,23 @@ export class Attendance implements OnInit {
   public contextService = inject(TeacherContextService);
   private apiUrl = 'http://localhost:8080/api/v1'; 
 
-  // Dáta pre tabuľku
   public uniqueStudents: Student[] = [];
   public uniqueSessions: SessionColumn[] = [];
-  
-  // Mapa pre rýchle vyhľadávanie: "studentId_sessionId" -> Záznam
+
   public attendanceMap = new Map<string, AttendanceRecord>();
   public attendanceOptions: string[] = []; 
 
-  // Stavy
   public isLoading: boolean = false;
   public error: string | null = null;
-  public showFullHistory: boolean = false; // Default: Zobraz len aktuálny týždeň
+  public showFullHistory: boolean = false;
   
-  private processingSet = new Set<string>(); // Zámok proti double-clickom
+  private processingSet = new Set<string>();
 
   constructor() {
-    // Sleduje zmenu cvičenia v Headeri
     effect(() => {
       const selectedEx = this.contextService.selectedExercise() as ContextExercise | null;
       
       if (selectedEx && selectedEx.exerciseId) {
-        // Pri zmene cvičenia resetneme na "Aktuálny týždeň"
         this.showFullHistory = false;
         console.log('Načítavam skupinu ID:', selectedEx.exerciseId);
         this.fetchAttendance(selectedEx.exerciseId);
@@ -107,7 +95,6 @@ export class Attendance implements OnInit {
     }
   }
   
-  // Prepínač História / Aktuálny
   toggleHistory(): void {
     this.showFullHistory = !this.showFullHistory;
     this.fetchAttendance();
@@ -126,9 +113,6 @@ export class Attendance implements OnInit {
         return;
     }
     
-    // Logika parametra 'current'
-    // showFullHistory = false => current = true
-    // showFullHistory = true  => current = false
     const isCurrentParam = !this.showFullHistory;
 
     try {
@@ -146,15 +130,12 @@ export class Attendance implements OnInit {
       this.isLoading = false;
     }
   }
-
-  // --- Spracovanie dát a výroba stĺpcov ---
   private processData(rows: StudentRowDto[]): void {
     const studentsTemp: Student[] = [];
     const sessionsMap = new Map<number, SessionColumn>(); 
 
     rows.forEach((row, index) => {
       
-      // Vyrobíme ID pre frontend (0, 1, 2...) ak chýba studentId
       const syntheticStudentId = row.studentId !== undefined ? row.studentId : index;
 
       const studentObj: Student = {
@@ -166,11 +147,9 @@ export class Attendance implements OnInit {
 
       if (row.studentAttendances && row.studentAttendances.length > 0) {
         row.studentAttendances.forEach((att, attIndex) => {
-            
-            // Vyrobíme ID pre stĺpec (alebo použijeme existujúce)
+
             const syntheticSessionId = (att as any).exerciseSessionId || (attIndex + 1);
 
-            // A. Vytvorenie hlavičky stĺpca (ak ešte nie je)
             if (!sessionsMap.has(syntheticSessionId)) {
                 
                 let columnLabel = '';
@@ -189,11 +168,10 @@ export class Attendance implements OnInit {
                 });
             }
 
-            // B. Uloženie záznamu do mapy
             const key = this.getMapKey(syntheticStudentId, syntheticSessionId);
             
             const record: AttendanceRecord = {
-              id: att.attendanceId, // ID pre backend update
+              id: att.attendanceId,
               attendanceEnum: att.attendance,
               studentId: syntheticStudentId,
               sessionId: syntheticSessionId
@@ -204,10 +182,8 @@ export class Attendance implements OnInit {
       }
     });
 
-    // Zoradenie študentov
     this.uniqueStudents = studentsTemp.sort((a, b) => (a.fullName || '').localeCompare(b.fullName || ''));
-    
-    // Zoradenie stĺpcov
+
     this.uniqueSessions = Array.from(sessionsMap.values()).sort((a, b) => {
         if (a.date && b.date) {
             return new Date(a.date).getTime() - new Date(b.date).getTime();
@@ -233,7 +209,6 @@ export class Attendance implements OnInit {
     return this.attendanceMap.get(this.getMapKey(studentId, sessionId));
   }
 
-  // --- Kliknutie na bunku ---
   async onCellClick(student: Student, session: SessionColumn): Promise<void> {
     if (this.attendanceOptions.length === 0) return;
 
@@ -242,8 +217,7 @@ export class Attendance implements OnInit {
     this.processingSet.add(key);
 
     const currentRecord = this.attendanceMap.get(key);
-    
-    // Validácia: Musíme mať ID záznamu
+
     if (!currentRecord || !currentRecord.id) {
         console.error("Chýba attendanceId, nemôžem aktualizovať.");
         this.processingSet.delete(key);
@@ -255,12 +229,10 @@ export class Attendance implements OnInit {
     const nextIndex = (currentIndex + 1) % this.attendanceOptions.length;
     const nextStatus = this.attendanceOptions[nextIndex];
 
-    // Optimistický update v UI
     const updatedRecord = { ...currentRecord, attendanceEnum: nextStatus };
     this.attendanceMap.set(key, updatedRecord);
 
     try {
-      // PUT Request s novou hodnotou
       const url = `${this.apiUrl}/student-attendance/${currentRecord.id}`;
       
       const payload: UpdateAttendanceRequest = {
@@ -273,7 +245,6 @@ export class Attendance implements OnInit {
 
     } catch (err) {
       console.error(err);
-      // Rollback pri chybe
       this.attendanceMap.set(key, { ...currentRecord, attendanceEnum: oldStatus });
       this.error = 'Uloženie zlyhalo.';
     } finally {

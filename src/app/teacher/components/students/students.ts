@@ -1,38 +1,42 @@
-import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common'; 
-import { HttpClient } from '@angular/common/http'; 
-import { lastValueFrom } from 'rxjs'; 
+import { HttpClient, HttpParams } from '@angular/common/http'; 
+import { lastValueFrom, Subject, Subscription } from 'rxjs'; 
+import { debounceTime, switchMap, tap, catchError } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms'; 
 import { LongPressDirective } from '../../../shared/long-press/long-press';
 
 interface Student {
-    id: number; 
-    aisId: number;
-    fullName: string;
-    exerciseId?: number | null; 
-    relationshipId?: number | null; 
+  id: number; 
+  relationshipId: number;
+  aisId: number;
+  fullName: string;
+  exerciseId?: number | null; 
 }
 
 interface Exercise {
-    id: number;
-    firstSessionDate: string; // YYYY-MM-DD
-    startTime: string; // HH:MM:SS
-    roomEnum: string;
+  id: number;
+  firstSessionDate: string;
+  startTime: string;
+  roomEnum: string;
 }
 
 interface StudentExerciseResponse {
-    id: number; 
-    student: { id: number };
-    exercise: { id: number };
+  id: number;
+  student: { 
+    id: number;
+    aisId: number;
+    fullName: string;
+  };
+  exercise: { 
+    id: number;
+    firstSessionDate: string;
+    startTime: string;
+    roomEnum: string;
+  };
 }
 
 type NewStudent = Omit<Student, 'id' | 'relationshipId' | 'exerciseId'>;
-
-// Rozhranie DayOption už nie je potrebné, ale nechávame ho pre kompatibilitu ak by sa použilo inde.
-interface DayOption {
-    label: string; 
-    date: string;  
-}
 
 @Component({
   selector: 'app-students',
@@ -41,274 +45,223 @@ interface DayOption {
   templateUrl: './students.html',
   styleUrl: './students.css'
 })
-export class Students implements OnInit, AfterViewChecked { 
-
+export class Students implements OnInit, AfterViewChecked, OnDestroy { 
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
   
   @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
+  
   private shouldFocus: boolean = false; 
-  private isSaving: boolean = false; 
+  public isSaving: boolean = false; 
 
-  private studentsApiUrl = 'http://localhost:8080/api/v1/student'; 
+  private studentsApiUrl = 'http://localhost:8080/api/v1/student';
   private exercisesApiUrl = 'http://localhost:8080/api/v1/exercise'; 
   private studentExerciseApiUrl = 'http://localhost:8080/api/v1/student-exercise';
 
   public students: Student[] = [];
   public exercises: Exercise[] = []; 
   
+  public searchName: string = '';
+  public searchAisId: string = '';
+  
+  public sortField: string = 'id';
+  public sortDirection: 'asc' | 'desc' = 'asc';
+
+  private searchSubject = new Subject<void>();
+  private searchSubscription?: Subscription;
+
   public isLoading: boolean = false;
   public error: string | null = null;
   public message: string | null = null; 
-  
-  // Create Modal
-  isCreateStudentModalOpen: boolean = false;
-  novyStudent: NewStudent = { aisId: 0, fullName: '' };
-  selectedExerciseId: number | null = null; 
 
-  // Edit states
-  editingStudentId: number | null = null;
-  editingField: keyof Student | null = null;
-  editingValue: string | number | null = '';
+  public isCreateStudentModalOpen: boolean = false;
+  public novyStudent: NewStudent = { aisId: 0, fullName: '' };
+  public selectedExerciseId: number | null = null; 
 
-  // Delete states
-  isDeleteConfirmModalOpen: boolean = false;
-  studentToDelete: Student | null = null;
-  deleteConfirmationInput: string = '';
+  public editingStudentId: number | null = null;
+  public editingField: keyof Student | null = null;
+  public editingValue: string | number | null = '';
+
+  public isDeleteConfirmModalOpen: boolean = false;
+  public studentToDelete: Student | null = null;
+  public deleteConfirmationInput: string = '';
   readonly deleteConfirmText: string = 'CONFIRM';
 
-  // Názvy dní v týždni (zachované, aj keď už nie sú primárne používané v getWorkDaysForWeek)
-  private dayNames = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota'];
-  
   ngOnInit(): void {
-    this.loadData();
-  }
-  
-  /**
-   * Pomocná funkcia pre získanie celého objektu cvičenia
-   */
-  getExerciseById(id: number): Exercise | undefined {
-      return this.exercises.find(e => e.id === id);
-  }
+    this.loadExercises();
 
+    this.searchSubscription = this.searchSubject.pipe(
+      debounceTime(300), 
+      tap(() => {
+        this.isLoading = true;
+        this.error = null;
+        this.cdr.markForCheck();
+      }),
+      switchMap(() => {
+        let params = new HttpParams();
 
-  // --- NAČÍTANIE DÁT ---
-  async loadData(): Promise<void> {
-      this.isLoading = true;
-      this.error = null;
-      try {
-          const [exercisesData, studentsData, relationshipsData] = await Promise.all([
-              lastValueFrom(this.http.get<Exercise[]>(this.exercisesApiUrl)),
-              lastValueFrom(this.http.get<Student[]>(`${this.studentsApiUrl}?sort=id,asc`)),
-              lastValueFrom(this.http.get<StudentExerciseResponse[]>(this.studentExerciseApiUrl))
-          ]);
-          
-          this.exercises = (exercisesData || []).map(e => {
-            // Predspracovanie dátumu pre konzistenciu (ak príde s časom)
-            if (e.firstSessionDate && e.firstSessionDate.includes('T')) {
-                e.firstSessionDate = e.firstSessionDate.split('T')[0];
-            }
-            return e;
-          });
-          this.exercises.sort((a, b) => a.id - b.id);
+        if (this.searchName.trim()) {
+            params = params.set('fullName', this.searchName.trim());
+        }
+        
+        if (this.searchAisId.trim()) {
+            params = params.set('aisId', this.searchAisId.trim());
+        }
 
-          const rawStudents = studentsData || [];
-          const relationships = relationshipsData || [];
+        let sortParam = 'id,asc';
+        if (this.sortField === 'fullName') {
+            sortParam = `student.fullName,${this.sortDirection}`;
+        } else if (this.sortField === 'aisId') {
+            sortParam = `student.aisId,${this.sortDirection}`;
+        } else if (this.sortField === 'exercise') {
+            sortParam = `exercise.firstSessionDate,${this.sortDirection}`; 
+        } else {
+             sortParam = `id,${this.sortDirection}`;
+        }
+        params = params.set('sort', sortParam);
 
-          this.students = rawStudents.map(student => {
-              const rel = relationships.find(r => r.student.id === student.id);
-              return {
-                  ...student,
-                  exerciseId: rel ? rel.exercise.id : null,
-                  relationshipId: rel ? rel.id : null 
-              };
-          });
-
-          this.students.sort((a, b) => a.id - b.id);
-
-      } catch (err) {
-          console.error(err);
-          this.error = "Nepodarilo sa načítať dáta.";
-      } finally {
-          this.isLoading = false;
-      }
-  }
-
-  // --- ZMENA CVIČENIA (PUT) ---
-  async onExerciseChange(student: Student, newExerciseId: any): Promise<void> {
-      // newExerciseId prichádza ako string z HTML selectu, konvertujeme na číslo
-      const newId = Number(newExerciseId); 
-
-      if (student.exerciseId === newId) return;
-      
-      this.isLoading = true;
-      this.message = null; 
-      this.error = null;
-
-      const oldExerciseId = student.exerciseId;
-      const relationshipId = student.relationshipId;
-      
-      if (relationshipId === null || relationshipId === undefined) {
-          this.isLoading = false;
-          this.error = `Chyba: Študent ${student.fullName} nemá priradenú žiadnu väzbu k cvičeniu.`;
-          await this.loadData();
-          return;
-      }
-      
-      // Payload pre PUT je ID študenta a NOVÉ ID cvičenia
-      const payload = {
-          studentId: student.id,
-          exerciseId: newId
-      };
-
-      try {
-          // Optimistický update v UI
-          student.exerciseId = newId;
-
-          const putUrl = `${this.studentExerciseApiUrl}/${relationshipId}`;
-          await lastValueFrom(this.http.put(putUrl, payload));
-          
-          this.message = `Študent ${student.fullName} bol presunutý.`;
-
-      } catch (err: any) {
-          console.error('Chyba pri zmene cvičenia:', err);
-          
-          // Rollback a zobrazenie chyby
-          student.exerciseId = oldExerciseId; 
-          this.error = `Chyba pri zmene cvičenia pre ${student.fullName}.`;
-          
-          await this.loadData();
-      } finally {
-          this.isLoading = false;
-      }
-  }
-  
-  // --- Ostatné funkcie (CREATE, DELETE, EDIT) zostávajú rovnaké ---
-
-  onCreateStudentClick(): void {
-    this.novyStudent = { aisId: 0, fullName: '' };
-    this.selectedExerciseId = null; 
-    if (this.exercises.length > 0) this.selectedExerciseId = this.exercises[0].id;
-    this.isCreateStudentModalOpen = true;
-    this.error = null; this.message = null;
-  }
-  
-  onCloseStudentModal(): void { this.isCreateStudentModalOpen = false; }
-  
-  async onSubmitNovyStudent(): Promise<void> {
-    if (this.selectedExerciseId === null) {
-        this.error = "Vyberte cvičenie."; return;
-    }
-    this.isLoading = true;
-    
-    const dataToSend = { 
-        exerciseId: Number(this.selectedExerciseId), 
-        students: [{ aisId: Number(this.novyStudent.aisId), fullName: this.novyStudent.fullName.trim() }] 
-    };
-
-    try {
-      await lastValueFrom(this.http.post<any>(this.studentsApiUrl, dataToSend));
-      this.message = `Študent pridaný.`;
-      this.onCloseStudentModal();
-      await this.loadData(); 
-    } catch (err: any) { 
-       if (err.status === 409) {
-           this.error = "Študent s týmto AIS ID už existuje.";
-       } else {
-           this.error = "Chyba pri vytváraní študenta.";
-       }
-    } finally {
+        return this.http.get<StudentExerciseResponse[]>(this.studentExerciseApiUrl, { params }).pipe(
+          catchError(() => {
+            this.error = "Nepodarilo sa načítať dáta.";
+            return [];
+          })
+        );
+      })
+    ).subscribe(data => {
+      this.processResponseData(data);
       this.isLoading = false;
+      this.cdr.detectChanges();
+    });
+
+    this.triggerSearch();
+  }
+
+  ngOnDestroy(): void {
+    this.searchSubscription?.unsubscribe();
+    this.searchSubject.complete();
+  }
+
+  onSort(field: string): void {
+    if (this.sortField === field) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortDirection = 'asc';
     }
+    this.triggerSearch(); 
   }
 
-  onDeleteStudentClick(student: Student): void {
-      this.studentToDelete = student;
-      this.deleteConfirmationInput = '';
-      this.isDeleteConfirmModalOpen = true;
-      this.error = null; this.message = null;
+  triggerSearch(): void {
+    this.searchSubject.next();
   }
-  onCloseDeleteConfirmModal(): void {
-      this.isDeleteConfirmModalOpen = false;
-      this.studentToDelete = null;
+
+  onSearchInputChange(): void {
+    this.triggerSearch();
   }
+
+  private processResponseData(data: StudentExerciseResponse[]): void {
+    if (!data) {
+        this.students = [];
+        return;
+    }
+
+    this.students = data.map(item => {
+      return {
+        id: item.student.id,
+        relationshipId: item.id,
+        aisId: item.student.aisId,
+        fullName: item.student.fullName,
+        exerciseId: item.exercise ? item.exercise.id : null
+      };
+    });
+  }
+
+  async loadExercises(): Promise<void> {
+    try {
+      const data = await lastValueFrom(this.http.get<Exercise[]>(this.exercisesApiUrl));
+      this.exercises = (data || []).map(e => {
+        if (e.firstSessionDate?.includes('T')) e.firstSessionDate = e.firstSessionDate.split('T')[0];
+        return e;
+      }).sort((a, b) => a.id - b.id);
+    } catch (err) { this.error = "Chyba načítania cvičení."; }
+  }
+
+  async onExerciseChange(student: Student, newExerciseId: any): Promise<void> {
+    const newId = Number(newExerciseId); 
+    if (student.exerciseId === newId) return;
+    this.isLoading = true;
+    try {
+        await lastValueFrom(this.http.put(`${this.studentExerciseApiUrl}/${student.relationshipId}`, {
+            studentId: student.id, 
+            exerciseId: newId
+        }));
+        student.exerciseId = newId;
+        this.message = `Študent presunutý.`;
+    } catch { 
+        this.error = `Zmena zlyhala.`; 
+        this.triggerSearch();
+    } 
+    finally { this.isLoading = false; }
+  }
+
+  async onSubmitNovyStudent(): Promise<void> {
+    if (this.selectedExerciseId === null) return;
+    this.isLoading = true;
+    try {
+      await lastValueFrom(this.http.post<any>(this.studentsApiUrl, { 
+          exerciseId: Number(this.selectedExerciseId), 
+          students: [{ aisId: Number(this.novyStudent.aisId), fullName: this.novyStudent.fullName.trim() }] 
+      }));
+      this.onCloseStudentModal();
+      this.triggerSearch(); 
+    } catch (err: any) { this.error = "Chyba pri vytváraní."; } 
+    finally { this.isLoading = false; }
+  }
+
   async onConfirmDelete(): Promise<void> {
-      if (!this.studentToDelete || this.deleteConfirmationInput.trim() !== this.deleteConfirmText) return;
-      const idToDelete = this.studentToDelete.id;
-      this.isLoading = true;
+    if (!this.studentToDelete || this.deleteConfirmationInput.trim() !== this.deleteConfirmText) return;
+    this.isLoading = true;
+    try {
+      await lastValueFrom(this.http.delete(`${this.studentsApiUrl}/${this.studentToDelete.id}`));
       this.onCloseDeleteConfirmModal();
-      try {
-        await lastValueFrom(this.http.delete(`${this.studentsApiUrl}/${idToDelete}`));
-        this.students = this.students.filter(s => s.id !== idToDelete);
-        this.message = `Študent vymazaný.`;
-      } catch (err: any) {
-        this.error = `Chyba pri mazaní.`;
-      } finally {
-        this.isLoading = false;
-      }
+      this.triggerSearch();
+    } catch { this.error = `Chyba pri mazaní.`; } 
+    finally { this.isLoading = false; }
   }
 
-  isEditing(id: number, field: string): boolean {
-    return this.editingStudentId === id && this.editingField === field;
-  }
+  onCreateStudentClick(): void { this.novyStudent = { aisId: 0, fullName: '' }; this.selectedExerciseId = this.exercises[0]?.id || null; this.isCreateStudentModalOpen = true; }
+  onCloseStudentModal(): void { this.isCreateStudentModalOpen = false; }
+  onDeleteStudentClick(student: Student): void { this.studentToDelete = student; this.deleteConfirmationInput = ''; this.isDeleteConfirmModalOpen = true; }
+  onCloseDeleteConfirmModal(): void { this.isDeleteConfirmModalOpen = false; }
+  onBackdropClick(event: MouseEvent): void { if (event.target === event.currentTarget) { this.onCloseStudentModal(); this.onCloseDeleteConfirmModal(); } }
+
+  isEditing(id: number, field: string): boolean { return this.editingStudentId === id && this.editingField === field; }
   onCellEdit(student: Student, field: keyof Student): void {
     if (this.isSaving) return;
-    if (field === 'exerciseId' || field === 'relationshipId') return;
-
-    this.editingStudentId = student.id;
-    this.editingField = field;
+    this.editingStudentId = student.id; 
+    this.editingField = field; 
     this.editingValue = student[field] as string | number;
     this.shouldFocus = true; 
     this.cdr.detectChanges(); 
   }
+  
   async onCellSave(student: Student): Promise<void> {
-    this.shouldFocus = false;
-    if (this.isSaving || this.editingStudentId === null || !this.editingField) return;
-
-    const idToSave = this.editingStudentId;
-    const fieldToSave = this.editingField as 'aisId' | 'fullName';
-    const rawValue = this.editingValue;
-
-    if (String(student[fieldToSave]) === String(rawValue).trim()) {
-      this.editingStudentId = null; this.editingField = null; return;
-    }
-
-    let newValue: any = String(rawValue).trim();
-    if (fieldToSave === 'aisId') newValue = parseFloat(newValue) || 0;
+    if (this.isSaving || this.editingStudentId === null) return;
+    const field = this.editingField as 'aisId' | 'fullName';
+    if (String(student[field]) === String(this.editingValue)) { this.editingStudentId = null; return; }
     
-    const updatePayload = {
-        aisId: student.aisId,
-        fullName: student.fullName
-    };
-    
-    if (fieldToSave === 'aisId') updatePayload.aisId = newValue;
-    if (fieldToSave === 'fullName') updatePayload.fullName = newValue;
-    
-    this.isSaving = true; this.isLoading = true;
+    this.isSaving = true;
     try {
-      await lastValueFrom(this.http.put(`${this.studentsApiUrl}/${idToSave}`, updatePayload));
+      const payload = { aisId: student.aisId, fullName: student.fullName };
+      if (field === 'aisId') payload.aisId = Number(this.editingValue); else payload.fullName = String(this.editingValue);
       
-      if (fieldToSave === 'aisId') student.aisId = newValue;
-      if (fieldToSave === 'fullName') student.fullName = newValue;
-      this.message = `Údaje aktualizované.`;
-    } catch (err: any) {
-      this.error = `Aktualizácia zlyhala.`;
-      await this.loadData();
-    } finally {
-      this.editingStudentId = null; this.editingField = null;
-      this.isLoading = false; this.isSaving = false;
-    }
+      await lastValueFrom(this.http.put(`${this.studentsApiUrl}/${student.id}`, payload));
+      (student as any)[field] = payload[field];
+    } catch { 
+        this.triggerSearch();
+    } 
+    finally { this.editingStudentId = null; this.isSaving = false; }
   }
 
-  ngAfterViewChecked(): void {
-      if (this.shouldFocus && this.editInputsRef.first) {
-          this.shouldFocus = false; 
-          setTimeout(() => {
-              if (this.editInputsRef.first) this.editInputsRef.first.nativeElement.focus();
-          }, 10);
-      }
-  }
-  onBackdropClick(event: MouseEvent): void {
-    if (event.target === event.currentTarget) { this.onCloseStudentModal(); this.onCloseDeleteConfirmModal(); }
-  }
+  ngAfterViewChecked(): void { if (this.shouldFocus && this.editInputsRef.first) { this.shouldFocus = false; setTimeout(() => this.editInputsRef.first?.nativeElement.focus(), 10); } }
 }

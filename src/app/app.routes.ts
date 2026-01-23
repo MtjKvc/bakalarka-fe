@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-// 1. KROK: Importuj svojho strážnika (guarda)
 import { authGuard } from './auth/auth-guard'; 
 
 export const routes: Routes = [
@@ -141,11 +140,10 @@ export const routes: Routes = [
     ],
   },
   {
-    // 2. KROK: Uprav túto cestu
     path: 'teacher',
     loadComponent: () =>
       import('./teacher/teacher').then(m => m.Teacher),
-    canActivate: [authGuard] // TOTO JE OCHRANA
+    canActivate: [authGuard]
   },
   {
     path: 'login',

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms'; 
 import { LongPressDirective } from '../../../shared/long-press/long-press'; 
@@ -10,6 +10,7 @@ interface Assignment { id: number; block: BlockSimple | null; name: string; maxP
 interface NewAssignmentForm { blockId: number | null; name: string; maxPoints: number; }
 interface UpdateAssignmentPayload { blockId: number; name: string; maxPoints: any; }
 type EditableField = 'name' | 'maxPoints';
+type SortDirection = 'asc' | 'desc';
 
 @Component({
   selector: 'app-assignments',
@@ -36,6 +37,12 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
   public error: string | null = null;
   public message: string | null = null;
 
+  public filterBlockId: number | null = null;
+  public filterAssignmentId: number | null = null;
+
+  public sortField: string = 'name';
+  public sortDirection: SortDirection = 'asc';
+
   isCreateModalOpen: boolean = false;
   newAssignment: NewAssignmentForm = { blockId: null, name: '', maxPoints: 0 };
 
@@ -54,13 +61,24 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
 
   async loadData(): Promise<void> {
     this.isLoading = true;
-    this.error = null; // TOTO MAZALO CHYBU
+    this.error = null;
     try {
         const blocksData = await lastValueFrom(this.http.get<BlockSimple[]>(this.blocksApiUrl));
         this.availableBlocks = blocksData || [];
-        const assignmentsData = await lastValueFrom(this.http.get<Assignment[]>(this.assignmentsApiUrl));
+
+        let params = new HttpParams();
+        if (this.filterBlockId) {
+            params = params.set('blockId', this.filterBlockId);
+        }
+        if (this.filterAssignmentId) {
+            params = params.set('id', this.filterAssignmentId);
+        }
+
+        const assignmentsData = await lastValueFrom(this.http.get<Assignment[]>(this.assignmentsApiUrl, { params }));
         this.assignments = assignmentsData || [];
-        this.assignments.sort((a, b) => a.id - b.id);
+        
+        this.sortData();
+
     } catch (err: any) {
         console.error(err);
         this.error = 'Nepodarilo sa načítať dáta.';
@@ -69,12 +87,55 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  // --- CREATE & DELETE (Bez zmien) ---
+  onSort(field: string): void {
+    if (this.sortField === field) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortDirection = 'asc';
+    }
+    this.sortData();
+  }
+
+  sortData(): void {
+    if (!this.assignments) return;
+
+    this.assignments.sort((a, b) => {
+      let valA: any;
+      let valB: any;
+
+      if (this.sortField === 'block') {
+        valA = a.block?.name?.toLowerCase() || '';
+        valB = b.block?.name?.toLowerCase() || '';
+      } else {
+        valA = a[this.sortField as keyof Assignment];
+        valB = b[this.sortField as keyof Assignment];
+        
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
+      }
+
+      if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  onResetFilters(): void {
+    this.filterBlockId = null;
+    this.filterAssignmentId = null;
+    this.sortField = 'name';
+    this.sortDirection = 'asc';
+    this.loadData();
+  }
+
   onCreateAssignmentClick(): void {
     this.newAssignment = { blockId: null, name: '', maxPoints: 0 };
     this.error = null; this.message = null; this.isCreateModalOpen = true;
   }
+  
   onCloseModal(): void { this.isCreateModalOpen = false; }
+  
   async onSubmitNewAssignment(): Promise<void> {
     if (!this.newAssignment.blockId) return;
     this.isLoading = true; this.error = null; this.message = null;
@@ -87,8 +148,10 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
     } catch (err: any) { this.error = "Chyba: Nepodarilo sa vytvoriť zadanie."; } 
     finally { this.isLoading = false; }
   }
+
   onDeleteAssignmentClick(assign: Assignment): void { this.assignToDelete = assign; this.deleteConfirmationInput = ''; this.error = null; this.message = null; this.isDeleteConfirmModalOpen = true; }
   onCloseDeleteConfirmModal(): void { this.isDeleteConfirmModalOpen = false; this.assignToDelete = null; this.deleteConfirmationInput = ''; this.error = null; }
+  
   async onConfirmDelete(): Promise<void> {
       if (!this.assignToDelete || this.deleteConfirmationInput.trim() !== this.deleteConfirmText) return;
       const id = this.assignToDelete.id; this.isLoading = true; this.error = null; this.onCloseDeleteConfirmModal();
@@ -100,7 +163,6 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
       finally { this.isLoading = false; }
   }
 
-  // --- BLOCK CHANGE ---
   async onBlockChange(assign: Assignment, newBlockId: number): Promise<void> {
       if (assign.block?.id === newBlockId) return;
       this.isLoading = true; this.error = null; this.message = null;
@@ -113,6 +175,7 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
              const index = this.assignments.findIndex(a => a.id === assign.id);
              if (index !== -1) this.assignments[index] = { ...this.assignments[index], ...updatedAssign };
              this.message = `Blok zmenený.`;
+             this.sortData();
           } else { throw new Error('Mismatch'); }
       } catch (err: any) { this.error = "Chyba: Nepodarilo sa zmeniť blok."; await this.loadData(); } 
       finally { this.isLoading = false; }
@@ -138,7 +201,6 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
       const field = this.editingField;
       const val = this.editingValue;
       
-      // Check change
       if (String(assign[field]) == String(val).trim()) {
           this.editingId = null; this.editingField = null; return;
       }
@@ -160,7 +222,6 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
       this.isSaving = true;
       this.isLoading = true;
       
-      // Pomocná premenná na chybovú správu
       let pendingErrorMessage: string | null = null;
 
       try {
@@ -179,25 +240,21 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
               const index = this.assignments.findIndex(a => a.id === assign.id);
               if (index !== -1) this.assignments[index] = { ...this.assignments[index], ...updatedAssign };
               this.message = `Zadanie aktualizované.`;
+              this.sortData();
           } else {
-              // Nastavíme správu, ale do 'this.error' ju dáme až po loadData
               pendingErrorMessage = "Chyba: Aktualizácia zlyhala (hodnota nebola povolená).";
           }
 
       } catch (err: any) {
           pendingErrorMessage = "Chyba: Aktualizácia zlyhala (chybné údaje).";
       } finally {
-          // 1. Ukončiť edit
           this.editingId = null; 
           this.editingField = null;
           
-          // 2. Obnoviť dáta (toto zmaže this.error)
-          await this.loadData();
-
-          // 3. Ak nastala chyba, obnovíme ju TERAZ, aby bola viditeľná
           if (pendingErrorMessage) {
+              await this.loadData();
               this.error = pendingErrorMessage;
-              this.message = null; // Prekryť success message ak tam bola
+              this.message = null;
           }
 
           this.isLoading = false;

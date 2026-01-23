@@ -1,152 +1,204 @@
 <div class="p-4 rounded-xl bg-white border border-gray-100 shadow-md font-sans h-full flex flex-col relative">
-  
-  <div class="mb-6 border-b border-gray-200 pb-4">
+
+  <div class="mb-4 border-b border-gray-200 pb-4">
     <div class="flex justify-between items-center mb-4">
-        <h3 class="text-3xl font-extrabold text-gray-800 flex items-center">
-            <svg class="w-8 h-8 mr-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-            Hodnotenie
-        </h3>
+      <h3 class="text-3xl font-extrabold text-gray-800 flex items-center">
+        <svg class="w-8 h-8 mr-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+          </path>
+        </svg>
+        {{ isSemesterMode ? 'Celosemestrálne hodnotenie' : 'Hodnotenie bloku' }}
+      </h3>
     </div>
 
-    <div class="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
-        <button *ngFor="let block of contextService.blocks()"
-                (click)="contextService.selectBlock(block)"
-                [class.bg-emerald-600]="contextService.selectedBlock()?.id === block.id"
-                [class.text-white]="contextService.selectedBlock()?.id === block.id"
-                [class.bg-gray-100]="contextService.selectedBlock()?.id !== block.id"
-                [class.text-gray-700]="contextService.selectedBlock()?.id !== block.id"
-                class="px-4 py-2 rounded-lg font-medium text-sm transition-colors whitespace-nowrap border border-transparent hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 shadow-sm">
-            {{ block.name }}
-        </button>
+    <div class="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide mb-4">
+      <button (click)="selectSemester()" [class.bg-emerald-600]="isSemesterMode" [class.text-white]="isSemesterMode"
+        [class.bg-gray-100]="!isSemesterMode" [class.text-gray-700]="!isSemesterMode"
+        class="px-4 py-2 rounded-lg font-bold text-sm transition-all border border-transparent hover:border-emerald-300 shadow-sm hover:shadow-md">
+        Semester (Spolu)
+      </button>
+
+      <div class="w-px h-8 bg-gray-200 mx-1"></div>
+
+      <button *ngFor="let block of contextService.blocks()" (click)="contextService.selectBlock(block)"
+        [class.bg-emerald-600]="!isSemesterMode && contextService.selectedBlock()?.id === block.id"
+        [class.text-white]="!isSemesterMode && contextService.selectedBlock()?.id === block.id"
+        [class.bg-gray-100]="isSemesterMode || contextService.selectedBlock()?.id !== block.id"
+        [class.text-gray-700]="isSemesterMode || contextService.selectedBlock()?.id !== block.id"
+        class="px-4 py-2 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 shadow-sm">
+        {{ block.name }}
+      </button>
+    </div>
+
+    <div class="flex items-center w-full max-w-md relative">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+      
+      <input 
+        type="text" 
+        [ngModel]="studentSearchQuery" 
+        (ngModelChange)="onSearchInput($event)"
+        placeholder="Hľadať študenta podľa mena..." 
+        class="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors"
+      >
+      
+      <button *ngIf="studentSearchQuery" (click)="clearFilter()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
   </div>
 
   <div *ngIf="isLoading" class="flex justify-center items-center py-10">
-      <svg class="animate-spin h-8 w-8 text-emerald-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
-      <span class="text-emerald-600 font-medium">Načítavam údaje...</span>
+    <svg class="animate-spin h-8 w-8 text-emerald-600 mr-3" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+      </path>
+    </svg>
+    <span class="text-emerald-600 font-medium font-bold animate-pulse">Načítavam údaje...</span>
   </div>
 
-  <div *ngIf="error" class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold mb-4 shadow-sm text-sm whitespace-pre-wrap flex justify-between items-center">
-      <span>{{ error }}</span>
-      <button (click)="error = null" class="ml-2 font-bold hover:text-red-900">&times;</button>
+  <div *ngIf="error" class="p-3 bg-red-100 text-red-700 rounded-lg mb-4 flex justify-between items-center">
+    <span>{{ error }}</span>
+    <button (click)="error = null" class="font-bold">&times;</button>
   </div>
 
-  <div *ngIf="message" class="p-3 bg-emerald-50 border border-emerald-400 text-emerald-700 rounded-lg font-medium mb-4 shadow-sm text-sm whitespace-pre-wrap flex items-start animate-fade-in">
-    <svg class="w-5 h-5 mr-2 inline-block flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+  <div *ngIf="message"
+    class="p-3 bg-emerald-50 text-emerald-700 rounded-lg mb-4 flex items-center animate-fade-in border border-emerald-200">
+    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
     <span>{{ message }}</span>
   </div>
 
-  <div class="overflow-auto flex-grow bg-white rounded-lg shadow-inner border border-gray-200 relative select-none" *ngIf="!isLoading">
-    
-    <table class="min-w-full divide-y divide-gray-200 border-separate" style="border-spacing: 0;">
-      
+  <div class="overflow-auto flex-grow bg-white rounded-lg shadow-inner border border-gray-200 relative select-none"
+    *ngIf="!isLoading">
+    <table class="min-w-full border-separate" style="border-spacing: 0;">
       <thead class="bg-gray-50 sticky top-0 z-20 shadow-sm">
         <tr>
-          <th class="sticky left-0 z-30 bg-gray-100 px-4 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider border-b border-r border-gray-200 min-w-[200px]">
-            Študent
-          </th>
-          <th *ngFor="let assign of assignments" class="px-4 py-3 text-center text-xs font-extrabold text-gray-700 uppercase tracking-wider border-b border-gray-200 min-w-[120px]">
+          <th
+            class="sticky left-0 z-30 bg-gray-100 px-4 py-3 text-left text-xs font-extrabold text-gray-700 uppercase border-b border-r border-gray-200 min-w-[200px]">
+            Študent</th>
+
+          <th *ngFor="let assign of assignments"
+            class="px-4 py-3 text-center text-xs font-extrabold text-gray-700 uppercase border-b border-gray-200 min-w-[120px]">
             <div class="flex flex-col items-center">
-                <span class="text-emerald-700 font-bold block mb-1 truncate max-w-[110px]" [title]="assign.name">{{ assign.name }}</span>
-                <span class="text-[10px] text-gray-400 font-normal bg-gray-200 px-1.5 py-0.5 rounded">Max: {{ assign.maxPoints }}</span>
+              <span class="text-emerald-700 font-bold block mb-1 truncate max-w-[110px]" [title]="assign.name">{{
+                assign.name }}</span>
+
+              <span *ngIf="!isSemesterMode"
+                class="text-[10px] text-gray-400 font-normal bg-gray-200 px-1.5 py-0.5 rounded">Max: {{ assign.maxPoints
+                }}</span>
             </div>
           </th>
+
+          <th
+            class="sticky right-0 z-30 px-4 py-3 text-center text-xs font-extrabold text-gray-800 uppercase border-b border-l border-gray-300 bg-gray-200 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]">
+            Spolu</th>
         </tr>
       </thead>
 
       <tbody class="bg-white divide-y divide-gray-100">
         <tr *ngFor="let student of studentRows" class="hover:bg-gray-50 transition-colors">
-          
-          <td class="sticky left-0 z-10 bg-white px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-800 border-r border-gray-200 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
-            {{ student.studentFullName }}
+          <td
+            class="sticky left-0 z-10 bg-white px-4 py-3 text-sm font-medium text-gray-800 border-r border-gray-200 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] whitespace-nowrap">
+            {{ student.studentFullName }}</td>
+
+          <td *ngFor="let assign of assignments" class="px-1 py-1 text-center border-r border-gray-100 h-12 relative">
+            <ng-container *ngIf="getAssignmentRecord(student, assign.id) as record; else emptyCell">
+              <div class="w-full h-full flex items-center justify-center transition-colors"
+                [class.bg-emerald-50]="isEditing(record)" (click)="onCellClick(record)">
+
+                <ng-container *ngIf="isEditing(record); else viewMode">
+                  <input #pointInput type="number" [(ngModel)]="editingValue" (blur)="onCellSave(record)"
+                    (keydown.enter)="onCellSave(record)"
+                    class="w-full h-full text-center font-bold text-emerald-700 bg-white border-2 border-emerald-500 rounded focus:outline-none p-0 m-0">
+                </ng-container>
+
+                <ng-template #viewMode>
+                  <div class="flex items-center justify-center h-full w-full rounded relative group"
+                    [class.cursor-pointer]="!isSemesterMode" [class.hover:bg-gray-100]="!isSemesterMode">
+                    <span class="font-bold text-emerald-700">{{ record.earnedPoints }}</span>
+
+                    <div *ngIf="record.note !== null && record.note !== undefined && !isSemesterMode"
+                      class="absolute right-1 top-1/2 -translate-y-1/2 text-emerald-400 hover:text-emerald-500 transition-colors"
+                      [title]="record.note" (click)="openNoteModal(record, $event)">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                        <path fill-rule="evenodd"
+                          d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                          clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                </ng-template>
+              </div>
+            </ng-container>
+            <ng-template #emptyCell>
+              <div class="h-full w-full flex items-center justify-center text-gray-300 cursor-not-allowed"
+                title="Žiadny záznam">-</div>
+            </ng-template>
           </td>
 
-          <td *ngFor="let assign of assignments" 
-              class="px-1 py-1 text-center border-r border-gray-100 text-sm relative h-12">
-
-            <ng-container *ngIf="getAssignmentRecord(student, assign.id) as record; else emptyCell">
-                
-                <div class="w-full h-full flex items-center justify-center"
-                     [class.bg-emerald-50]="isEditing(record)"
-                     (click)="!isEditing(record) && onCellClick(record)">
-
-                    <ng-container *ngIf="isEditing(record); else viewMode">
-                        <input #pointInput
-                               type="number"
-                               [(ngModel)]="editingValue"
-                               (blur)="onCellSave(record)"
-                               (keydown.enter)="onCellSave(record)"
-                               class="w-full h-full text-center font-bold text-emerald-700 bg-white border-2 border-emerald-500 rounded focus:outline-none p-0 m-0"
-                               step="0.1"
-                               min="0">
-                    </ng-container>
-
-                    <ng-template #viewMode>
-                        <div class="flex items-center justify-center h-full w-full cursor-pointer hover:bg-gray-100 rounded relative group">
-                            <span class="font-bold text-gray-700">{{ record.earnedPoints }}</span>
-                            
-                            <div *ngIf="record.note" 
-                                 class="absolute right-1 top-1/2 -translate-y-1/2 text-amber-400 hover:text-amber-500 transition-colors"
-                                 [title]="record.note"
-                                 (dblclick)="openNoteModal(record, $event)">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                  <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </div>
-                    </ng-template>
-
-                </div>
-            </ng-container>
-
-            <ng-template #emptyCell>
-                <div class="h-full w-full flex items-center justify-center text-gray-300 cursor-not-allowed" title="Žiadny záznam">-</div>
-            </ng-template>
-
+          <td
+            class="sticky right-0 z-10 px-4 py-3 text-center font-black text-emerald-900 bg-emerald-50 border-l border-gray-300 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]">
+            {{ calculateTotalPoints(student) }}
           </td>
         </tr>
-        
-        <tr *ngIf="studentRows.length === 0">
-            <td [attr.colspan]="assignments.length + 1" class="text-center py-12 text-gray-500">
-                <p>Žiadni študenti na zobrazenie pre tento blok a cvičenie.</p>
-            </td>
+        <tr *ngIf="studentRows.length === 0 && !isLoading">
+          <td [attr.colspan]="assignments.length + 2" class="text-center py-12 text-gray-500">
+            <div class="flex flex-col items-center">
+              <svg class="w-12 h-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              <p class="font-medium">Nenašli sa žiadne výsledky{{ studentSearchQuery ? ' pre "' + studentSearchQuery + '"' : '' }}.</p>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <div *ngIf="isNoteModalOpen" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm" (click)="closeNoteModal()">
-      <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-auto border-t-8 border-amber-400 animate-in fade-in zoom-in duration-200" (click)="$event.stopPropagation()">
-          <div class="p-6">
-              <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-amber-500 mr-2">
-                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 01-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
-                  </svg>
-                  Poznámka k hodnoteniu
-              </h3>
-              
-              <textarea 
-                  [(ngModel)]="noteModalText"
-                  class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none text-gray-700"
-                  placeholder="Napíšte poznámku pre študenta..."></textarea>
-
-              <div class="flex justify-end space-x-3 mt-6">
-                  <button (click)="closeNoteModal()" 
-                          class="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                      Zrušiť
-                  </button>
-                  <button (click)="saveNoteFromModal()" 
-                          [disabled]="isSaving"
-                          class="px-4 py-2 text-sm font-semibold text-white bg-amber-500 rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50 flex items-center">
-                      <svg *ngIf="isSaving" class="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24"></svg>
-                      Uložiť poznámku
-                  </button>
-              </div>
-          </div>
+  <div *ngIf="isNoteModalOpen && !isSemesterMode"
+    class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in"
+    (click)="closeNoteModal()">
+    <div
+      class="bg-white rounded-2xl shadow-xl w-full max-w-md border-t-8 border-emerald-400 animate-in zoom-in duration-200"
+      (click)="$event.stopPropagation()">
+      <div class="p-6">
+        <h3 class="text-xl font-bold mb-4 flex items-center text-gray-800">
+          <svg class="w-6 h-6 text-emerald-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd"
+              d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 01-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
+              clip-rule="evenodd" />
+          </svg>
+          Poznámka k hodnoteniu
+        </h3>
+        <textarea [(ngModel)]="noteModalText"
+          class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none text-gray-700"
+          placeholder="Napíšte poznámku..."></textarea>
+        <div class="flex justify-end space-x-3 mt-6">
+          <button (click)="closeNoteModal()"
+            class="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">Zrušiť</button>
+          <button (click)="saveNoteFromModal()" [disabled]="isSaving"
+            class="px-4 py-2 text-sm font-semibold text-white bg-emerald-500 rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50 flex items-center">
+            <svg *ngIf="isSaving" class="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+            Uložiť poznámku
+          </button>
+        </div>
       </div>
+    </div>
   </div>
 
 </div>

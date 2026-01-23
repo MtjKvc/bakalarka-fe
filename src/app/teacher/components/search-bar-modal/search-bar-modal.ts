@@ -65,22 +65,17 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
   private cdr = inject(ChangeDetectorRef);
   private apiUrl = 'http://localhost:8080/api/v1';
 
-  // INPUT / OUTPUT
   student = input.required<StudentSearchResult>();
   close = output<void>();
 
-  // DÁTA - Grading
   gradingAssignments: AssignmentHeader[] = [];
   gradingRow: StudentGradingRow | null = null;
-  
-  // DÁTA - Attendance
+
   attendanceSessions: SessionColumn[] = [];
   attendanceMap = new Map<number, AttendanceMapValue>(); 
 
-  // Cyklus stavov pre klikanie (Dynamicky načítané)
   attendanceOptions: string[] = [];
 
-  // Preklady stavov do slovenčiny
   private translations: Record<string, string> = {
     'PRESENT': 'Prítomný',
     'ABSENT': 'Neprítomný',
@@ -89,25 +84,20 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     'SUBSTITUTED': 'Nahradené'
   };
 
-  // UI STATE
+
   isLoading = false;
   isSaving = false;
   
-  // UPOZORNENIA
   message: string | null = null;
   error: string | null = null;
-  
-  // EDITÁCIA - Grading
+
   @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
   editingAssignmentId: number | null = null;
   editingValue: number | string = '';      
   shouldFocus: boolean = false;
 
   ngOnInit(): void {
-    // 1. Načítame možnosti dochádzky (Enumy)
     this.loadAttendanceOptions();
-
-    // 2. Načítame bloky a následne dáta
     if (this.contextService.blocks().length === 0) {
         this.contextService.loadBlocks().subscribe(() => this.loadData());
     } else {
@@ -115,16 +105,13 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  // Načítanie enumov pre dochádzku z backendu
   async loadAttendanceOptions() {
     try {
-        // Správny endpoint pre enumy
         this.attendanceOptions = await lastValueFrom(
             this.http.get<string[]>(`${this.apiUrl}/enum/attendance`)
         );
     } catch (e) {
         console.error('Nepodarilo sa načítať statusy dochádzky.', e);
-        // Žiaden fallback - pole ostane prázdne
     }
   }
 
@@ -139,14 +126,12 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
 
     const studentId = this.student().id;
     const block = this.contextService.selectedBlock();     
-    
-    // 1. GRADING
+
     if (block && block.id) {
       try {
         this.gradingAssignments = await lastValueFrom(
           this.http.get<AssignmentHeader[]>(`${this.apiUrl}/assignment?blockId=${block.id}`)
         ) || [];
-        // Veríme poradiu z backendu
 
         const gradingData = await lastValueFrom(
           this.http.get<StudentGradingRow[]>(`${this.apiUrl}/student-assignment/grading?blockId=${block.id}&studentId=${studentId}`)
@@ -164,7 +149,6 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
       }
     }
 
-    // 2. ATTENDANCE
     try {
       const attendanceData = await lastValueFrom(
         this.http.get<StudentAttendanceRow[]>(`${this.apiUrl}/student-attendance/attendance?studentId=${studentId}`)
@@ -190,8 +174,6 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
 
   private mapAssignments() {
     if (this.gradingRow?.studentAssignments) {
-        // Veríme poradiu z backendu, aby sedelo s gradingAssignments[i]
-        
         this.gradingRow.studentAssignments.forEach((sa, i) => {
            if (this.gradingAssignments[i] && !sa.assignmentId) {
                sa.assignmentId = this.gradingAssignments[i].id;
@@ -219,10 +201,6 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     }
     this.attendanceSessions = Array.from(sessionsMap.values()).sort((a, b) => a.id - b.id);
   }
-
-  // ==========================================
-  // 1. INLINE EDIT - GRADING (BODY)
-  // ==========================================
 
   onEditPoint(assignmentId: number): void {
     if (this.isSaving) return;
@@ -257,8 +235,7 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
   private async updatePointRecord(record: StudentAssignmentDto, newPoints: number) {
       this.isSaving = true;
       const oldPoints = record.earnedPoints;
-      
-      // Optimistický update
+
       record.earnedPoints = newPoints;
 
       try {
@@ -269,16 +246,12 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
           this.showMessage("Body uložené");
       } catch (e) {
           console.error(e);
-          record.earnedPoints = oldPoints; // Rollback
+          record.earnedPoints = oldPoints; 
           this.error = "Chyba pri ukladaní bodov!";
       } finally {
           this.isSaving = false;
       }
   }
-
-  // ==========================================
-  // 2. CLICK EDIT - ATTENDANCE (DOCHÁDZKA)
-  // ==========================================
 
   async onAttendanceClick(sessionId: number): Promise<void> {
       if (this.isSaving) return; 
@@ -286,19 +259,14 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
       const record = this.attendanceMap.get(sessionId);
       if (!record) return;
 
-      // Ak sa možnosti ešte nenačítali (alebo zlyhali), nepokračujeme
       if (this.attendanceOptions.length === 0) return;
 
-      // 1. Zistíme aktuálny index
       const currentIndex = this.attendanceOptions.indexOf(record.status);
-      
-      // 2. Vypočítame ďalší index v cykle
+
       const nextIndex = (currentIndex === -1) ? 0 : (currentIndex + 1) % this.attendanceOptions.length;
-      
-      // 3. Nový stav
+
       const newStatus = this.attendanceOptions[nextIndex];
 
-      // 4. Zavoláme update
       await this.updateAttendanceRecord(record, newStatus);
   }
 
@@ -306,12 +274,11 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
       this.isSaving = true;
       const oldStatus = record.status;
 
-      // Optimistický update v UI
       record.status = newStatus;
 
       try {
           await lastValueFrom(this.http.put(`${this.apiUrl}/student-attendance/${record.id}`, {
-              attendanceEnum: newStatus // OPRAVENÉ: posiela sa attendanceEnum
+              attendanceEnum: newStatus
           }));
           
           this.showMessage("Dochádzka zmenená");
@@ -320,14 +287,11 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
       } catch (e) {
           console.error('Update failed', e);
           this.error = 'Zmena dochádzky zlyhala.';
-          // Rollback
           record.status = oldStatus;
       } finally {
           this.isSaving = false;
       }
   }
-
-  // --- HELPERS ---
 
   showMessage(msg: string) {
       this.message = msg;
@@ -352,15 +316,12 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     return record ? record.earnedPoints : '-';
   }
 
-  // Vráti slovenský preklad stavu
   getAttendanceStatus(sessionId: number): string {
     const record = this.attendanceMap.get(sessionId);
     if (!record) return '-';
-    // Vrátime preklad alebo pôvodnú hodnotu, ak preklad chýba
     return this.translations[record.status] || record.status;
   }
 
-  // Farby prispôsobené slovenským (aj anglickým pre istotu) názvom
   getStatusColor(status: string): string {
     switch (status?.toUpperCase()) {
       case 'PRÍTOMNÝ':

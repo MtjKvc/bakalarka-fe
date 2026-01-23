@@ -5,20 +5,20 @@
       <svg class="w-8 h-8 mr-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
       Správa Používateľov
     </h3>
-    <button class="flex items-center px-5 py-2.5 bg-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:bg-emerald-700 transition duration-150 transform hover:scale-[1.02]" (click)="onCreateUserClick()">
+    <button class="flex items-center px-5 py-2.5 bg-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:bg-emerald-700 transition duration-150 transform hover:scale-[1.02] shadow-emerald-500/30" (click)="onCreateUserClick()">
       <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
       Vytvoriť nového Používateľa
     </button>
   </div>
 
-  <div *ngIf="isLoading" class="flex items-center justify-center p-3 bg-amber-50 border border-amber-300 text-amber-700 rounded-lg text-sm font-medium mb-4 animate-pulse">
+  <div *ngIf="isLoading" class="flex items-center justify-center p-3 bg-amber-50 border border-amber-300 text-amber-700 rounded-lg text-sm font-medium mb-4 shadow-inner animate-pulse">
     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-    Spracúvam požiadavku...
+    Spracúvam požiadavku, prosím počkajte...
   </div>
 
-  <div *ngIf="error && !isCreateModalOpen && !isDeleteConfirmModalOpen && !isExerciseModalOpen" class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold mb-4 text-sm whitespace-pre-wrap">{{ error }}</div>
+  <div *ngIf="error && !isCreateModalOpen && !isDeleteConfirmModalOpen && !isExerciseModalOpen" class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold mb-4 shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
   
-  <div *ngIf="message" class="p-3 bg-emerald-50 border border-emerald-400 text-emerald-700 rounded-lg font-medium mb-4 text-sm flex items-center whitespace-pre-wrap">
+  <div *ngIf="message" class="p-3 bg-emerald-50 border border-emerald-400 text-emerald-700 rounded-lg font-medium mb-4 shadow-sm text-sm flex items-center whitespace-pre-wrap">
     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
     <span>{{ message }}</span>
   </div>
@@ -43,7 +43,7 @@
               longPress (longPress)="onCellEdit(user, 'fullName')">
             <ng-container *ngIf="isEditing(user.id, 'fullName'); else viewName">
               <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(user)" (keydown.enter)="onCellSave(user)"
-                type="text" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm -m-2 focus:outline-none focus:ring-2 focus:ring-emerald-200" />
+                type="text" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm -m-2 focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold" />
             </ng-container>
             <ng-template #viewName>{{ user.fullName }}</ng-template>
           </td>
@@ -54,7 +54,7 @@
               longPress (longPress)="onCellEdit(user, 'email')">
             <ng-container *ngIf="isEditing(user.id, 'email'); else viewEmail">
               <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(user)" (keydown.enter)="onCellSave(user)"
-                type="email" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm -m-2 focus:outline-none focus:ring-2 focus:ring-emerald-200" />
+                type="email" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm -m-2 focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold" />
             </ng-container>
             <ng-template #viewEmail>{{ user.email }}</ng-template>
           </td>
@@ -100,7 +100,7 @@
   </div>
 </div>
 
-<div *ngIf="isExerciseModalOpen" (click)="onBackdropClick($event)" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+<div *ngIf="isExerciseModalOpen" (click)="onBackdropClick($event)" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl border-t-8 border-emerald-600" (click)="$event.stopPropagation()">
     <div class="p-8">
       
@@ -119,14 +119,14 @@
       <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6">
         <label class="block text-sm font-bold text-gray-700 mb-2">Pridať nové cvičenie</label>
         <div class="flex gap-2">
-            <select [(ngModel)]="selectedExerciseIdToAdd" class="flex-grow p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+            <select [(ngModel)]="selectedExerciseIdToAdd" class="flex-grow p-2 border border-gray-300 bg-white rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
                 <option [ngValue]="null" disabled selected>Vyberte cvičenie zo zoznamu...</option>
                 <option *ngFor="let ex of availableExercises" [ngValue]="ex.id">
                     {{ getDayName(ex.firstSessionDate) }} - {{ ex.startTime | slice:0:5 }} ({{ ex.roomEnum }})
                 </option>
             </select>
             <button (click)="onAssignExercise()" [disabled]="!selectedExerciseIdToAdd || isLoading"
-                class="px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors flex items-center shadow-md transform hover:scale-[1.02]">
+                class="px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors flex items-center shadow-md shadow-emerald-500/20 transform hover:scale-[1.02]">
                 <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Pridať
             </button>
@@ -165,13 +165,13 @@
       </div>
 
       <div class="mt-6 flex justify-end">
-        <button (click)="onCloseExerciseModal()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150">Zavrieť</button>
+        <button (click)="onCloseExerciseModal()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150 shadow-md">Zavrieť</button>
       </div>
     </div>
   </div>
 </div>
 
-<div *ngIf="isCreateModalOpen" (click)="onBackdropClick($event)" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+<div *ngIf="isCreateModalOpen" (click)="onBackdropClick($event)" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl border-t-8 border-emerald-600" (click)="$event.stopPropagation()">
     <div class="p-8">
       <h3 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2 border-emerald-300">Vytvoriť používateľa</h3>
@@ -180,11 +180,11 @@
       <form (ngSubmit)="onSubmitNewUser()">
         <div class="mb-4">
           <label class="block text-sm font-semibold text-gray-700 mb-1">Meno a Priezvisko</label>
-          <input name="fullName" type="text" [(ngModel)]="newUser.fullName" required placeholder="Janko Hraško" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-emerald-500">
+          <input name="fullName" type="text" [(ngModel)]="newUser.fullName" required placeholder="Janko Hraško" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-emerald-500 bg-white">
         </div>
         <div class="mb-4">
           <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-          <input name="email" type="email" [(ngModel)]="newUser.email" required placeholder="janko@example.com" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-emerald-500">
+          <input name="email" type="email" [(ngModel)]="newUser.email" required placeholder="janko@example.com" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-emerald-500 bg-white">
         </div>
         <div class="mb-6">
           <label class="block text-sm font-semibold text-gray-700 mb-1">Rola</label>
@@ -194,36 +194,48 @@
           </select>
         </div>
         <div class="flex justify-end space-x-3 pt-4">
-          <button type="button" (click)="onCloseModal()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Zrušiť</button>
-          <button type="submit" [disabled]="isLoading || !newUser.fullName || !newUser.email || !newUser.roleEnum" class="px-6 py-3 text-sm font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50">Vytvoriť</button>
+          <button type="button" (click)="onCloseModal()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150">Zrušiť</button>
+          <button type="submit" [disabled]="isLoading || !newUser.fullName || !newUser.email || !newUser.roleEnum" class="px-6 py-3 text-sm font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition duration-150 shadow-md shadow-emerald-500/20">Vytvoriť</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
-<div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+<div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg border-t-8 border-red-700" (click)="$event.stopPropagation()"> 
     <div class="p-8">
+      
       <div class="flex items-center space-x-4 mb-6">
         <svg class="w-8 h-8 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z"></path></svg>
         <h3 class="text-2xl font-bold text-red-700">Potvrďte trvalé vymazanie</h3>
       </div>
+
       <div *ngIf="error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
       
-      <p class="text-gray-700 mb-4">Naozaj chcete **natrvalo vymazať** používateľa?</p>
-      
-      <div class="bg-gray-100 p-3 rounded mb-4 text-sm font-mono text-gray-800">
-         ID: {{ userToDelete?.id }}<br>
-         Meno: {{ userToDelete?.fullName }}<br>
-         Email: {{ userToDelete?.email }}
-      </div>
+      <p class="text-gray-700 mb-4">
+        Naozaj chcete **natrvalo vymazať** používateľa:
+        <span class="font-bold text-red-600 block my-1">"{{ userToDelete?.fullName }}"</span>
+        <span class="text-sm text-gray-500 block">({{ userToDelete?.email }})</span>
+      </p>
 
-      <p class="text-sm text-gray-600 mb-4">**Táto akcia je nezvratná.** Pre potvrdenie prosím napíšte presne slovo <span class="font-mono bg-gray-200 px-2 py-0.5 rounded text-red-700 font-semibold">{{ deleteConfirmText }}</span> do poľa nižšie:</p>
+      <p class="text-sm text-gray-600 mb-4">
+        **Táto akcia je nezvratná.** Pre potvrdenie prosím napíšte presne slovo <span class="font-mono bg-gray-200 px-2 py-0.5 rounded text-red-700 font-semibold">{{ deleteConfirmText }}</span> do poľa nižšie:
+      </p>
       
       <form (ngSubmit)="onConfirmDelete()">
-        <div class="mb-6"><input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm" placeholder="Sem napíšte CONFIRM" class="block w-full px-4 py-3 border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-lg font-mono tracking-wider"></div>
-        <div class="flex justify-end space-x-3 pt-4"><button type="button" (click)="onCloseDeleteConfirmModal()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Zrušiť</button><button type="submit" [disabled]="isLoading || deleteConfirmationInput.trim() !== deleteConfirmText" class="px-6 py-3 text-sm font-semibold text-white bg-red-700 rounded-lg hover:bg-red-800 disabled:opacity-50">Vymazať natrvalo</button></div>
+        <div class="mb-6">
+          <input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm" placeholder="Sem napíšte CONFIRM" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-lg font-mono tracking-wider bg-white">
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" (click)="onCloseDeleteConfirmModal()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150">
+            Zrušiť
+          </button>
+          <button type="submit" [disabled]="isLoading || deleteConfirmationInput.trim() !== deleteConfirmText" class="px-6 py-3 text-sm font-semibold text-white bg-red-700 rounded-lg hover:bg-red-800 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-red-500/20">
+            {{ isLoading ? 'Mažem...' : 'Vymazať natrvalo' }}
+          </button>
+        </div>
       </form>
     </div>
   </div>

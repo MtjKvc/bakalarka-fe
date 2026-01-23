@@ -19,7 +19,9 @@ import { Logs } from './components/logs/logs';
 
 interface SidebarButton {
   label: string;
-  isAdminOnly: boolean; 
+  isAdminAvailable: boolean;
+  isTeacherAvailable: boolean;
+  isHelperAvailable: boolean;
 }
 
 @Component({
@@ -61,19 +63,18 @@ export class Teacher implements OnInit {
 
   isSidebarOpen: boolean = false; 
 
-  // PREMENNÁ PRE VYBRATÉHO ŠTUDENTA (null = modal zatvorený)
   selectedStudent: StudentSearchResult | null = null;
 
   sidebarButtons: SidebarButton[] = [
-    { label: 'nahrávanie', isAdminOnly: false },    
-    { label: 'dochádzka', isAdminOnly: false },     
-    { label: 'používatelia', isAdminOnly: true },   
-    { label: 'študenti', isAdminOnly: true },       
-    { label: 'cvičenia', isAdminOnly: true },       
-    { label: 'bloky', isAdminOnly: true },          
-    { label: 'zadania', isAdminOnly: true },        
-    { label: 'hodnotenie', isAdminOnly: true },
-    { label: 'záznamy', isAdminOnly: true },  
+    { label: 'nahrávanie', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false,},    
+    { label: 'dochádzka', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false,},     
+    { label: 'používatelia', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},   
+    { label: 'študenti', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},       
+    { label: 'cvičenia', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},       
+    { label: 'bloky', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},          
+    { label: 'zadania', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},        
+    { label: 'hodnotenie', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: true,},
+    { label: 'záznamy', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},  
   ];
 
   constructor() { }
@@ -85,16 +86,13 @@ export class Teacher implements OnInit {
       const userData = this.parseJwt(token);
       console.log('Dekódovaný token:', userData);
 
-      // TOTO JE ČASŤ, KTORÁ CHÝBALA A SPÔSOBOVALA CHYBU
       if (userData) {
         if (userData.id) this.currentUser.id = userData.id;
         
-        // Priradenie mena
         if (userData.fullName) {
            this.currentUser.meno = userData.fullName;
         }
         
-        // Priradenie roly
         if (userData.role) {
            this.currentUser.rola = userData.role;
         } else if (userData.roleEnum) {
@@ -106,7 +104,6 @@ export class Teacher implements OnInit {
         if (storedRole) this.currentUser.rola = storedRole;
     }
 
-    // Načítanie cvičení pre hlavičku
     this.contextService.loadCurrentExercises().subscribe({
       error: (err) => console.error('Chyba pri načítaní cvičení:', err)
     });
@@ -137,13 +134,11 @@ export class Teacher implements OnInit {
       this.isSidebarOpen = !this.isSidebarOpen;
   }
   
-  // OTVORENIE MODÁLU
   onStudentFound(student: StudentSearchResult): void {
       console.log('Vybraný študent:', student);
       this.selectedStudent = student;
   }
 
-  // ZATVORENIE MODÁLU
   onModalClose(): void {
       this.selectedStudent = null;
   }
@@ -154,6 +149,12 @@ export class Teacher implements OnInit {
 
   isAdmin(): boolean {
     return this.currentUser.rola?.toUpperCase() === 'ADMIN';
+  }
+  isTeacher(): boolean {
+    return this.currentUser.rola?.toUpperCase() === 'TEACHER';
+  }
+  isHelper(): boolean {
+    return this.currentUser.rola?.toUpperCase() === 'HELPER';
   }
   
   onSidebarButtonClick(buttonLabel: string): void {
