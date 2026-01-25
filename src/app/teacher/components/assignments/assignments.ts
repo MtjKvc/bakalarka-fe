@@ -4,6 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms'; 
 import { LongPressDirective } from '../../../shared/long-press/long-press'; 
+import { environment } from '../../../../environments/environment';
 
 interface BlockSimple { id: number; name: string; }
 interface Assignment { id: number; block: BlockSimple | null; name: string; maxPoints: number; }
@@ -28,8 +29,8 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
   private shouldFocus: boolean = false;
   private isSaving: boolean = false;
 
-  private assignmentsApiUrl = 'http://localhost:8080/api/v1/assignment';
-  private blocksApiUrl = 'http://localhost:8080/api/v1/block';
+  private assignmentsApiUrl = `${environment.apiUrl}/api/v1/assignment`;
+  private blocksApiUrl = `${environment.apiUrl}/api/v1/block`;
 
   public assignments: Assignment[] = [];
   public availableBlocks: BlockSimple[] = []; 

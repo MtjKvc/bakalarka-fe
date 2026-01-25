@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { TeacherContextService } from '../../../services/teacher-context';
+import { environment } from '../../../../environments/environment';
 
 interface StudentDto {
   aisId: number;
@@ -97,7 +98,7 @@ export class StudentUploadComponent {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
 
-    this.http.post('http://localhost:8080/api/v1/student', payload, { headers })
+    this.http.post(`${environment.apiUrl}/api/v1/student`, payload, { headers })
       .subscribe({
         next: () => {
           this.isUploading.set(false);

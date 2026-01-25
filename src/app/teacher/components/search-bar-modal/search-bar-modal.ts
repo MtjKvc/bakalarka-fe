@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { lastValueFrom } from 'rxjs';
 import { Block, TeacherContextService } from '../../../services/teacher-context';
+import { environment } from '../../../../environments/environment';
 
 export interface StudentSearchResult {
   id: number;
@@ -63,7 +64,7 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
   private http = inject(HttpClient);
   public contextService = inject(TeacherContextService);
   private cdr = inject(ChangeDetectorRef);
-  private apiUrl = 'http://localhost:8080/api/v1';
+  private apiUrl = `${environment.apiUrl}/api/v1`;
 
   student = input.required<StudentSearchResult>();
   close = output<void>();

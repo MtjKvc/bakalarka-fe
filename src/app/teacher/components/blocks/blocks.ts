@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs'; 
 import { FormsModule } from '@angular/forms'; 
 import { LongPressDirective } from '../../../shared/long-press/long-press';
+import { environment } from '../../../../environments/environment';
 
 interface ApiResponse<T> {
   status?: string;
@@ -38,7 +39,7 @@ export class Blocks implements OnInit, AfterViewChecked {
   private shouldFocus: boolean = false; 
   private isSaving: boolean = false;
 
-  private blocksApiUrl = 'http://localhost:8080/api/v1/block'; 
+  private blocksApiUrl = `${environment.apiUrl}/api/v1/block`; 
 
   public blocks: Block[] = [];
   public isLoading: boolean = false;

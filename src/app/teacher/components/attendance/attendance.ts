@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs'; 
 import { FormsModule } from '@angular/forms'; 
 import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../services/teacher-context';
+import { environment } from '../../../../environments/environment';
 
 
 interface AttendanceItemDto {
@@ -54,7 +55,7 @@ export class Attendance implements OnInit {
 
   private http = inject(HttpClient);
   public contextService = inject(TeacherContextService);
-  private apiUrl = 'http://localhost:8080/api/v1'; 
+  private apiUrl = `${environment.apiUrl}/api/v1`; 
 
   public uniqueStudents: Student[] = [];
   public uniqueSessions: SessionColumn[] = [];
@@ -91,7 +92,7 @@ export class Attendance implements OnInit {
       const enums = await lastValueFrom(this.http.get<string[]>(`${this.apiUrl}/enum/attendance`));
       this.attendanceOptions = enums || [];
     } catch (err) {
-      this.attendanceOptions = ['PRESENT', 'ABSENT', 'SUBSTITUTED']; 
+      this.attendanceOptions = [ 'ABSENT','PRESENT', 'SUBSTITUTED']; 
     }
   }
   
@@ -255,8 +256,8 @@ export class Attendance implements OnInit {
   getStatusColor(status: string): string {
     if (!status) return '';
     switch (status.toUpperCase()) {
-      case 'PRESENT': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       case 'ABSENT': return 'bg-red-100 text-red-800 border-red-200';
+      case 'PRESENT': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       case 'SUBSTITUTED': return 'bg-purple-100 text-purple-800 border-purple-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }

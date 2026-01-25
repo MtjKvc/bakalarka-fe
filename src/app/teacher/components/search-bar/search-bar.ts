@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Subject, Subscription, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, tap } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 
 interface StudentSearchResult {
   id: number;
@@ -25,7 +26,7 @@ export class SearchBar implements OnDestroy {
 
   private cdr = inject(ChangeDetectorRef);
   
-  private apiUrl = 'http://localhost:8080/api/v1/student';
+  private apiUrl = `${environment.apiUrl}/api/v1/student`;
 
   @Output() studentSelected = new EventEmitter<StudentSearchResult>();
 

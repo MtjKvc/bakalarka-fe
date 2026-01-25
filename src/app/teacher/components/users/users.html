@@ -16,7 +16,7 @@
     Spracúvam požiadavku, prosím počkajte...
   </div>
 
-  <div *ngIf="error && !isCreateModalOpen && !isDeleteConfirmModalOpen && !isExerciseModalOpen" class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold mb-4 shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
+  <div *ngIf="error && !isCreateModalOpen && !isDeleteConfirmModalOpen && !isExerciseModalOpen && !isRemoveExerciseConfirmOpen" class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold mb-4 shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
   
   <div *ngIf="message" class="p-3 bg-emerald-50 border border-emerald-400 text-emerald-700 rounded-lg font-medium mb-4 shadow-sm text-sm flex items-center whitespace-pre-wrap">
     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -63,7 +63,7 @@
             <select 
                 [ngModel]="user.roleEnum" 
                 (ngModelChange)="onRoleChange(user, $event)"
-                class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm cursor-pointer hover:border-emerald-400">
+                class="block w-full min-w-[140px] py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm cursor-pointer hover:border-emerald-400">
                 <option *ngFor="let role of availableRoles" [value]="role">{{ role }}</option>
             </select>
           </td>
@@ -101,13 +101,13 @@
 </div>
 
 <div *ngIf="isExerciseModalOpen" (click)="onBackdropClick($event)" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl border-t-8 border-emerald-600" (click)="$event.stopPropagation()">
-    <div class="p-8">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl border-t-8 border-emerald-600 flex flex-col max-h-[90vh]" (click)="$event.stopPropagation()">
+    <div class="p-6 sm:p-8 overflow-y-auto">
       
       <div class="flex justify-between items-center mb-6 border-b pb-2 border-emerald-300">
         <div>
-           <h3 class="text-3xl font-bold text-gray-800">Cvičenia používateľa</h3>
-           <p class="text-emerald-600 font-semibold text-lg mt-1">{{ selectedUserForExercises?.fullName }}</p>
+           <h3 class="text-2xl sm:text-3xl font-bold text-gray-800">Cvičenia používateľa</h3>
+           <p class="text-emerald-600 font-semibold text-base sm:text-lg mt-1">{{ selectedUserForExercises?.fullName }}</p>
         </div>
         <button (click)="onCloseExerciseModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -118,15 +118,15 @@
 
       <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6">
         <label class="block text-sm font-bold text-gray-700 mb-2">Pridať nové cvičenie</label>
-        <div class="flex gap-2">
-            <select [(ngModel)]="selectedExerciseIdToAdd" class="flex-grow p-2 border border-gray-300 bg-white rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+        <div class="flex flex-col sm:flex-row gap-3">
+            <select [(ngModel)]="selectedExerciseIdToAdd" class="w-full min-w-[140px] sm:flex-grow p-2 border border-gray-300 bg-white rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm">
                 <option [ngValue]="null" disabled selected>Vyberte cvičenie zo zoznamu...</option>
                 <option *ngFor="let ex of availableExercises" [ngValue]="ex.id">
                     {{ getDayName(ex.firstSessionDate) }} - {{ ex.startTime | slice:0:5 }} ({{ ex.roomEnum }})
                 </option>
             </select>
             <button (click)="onAssignExercise()" [disabled]="!selectedExerciseIdToAdd || isLoading"
-                class="px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors flex items-center shadow-md shadow-emerald-500/20 transform hover:scale-[1.02]">
+                class="w-full sm:w-auto justify-center px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors flex items-center shadow-md shadow-emerald-500/20 transform hover:scale-[1.02]">
                 <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Pridať
             </button>
@@ -149,7 +149,7 @@
                     <td class="px-4 py-2 text-sm text-gray-600 font-mono">{{ assign.exercise.startTime | slice:0:5 }}</td>
                     <td class="px-4 py-2 text-sm text-gray-600">{{ assign.exercise.roomEnum }}</td>
                     <td class="px-4 py-2 text-right">
-                        <button (click)="onRemoveExercise(assign)" [disabled]="isLoading" 
+                        <button (click)="onOpenRemoveConfirm(assign)" [disabled]="isLoading" 
                                 class="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors" title="Odobrať cvičenie">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
@@ -163,14 +163,14 @@
             </tbody>
         </table>
       </div>
-
+      
       <div class="mt-6 flex justify-end">
         <button (click)="onCloseExerciseModal()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150 shadow-md">Zavrieť</button>
       </div>
+
     </div>
   </div>
 </div>
-
 <div *ngIf="isCreateModalOpen" (click)="onBackdropClick($event)" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl border-t-8 border-emerald-600" (click)="$event.stopPropagation()">
     <div class="p-8">
@@ -180,7 +180,7 @@
       <form (ngSubmit)="onSubmitNewUser()">
         <div class="mb-4">
           <label class="block text-sm font-semibold text-gray-700 mb-1">Meno a Priezvisko</label>
-          <input name="fullName" type="text" [(ngModel)]="newUser.fullName" required placeholder="Janko Hraško" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-emerald-500 bg-white">
+          <input name="fullName" type="text" [(ngModel)]="newUser.fullName" required placeholder="Janko Hraško" class="block w-full px-4 py-3 placeholder-gray-500 border border-gray-300 rounded-lg shadow-sm focus:ring-emerald-500 bg-white">
         </div>
         <div class="mb-4">
           <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
@@ -188,7 +188,7 @@
         </div>
         <div class="mb-6">
           <label class="block text-sm font-semibold text-gray-700 mb-1">Rola</label>
-          <select name="roleEnum" [(ngModel)]="newUser.roleEnum" required class="block w-full px-4 py-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:ring-emerald-500">
+          <select name="roleEnum" [(ngModel)]="newUser.roleEnum" required class="block w-full min-w-[140px] px-4 py-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:ring-emerald-500">
              <option value="" disabled selected>Vyberte rolu...</option>
              <option *ngFor="let role of availableRoles" [value]="role">{{ role }}</option>
           </select>
@@ -225,7 +225,7 @@
       
       <form (ngSubmit)="onConfirmDelete()">
         <div class="mb-6">
-          <input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm" placeholder="Sem napíšte CONFIRM" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-lg font-mono tracking-wider bg-white">
+          <input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm" placeholder="Sem napíšte CONFIRM" class="block w-full px-4 py-3 placeholder-gray-500 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-lg font-mono tracking-wider bg-white">
         </div>
         
         <div class="flex justify-end space-x-3 pt-4">
@@ -237,6 +237,56 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isRemoveExerciseConfirmOpen" class="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+  <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm border-t-4 border-red-500 transform scale-100 transition-all" (click)="$event.stopPropagation()">
+    <div class="p-6">
+      
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="bg-red-100 p-2 rounded-full">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800">Odobrať cvičenie?</h3>
+      </div>
+
+      <p class="text-sm text-gray-600 mb-4">
+        Naozaj chcete používateľovi odobrať toto cvičenie?
+      </p>
+
+      <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 mb-6 text-sm">
+        <div class="flex justify-between mb-1">
+            <span class="text-gray-500">Deň:</span>
+            <span class="font-bold text-gray-800">{{ getDayName(assignmentToRemove?.exercise?.firstSessionDate || '') }}</span>
+        </div>
+        <div class="flex justify-between mb-1">
+            <span class="text-gray-500">Čas:</span>
+            <span class="font-bold text-gray-800 font-mono">{{ assignmentToRemove?.exercise?.startTime | slice:0:5 }}</span>
+        </div>
+        <div class="flex justify-between">
+            <span class="text-gray-500">Miestnosť:</span>
+            <span class="font-bold text-gray-800">{{ assignmentToRemove?.exercise?.roomEnum }}</span>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button (click)="onCloseRemoveConfirm()" 
+                class="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors focus:ring-2 focus:ring-gray-300">
+          Zrušiť
+        </button>
+        
+        <button (click)="onConfirmRemoveExercise()" 
+                [disabled]="isLoading"
+                class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-md shadow-red-500/20 transition-colors flex items-center">
+          <span *ngIf="isLoading" class="mr-2">
+            <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          </span>
+          Áno, odobrať
+        </button>
+      </div>
+
     </div>
   </div>
 </div>

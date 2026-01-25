@@ -66,7 +66,7 @@
              Filter
           </td>
           <td class="px-6 py-2">
-             <select [(ngModel)]="filterBlockId" (ngModelChange)="loadData()" class="w-full p-2 text-xs border border-emerald-200 rounded outline-none shadow-sm bg-white cursor-pointer">
+             <select [(ngModel)]="filterBlockId" (ngModelChange)="loadData()" class="w-full min-w-[140px] p-2 text-xs border border-emerald-200 rounded outline-none shadow-sm bg-white cursor-pointer">
                 <option [ngValue]="null">Všetky bloky</option>
                 <option *ngFor="let block of availableBlocks" [value]="block.id">{{ block.name }}</option>
              </select>
@@ -86,7 +86,7 @@
           </td>
 
           <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
-            <select [ngModel]="assign.block?.id" (ngModelChange)="onBlockChange(assign, $event)" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md text-xs font-medium focus:ring-emerald-500 cursor-pointer">
+            <select [ngModel]="assign.block?.id" (ngModelChange)="onBlockChange(assign, $event)" class="block w-full min-w-[140px] py-2 px-3 border border-gray-300 bg-white rounded-md text-xs font-medium focus:ring-emerald-500 cursor-pointer">
               <option [ngValue]="null" disabled>Vyberte blok...</option>
               <option *ngFor="let b of availableBlocks" [value]="b.id">
                 {{ b.name }}
@@ -120,7 +120,7 @@
         <div class="space-y-4">
           <div>
             <label class="block text-sm font-semibold mb-1">Priradiť k bloku</label>
-            <select name="blockId" [(ngModel)]="newAssignment.blockId" required class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white">
+            <select name="blockId" [(ngModel)]="newAssignment.blockId" required class="block w-full min-w-[140px] px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white">
                 <option [ngValue]="null" disabled>Vyberte blok...</option>
                 <option *ngFor="let blok of availableBlocks" [ngValue]="blok.id">{{ blok.name }}</option>
             </select>

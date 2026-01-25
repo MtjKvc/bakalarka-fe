@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { lastValueFrom, forkJoin, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../services/teacher-context';
+import { environment } from '../../../../environments/environment';
 
 interface AssignmentHeader {
   id: number;
@@ -37,7 +38,7 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
   public contextService = inject(TeacherContextService);
-  private apiUrl = 'http://localhost:8080/api/v1';
+  private apiUrl = `${environment.apiUrl}/api/v1`;
 
   @ViewChildren('pointInput') pointInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
   private shouldFocusInput = false;
@@ -47,6 +48,9 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
   public isLoading = false;
   public isSaving = false;
   public isSemesterMode = false;
+
+  public blockMaxPoints = 0;
+  public blockRequiredPoints = 0;
 
   public error: string | null = null;
   public message: string | null = null;
@@ -97,8 +101,6 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
       }
   }
 
-
-
   onSearchInput(text: string) {
     this.studentSearchQuery = text;
     this.searchSubject.next(text); 
@@ -129,6 +131,8 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.error = null;
     this.assignments = [];
     this.studentRows = [];
+    this.blockMaxPoints = 0;
+    this.blockRequiredPoints = 0;
 
     try {
       const blocks = this.contextService.blocks();
@@ -143,7 +147,7 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.assignments = blocks.map(b => ({
         id: b.id,
         name: b.name,
-        maxPoints: 0 
+        maxPoints: 0
       }));
 
       let commonParams = new HttpParams().set('exerciseId', exerciseId);
@@ -200,6 +204,12 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (!exerciseId) {
         this.error = 'Prosím, vyberte cvičenie v hornej lište.';
         this.studentRows = []; this.assignments = []; return;
+    }
+
+    const currentBlock = this.contextService.blocks().find(b => b.id === blockId);
+    if (currentBlock) {
+        this.blockMaxPoints = (currentBlock as any).maxPoints || 0;
+        this.blockRequiredPoints = (currentBlock as any).requiredPoints || 0;
     }
 
     this.isLoading = true;

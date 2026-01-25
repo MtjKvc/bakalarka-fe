@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/long-press/long-press';
+import { environment } from '../../../../environments/environment';
 
 interface User {
   id: number;
@@ -55,12 +56,12 @@ export class UsersComponent implements OnInit, AfterViewChecked {
   private shouldFocus: boolean = false;
   private isSaving: boolean = false;
 
-  private usersApiUrl = 'http://localhost:8080/api/v1/user';
-  private rolesApiUrl = 'http://localhost:8080/api/v1/enum/role'; 
-  private passwordApiUrl = 'http://localhost:8080/api/v1/user/password';
+  private usersApiUrl = `${environment.apiUrl}/api/v1/user`;
+  private rolesApiUrl = `${environment.apiUrl}/api/v1/enum/role`; 
+  private passwordApiUrl = `${environment.apiUrl}/api/v1/user/password`;
   
-  private exercisesApiUrl = 'http://localhost:8080/api/v1/exercise';
-  private userExerciseApiUrl = 'http://localhost:8080/api/v1/user-exercise';
+  private exercisesApiUrl = `${environment.apiUrl}/api/v1/exercise`;
+  private userExerciseApiUrl = `${environment.apiUrl}/api/v1/user-exercise`;
   public users: User[] = [];
   public availableRoles: string[] = []; 
 
@@ -89,6 +90,9 @@ export class UsersComponent implements OnInit, AfterViewChecked {
   deleteConfirmationInput: string = '';
   readonly deleteConfirmText: string = 'CONFIRM';
 
+  public isRemoveExerciseConfirmOpen: boolean = false;
+  public assignmentToRemove: UserExerciseAssignment | null = null;
+
   ngOnInit(): void {
     this.loadData();
   }
@@ -113,7 +117,6 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     }
   }
 
-
   getDayName(dateStr: string): string {
     if (!dateStr) return '';
     const date = new Date(dateStr.split('T')[0]);
@@ -130,7 +133,6 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     this.isLoading = true;
 
     try {
-
         const [allExercises, allAssignments] = await Promise.all([
             lastValueFrom(this.http.get<Exercise[]>(this.exercisesApiUrl)),
             lastValueFrom(this.http.get<UserExerciseAssignment[]>(this.userExerciseApiUrl))
@@ -196,20 +198,37 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  async onRemoveExercise(assignment: UserExerciseAssignment): Promise<void> {
-    if (!this.selectedUserForExercises) return;
+  onOpenRemoveConfirm(assignment: UserExerciseAssignment): void {
+    this.assignmentToRemove = assignment;
+    this.isRemoveExerciseConfirmOpen = true;
+    this.error = null;
+  }
+
+  onCloseRemoveConfirm(): void {
+    this.isRemoveExerciseConfirmOpen = false;
+    this.assignmentToRemove = null;
+  }
+
+  async onConfirmRemoveExercise(): Promise<void> {
+    if (!this.selectedUserForExercises || !this.assignmentToRemove) return;
 
     this.isLoading = true;
     this.error = null;
 
     try {
-        await lastValueFrom(this.http.delete(`${this.userExerciseApiUrl}/${assignment.id}`));
+        await lastValueFrom(this.http.delete(`${this.userExerciseApiUrl}/${this.assignmentToRemove.id}`));
+
+        this.onCloseRemoveConfirm();
 
         await this.onOpenExerciseModal(this.selectedUserForExercises);
+
+        this.message = "Cvičenie bolo úspešne odobraté.";
 
     } catch (err: any) {
         console.error(err);
         this.error = "Chyba pri odoberaní cvičenia.";
+        this.onCloseRemoveConfirm();
+    } finally {
         this.isLoading = false;
     }
   }
@@ -371,7 +390,13 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         setTimeout(() => this.editInputsRef.first.nativeElement.focus(), 10);
     }
   }
+  
   onBackdropClick(event: MouseEvent): void {
-      if (event.target === event.currentTarget) { this.onCloseModal(); this.onCloseDeleteConfirmModal(); this.onCloseExerciseModal(); }
+      if (event.target === event.currentTarget) { 
+          this.onCloseModal(); 
+          this.onCloseDeleteConfirmModal(); 
+          this.onCloseExerciseModal();
+          this.onCloseRemoveConfirm();
+      }
   }
 }

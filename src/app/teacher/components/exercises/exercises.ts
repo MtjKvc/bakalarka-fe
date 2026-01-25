@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/long-press/long-press';
+import { environment } from '../../../../environments/environment';
 
 interface DayOption {
   label: string;
@@ -32,8 +33,8 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
   @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
   private shouldFocus: boolean = false;
 
-  private exercisesApiUrl = 'http://localhost:8080/api/v1/exercise';
-  private roomsApiUrl = 'http://localhost:8080/api/v1/enum/room'; 
+  private exercisesApiUrl = `${environment.apiUrl}/api/v1/exercise`;
+  private roomsApiUrl = `${environment.apiUrl}/api/v1/enum/room`; 
 
   public exercises: Exercise[] = [];
   public availableRooms: string[] = []; 

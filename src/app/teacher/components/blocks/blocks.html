@@ -100,7 +100,7 @@
 
         <div class="mb-4">
           <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">Názov bloku</label>
-          <input id="name" name="name" type="text" [(ngModel)]="novyBlok.name" required placeholder="Napr. Úvod do programovania" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white">
+          <input id="name" name="name" type="text" [(ngModel)]="novyBlok.name" required placeholder="Uloha 1" class="block w-full px-4 py-3 placeholder-gray-500 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white">
         </div>
 
         <div class="mb-4">
@@ -155,7 +155,7 @@
 
       <form (ngSubmit)="onConfirmDelete()">
         <div class="mb-6">
-          <input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm" placeholder="Sem napíšte CONFIRM" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white text-lg font-mono tracking-wider">
+          <input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm" placeholder="Sem napíšte CONFIRM" class="block w-full px-4 py-3 placeholder-gray-500 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white text-lg font-mono tracking-wider">
         </div>
 
         <div class="flex justify-end space-x-3 pt-4">

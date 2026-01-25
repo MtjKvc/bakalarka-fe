@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
+
 
 @Component({
   selector: 'app-login',
@@ -39,7 +41,7 @@ export class Login {
 
   onLogin() {
     const formValue = this.loginForm.value;
-    this.http.post("http://localhost:8080/api/v1/auth/authenticate", formValue).subscribe({
+    this.http.post(`${environment.apiUrl}/api/v1/auth/authenticate`, formValue).subscribe({
       next: (res: any) => {
         if (res.token) {
           localStorage.setItem('auth_token', res.token);

@@ -5,6 +5,7 @@ import { lastValueFrom, Subject, Subscription } from 'rxjs';
 import { debounceTime, switchMap, tap, catchError } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms'; 
 import { LongPressDirective } from '../../../shared/long-press/long-press';
+import { environment } from '../../../../environments/environment';
 
 interface Student {
   id: number; 
@@ -54,9 +55,9 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   private shouldFocus: boolean = false; 
   public isSaving: boolean = false; 
 
-  private studentsApiUrl = 'http://localhost:8080/api/v1/student';
-  private exercisesApiUrl = 'http://localhost:8080/api/v1/exercise'; 
-  private studentExerciseApiUrl = 'http://localhost:8080/api/v1/student-exercise';
+  private studentsApiUrl = `${environment.apiUrl}/api/v1/student`;
+  private exercisesApiUrl = `${environment.apiUrl}/api/v1/exercise`; 
+  private studentExerciseApiUrl = `${environment.apiUrl}/api/v1/student-exercise`;
 
   public students: Student[] = [];
   public exercises: Exercise[] = []; 
@@ -110,11 +111,11 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
 
         let sortParam = 'id,asc';
         if (this.sortField === 'fullName') {
-            sortParam = `student.fullName,${this.sortDirection}`;
+            sortParam = `StudentEntity.fullName,${this.sortDirection}`;
         } else if (this.sortField === 'aisId') {
-            sortParam = `student.aisId,${this.sortDirection}`;
+            sortParam = `StudentEntity.aisId,${this.sortDirection}`;
         } else if (this.sortField === 'exercise') {
-            sortParam = `exercise.firstSessionDate,${this.sortDirection}`; 
+            sortParam = `ExerciseEntity.id,${this.sortDirection}`; 
         } else {
              sortParam = `id,${this.sortDirection}`;
         }

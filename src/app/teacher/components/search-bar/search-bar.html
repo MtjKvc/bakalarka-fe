@@ -12,9 +12,10 @@
             [(ngModel)]="searchTerm"
             (ngModelChange)="onSearch($event)"
             (focus)="onFocus()"
-            class="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm transition duration-150 ease-in-out shadow-sm"
+            class="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg leading-5 bg-gray-50 text-gray-900 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm transition duration-150 ease-in-out shadow-sm"
             placeholder="Meno alebo AIS ID..."
             autocomplete="off">
+
         <div *ngIf="isLoading" class="absolute inset-y-0 right-0 pr-3 flex items-center">
             <svg class="animate-spin h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -22,11 +23,13 @@
             </svg>
         </div>
     </div>
+
     <div *ngIf="showDropdown && (results.length > 0 || (searchTerm.length >= 1 && !isLoading))" 
          class="absolute mt-1 w-full bg-white shadow-xl rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto max-h-60 focus:outline-none sm:text-sm z-50 animate-fade-in-down">
+        
         <ul *ngIf="results.length > 0" class="divide-y divide-gray-100">
             <li *ngFor="let student of results" 
-                (click)="selectStudent(student)"
+                (mousedown)="selectStudent(student)"
                 class="cursor-pointer select-none relative py-2 pl-3 pr-4 hover:bg-emerald-50 transition-colors flex items-center justify-between">
                 
                 <div class="flex flex-col">

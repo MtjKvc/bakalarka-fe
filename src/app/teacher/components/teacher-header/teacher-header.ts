@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, output, ChangeDetectionStrategy } from '@angular/core'; 
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ExerciseSession } from '../../../services/teacher-context';
 import { SearchBar } from '../search-bar/search-bar';
 
@@ -11,39 +11,28 @@ export interface UserInfo {
 @Component({
   selector: 'app-teacher-header',
   standalone: true,
-  imports: [
-    CommonModule,
-    SearchBar
-  ],
-  templateUrl: './teacher-header.html', 
-  styleUrl: './teacher-header.css', 
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, SearchBar],
+  templateUrl: './teacher-header.html',
+  styleUrl: './teacher-header.css'
 })
 export class TeacherHeader {
-  currentUser = input.required<UserInfo>();
-  isSidebarOpen = input<boolean>(false); 
 
-  exercises = input<ExerciseSession[]>([]);
-  activeExerciseId = input<number | undefined>(undefined);
+  @Input() currentUser!: UserInfo;
+  @Input() isSidebarOpen: boolean = false;
+  @Input() exercises: ExerciseSession[] = [];
+  @Input() activeExerciseId: number | undefined = undefined;
 
-  toggleSidebar = output<void>();
-  logout = output<void>();
-  searchIconClick = output<void>();
-  
-  exerciseSelected = output<ExerciseSession>();
+  @Output() toggleSidebar = new EventEmitter<void>();
+  @Output() logout = new EventEmitter<void>();
+  @Output() exerciseSelected = new EventEmitter<ExerciseSession>();
+  @Output() studentFound = new EventEmitter<any>();
 
-  studentFound = output<any>();
-  
   onToggleSidebar() {
     this.toggleSidebar.emit();
   }
 
   onLogoutClick() {
     this.logout.emit();
-  }
-
-  onSearchIconClick() {
-    this.searchIconClick.emit();
   }
 
   onExerciseClick(ex: ExerciseSession) {

@@ -30,7 +30,6 @@ interface SidebarButton {
   imports: [
     CommonModule,
     NgIf, 
-    TitleCasePipe, 
     TeacherHeader,
     Blocks, 
     TeacherSidebarComponent,
@@ -74,7 +73,7 @@ export class Teacher implements OnInit {
     { label: 'bloky', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},          
     { label: 'zadania', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},        
     { label: 'hodnotenie', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: true,},
-    { label: 'záznamy', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},  
+    { label: 'záznamy', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false,},  
   ];
 
   constructor() { }
