@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgIf, TitleCasePipe } from '@angular/common'; 
+import { CommonModule, NgIf } from '@angular/common'; 
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -16,6 +16,7 @@ import { GradingComponent } from './components/grading/grading';
 import { TeacherContextService } from '../services/teacher-context';
 import { SearchBarModalComponent, StudentSearchResult } from './components/search-bar-modal/search-bar-modal';
 import { Logs } from './components/logs/logs'; 
+import { LoggerService } from '../services/logger';
 
 interface SidebarButton {
   label: string;
@@ -47,6 +48,7 @@ interface SidebarButton {
   styleUrl: './teacher.css' 
 })
 export class Teacher implements OnInit {
+  private logger = inject(LoggerService);
 
   currentUser: UserInfo & { id: number | null } = { 
     id: null,
@@ -79,17 +81,19 @@ export class Teacher implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.logger.log('Teacher component initialized');
     const token = localStorage.getItem('auth_token');
 
     if (token) {
       const userData = this.parseJwt(token);
-      console.log('Dekódovaný token:', userData);
-
       if (userData) {
+        this.logger.log('User data parsed from token', { role: userData.role || userData.roleEnum, name: userData.fullName || userData.sub });
         if (userData.id) this.currentUser.id = userData.id;
         
         if (userData.fullName) {
            this.currentUser.meno = userData.fullName;
+        } else if (userData.sub) {
+           this.currentUser.meno = userData.sub;
         }
         
         if (userData.role) {
@@ -98,18 +102,17 @@ export class Teacher implements OnInit {
            this.currentUser.rola = userData.roleEnum;
         }
       }
-    } else {
-        const storedRole = localStorage.getItem('user_role');
-        if (storedRole) this.currentUser.rola = storedRole;
     }
 
     this.contextService.loadCurrentExercises().subscribe({
-      error: (err) => console.error('Chyba pri načítaní cvičení:', err)
+      next: () => this.logger.log('Context exercises loaded'),
+      error: (err) => this.logger.error('Chyba pri načítaní cvičení:', err)
     });
   }
 
   private parseJwt(token: string): any {
     try {
+      
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
@@ -118,23 +121,24 @@ export class Teacher implements OnInit {
 
       return JSON.parse(jsonPayload);
     } catch (e) {
-      console.error('Chyba pri parsovaní tokenu:', e);
+      this.logger.error('Failed to parse JWT', e);
       return null;
     }
   }
 
   onLogout(): void {
-    this.isSidebarOpen = false;
+    this.logger.log('User logging out');
     localStorage.clear();
-    this.router.navigate(['/login']);
+    this.router.navigate(['login']);
   }
 
   onToggleSidebar(): void {
       this.isSidebarOpen = !this.isSidebarOpen;
+      this.logger.log(`Sidebar toggled. Open: ${this.isSidebarOpen}`);
   }
   
   onStudentFound(student: StudentSearchResult): void {
-      console.log('Vybraný študent:', student);
+      this.logger.log('Student found via search', student.id);
       this.selectedStudent = student;
   }
 
@@ -143,7 +147,7 @@ export class Teacher implements OnInit {
   }
 
   onSearchIconClick(): void {
-      console.log('Open mobile search');
+      this.logger.log('Mobile search icon clicked');
   }
 
   isAdmin(): boolean {
@@ -157,6 +161,7 @@ export class Teacher implements OnInit {
   }
   
   onSidebarButtonClick(buttonLabel: string): void {
+    this.logger.log(`Navigating to view: ${buttonLabel}`);
     this.activeView = buttonLabel; 
     this.isSidebarOpen = false; 
   }

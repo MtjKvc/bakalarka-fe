@@ -1,0 +1,4 @@
+@import "tailwindcss";
+.list{
+    @apply list-disc mb-2 space-y-1 marker:text-green-500;
+}

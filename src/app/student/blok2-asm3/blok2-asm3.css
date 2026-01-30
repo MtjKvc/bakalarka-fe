@@ -1,0 +1,7 @@
+@import "tailwindcss";
+.list-container{
+ @apply flex flex-col sm:flex-row max-w-5xl mx-auto;
+}
+.list{
+    @apply list-disc mb-2 space-y-1 marker:text-green-500;
+}

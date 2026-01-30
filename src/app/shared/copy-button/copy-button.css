@@ -1,0 +1,4 @@
+@import "tailwindcss";
+.button{
+    @apply bg-green-800 hover:bg-green-600 text-xs px-3 py-1 rounded text-white
+}

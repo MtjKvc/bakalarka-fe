@@ -1,30 +1,30 @@
 import { Component, OnInit, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http'; 
-import { lastValueFrom } from 'rxjs'; 
-import { FormsModule } from '@angular/forms'; 
+import { HttpClient } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../services/teacher-context';
 import { environment } from '../../../../environments/environment';
-
+import { LoggerService } from '../../../services/logger';
 
 interface AttendanceItemDto {
   attendanceId: number;
-  attendance: string; 
-  exerciseSessionId?: number; 
+  attendance: string;
+  exerciseSessionId?: number;
   sessionDate?: string;
 }
 
 interface StudentRowDto {
-  studentId?: number; 
+  studentId?: number;
   studentFullName: string;
   studentAttendances: AttendanceItemDto[];
-  aisId?: number; 
+  aisId?: number;
 }
 
 interface Student {
   id: number;
   fullName: string;
-  aisId?: number; 
+  aisId?: number;
 }
 
 interface SessionColumn {
@@ -46,36 +46,43 @@ interface UpdateAttendanceRequest {
 
 @Component({
   selector: 'app-attendance',
-  standalone: true, 
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './attendance.html',
   styleUrl: './attendance.css'
 })
-export class Attendance implements OnInit { 
+export class Attendance implements OnInit {
 
   private http = inject(HttpClient);
   public contextService = inject(TeacherContextService);
-  private apiUrl = `${environment.apiUrl}/api/v1`; 
+  private logger = inject(LoggerService);
+  private apiUrl = `${environment.apiUrl}/api/v1`;
 
   public uniqueStudents: Student[] = [];
   public uniqueSessions: SessionColumn[] = [];
 
   public attendanceMap = new Map<string, AttendanceRecord>();
-  public attendanceOptions: string[] = []; 
+  public attendanceOptions: string[] = [];
 
   public isLoading: boolean = false;
   public error: string | null = null;
   public showFullHistory: boolean = false;
-  
+
   private processingSet = new Set<string>();
+
+  private translations: Record<string, string> = {
+    'PRESENT': 'Prítomný',
+    'ABSENT': 'Neprítomný',
+    'SUBSTITUTED': 'Nahradené'
+  };
 
   constructor() {
     effect(() => {
       const selectedEx = this.contextService.selectedExercise() as ContextExercise | null;
-      
+
       if (selectedEx && selectedEx.exerciseId) {
         this.showFullHistory = false;
-        console.log('Načítavam skupinu ID:', selectedEx.exerciseId);
+        this.logger.log('Načítavam skupinu ID:', selectedEx.exerciseId);
         this.fetchAttendance(selectedEx.exerciseId);
       } else {
         this.clearTable();
@@ -84,7 +91,8 @@ export class Attendance implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchEnums(); 
+    this.logger.log('Attendance initialized');
+    this.fetchEnums();
   }
 
   async fetchEnums(): Promise<void> {
@@ -92,12 +100,14 @@ export class Attendance implements OnInit {
       const enums = await lastValueFrom(this.http.get<string[]>(`${this.apiUrl}/enum/attendance`));
       this.attendanceOptions = enums || [];
     } catch (err) {
-      this.attendanceOptions = [ 'ABSENT','PRESENT', 'SUBSTITUTED']; 
+      this.logger.warn('Failed to fetch enums', err);
+      this.attendanceOptions = ['ABSENT', 'PRESENT', 'SUBSTITUTED'];
     }
   }
-  
+
   toggleHistory(): void {
     this.showFullHistory = !this.showFullHistory;
+    this.logger.log(`Toggling history: ${this.showFullHistory}`);
     this.fetchAttendance();
   }
 
@@ -110,10 +120,10 @@ export class Attendance implements OnInit {
     const targetId = exerciseId ?? currentEx?.exerciseId;
 
     if (!targetId) {
-        this.isLoading = false;
-        return;
+      this.isLoading = false;
+      return;
     }
-    
+
     const isCurrentParam = !this.showFullHistory;
 
     try {
@@ -122,63 +132,66 @@ export class Attendance implements OnInit {
       const data = await lastValueFrom(
         this.http.get<StudentRowDto[]>(url)
       );
-      
+
+      this.logger.log(`Attendance data loaded: ${data?.length || 0} rows`);
       this.processData(data);
 
     } catch (err) {
+      this.logger.error('Nepodarilo sa načítať záznamy', err);
       this.error = 'Nepodarilo sa načítať záznamy.';
     } finally {
       this.isLoading = false;
     }
   }
+
   private processData(rows: StudentRowDto[]): void {
     const studentsTemp: Student[] = [];
-    const sessionsMap = new Map<number, SessionColumn>(); 
+    const sessionsMap = new Map<number, SessionColumn>();
 
     rows.forEach((row, index) => {
-      
+
       const syntheticStudentId = row.studentId !== undefined ? row.studentId : index;
 
       const studentObj: Student = {
-        id: syntheticStudentId, 
+        id: syntheticStudentId,
         fullName: row.studentFullName,
-        aisId: row.aisId 
+        aisId: row.aisId
       };
       studentsTemp.push(studentObj);
 
       if (row.studentAttendances && row.studentAttendances.length > 0) {
         row.studentAttendances.forEach((att, attIndex) => {
 
-            const syntheticSessionId = (att as any).exerciseSessionId || (attIndex + 1);
+          const syntheticSessionId = (att as any).exerciseSessionId || (attIndex + 1);
 
-            if (!sessionsMap.has(syntheticSessionId)) {
-                
-                let columnLabel = '';
-                
-                if (att.sessionDate) {
-                    const formattedDate = this.formatDate(att.sessionDate);
-                    columnLabel = `${formattedDate} (${syntheticSessionId}. týždeň)`;
-                } else {
-                    columnLabel = `Týždeň ${syntheticSessionId}`;
-                }
+          if (!sessionsMap.has(syntheticSessionId)) {
 
-                sessionsMap.set(syntheticSessionId, {
-                    id: syntheticSessionId,
-                    label: columnLabel,
-                    date: att.sessionDate
-                });
+            let columnLabel = '';
+
+            if (att.sessionDate) {
+              const formattedDate = this.formatDate(att.sessionDate);
+              columnLabel = `${formattedDate} (${syntheticSessionId}. týž.)`;
+            } else {
+              columnLabel = `${syntheticSessionId}. týž.`;
             }
 
-            const key = this.getMapKey(syntheticStudentId, syntheticSessionId);
-            
-            const record: AttendanceRecord = {
-              id: att.attendanceId,
-              attendanceEnum: att.attendance,
-              studentId: syntheticStudentId,
-              sessionId: syntheticSessionId
-            };
-            
-            this.attendanceMap.set(key, record);
+            sessionsMap.set(syntheticSessionId, {
+              id: syntheticSessionId,
+              label: columnLabel,
+              date: att.sessionDate
+            });
+          }
+
+          const key = this.getMapKey(syntheticStudentId, syntheticSessionId);
+
+          const record: AttendanceRecord = {
+            id: att.attendanceId,
+            attendanceEnum: att.attendance,
+            studentId: syntheticStudentId,
+            sessionId: syntheticSessionId
+          };
+
+          this.attendanceMap.set(key, record);
         });
       }
     });
@@ -186,20 +199,20 @@ export class Attendance implements OnInit {
     this.uniqueStudents = studentsTemp.sort((a, b) => (a.fullName || '').localeCompare(b.fullName || ''));
 
     this.uniqueSessions = Array.from(sessionsMap.values()).sort((a, b) => {
-        if (a.date && b.date) {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
-        }
-        return a.id - b.id;
+      if (a.date && b.date) {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      }
+      return a.id - b.id;
     });
   }
 
   private formatDate(dateStr: string): string {
-      try {
-          const d = new Date(dateStr);
-          return `${d.getDate()}.${d.getMonth() + 1}.`;
-      } catch {
-          return dateStr;
-      }
+    try {
+      const d = new Date(dateStr);
+      return `${d.getDate()}.${d.getMonth() + 1}.`;
+    } catch {
+      return dateStr;
+    }
   }
 
   private getMapKey(studentId: number | string, sessionId: number | string): string {
@@ -220,9 +233,9 @@ export class Attendance implements OnInit {
     const currentRecord = this.attendanceMap.get(key);
 
     if (!currentRecord || !currentRecord.id) {
-        console.error("Chýba attendanceId, nemôžem aktualizovať.");
-        this.processingSet.delete(key);
-        return;
+      this.logger.error("Chýba attendanceId, nemôžem aktualizovať.", { student, session });
+      this.processingSet.delete(key);
+      return;
     }
 
     const oldStatus = currentRecord.attendanceEnum;
@@ -235,37 +248,42 @@ export class Attendance implements OnInit {
 
     try {
       const url = `${this.apiUrl}/student-attendance/${currentRecord.id}`;
-      
+
       const payload: UpdateAttendanceRequest = {
         attendanceEnum: nextStatus
       };
 
-      console.log(`PUT ${url}`, payload);
+      this.logger.log(`PUT ${url}`, payload);
 
       await lastValueFrom(this.http.put(url, payload));
 
     } catch (err) {
-      console.error(err);
+      this.logger.error('Update failed', err);
       this.attendanceMap.set(key, { ...currentRecord, attendanceEnum: oldStatus });
       this.error = 'Uloženie zlyhalo.';
     } finally {
       this.processingSet.delete(key);
     }
   }
+  getTranslation(status: string): string {
+    return this.translations[status] || status;
+  }
 
-  getStatusColor(status: string): string {
-    if (!status) return '';
-    switch (status.toUpperCase()) {
-      case 'ABSENT': return 'bg-red-100 text-red-800 border-red-200';
-      case 'PRESENT': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      case 'SUBSTITUTED': return 'bg-purple-100 text-purple-800 border-purple-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  }
+getStatusColor(status: string): string {
+  if (!status) return 'bg-gray-100 text-gray-500 border-gray-200';
   
+  const s = status.toUpperCase();
+  if (s === 'PRESENT' || s === 'PRÍTOMNÝ') return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+  if (s === 'ABSENT' || s === 'NEPRÍTOMNÝ') return 'bg-red-100 text-red-800 border-red-200';
+  if (s === 'SUBSTITUTED' || s === 'NAHRADENÉ') return 'bg-purple-100 text-purple-800 border-purple-200';
+  
+  return 'bg-gray-100 text-gray-500 border-gray-200';
+}
+
   getStudentFullName(s: Student): string {
-      return s.fullName || `ID: ${s.id}`;
+    return s.fullName || `ID: ${s.id}`;
   }
+
 
   private clearTable() {
     this.attendanceMap.clear();

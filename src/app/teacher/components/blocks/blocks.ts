@@ -5,6 +5,7 @@ import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms'; 
 import { LongPressDirective } from '../../../shared/long-press/long-press';
 import { environment } from '../../../../environments/environment';
+import { LoggerService } from '../../../services/logger';
 
 interface ApiResponse<T> {
   status?: string;
@@ -34,6 +35,7 @@ export class Blocks implements OnInit, AfterViewChecked {
 
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
+  private logger = inject(LoggerService);
   
   @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
   private shouldFocus: boolean = false; 
@@ -59,6 +61,7 @@ export class Blocks implements OnInit, AfterViewChecked {
   readonly deleteConfirmText: string = 'CONFIRM';
   
   ngOnInit(): void {
+    this.logger.log('Blocks initialized');
     this.fetchBloky();
   }
 
@@ -69,10 +72,11 @@ export class Blocks implements OnInit, AfterViewChecked {
     
     try {
       const data = await lastValueFrom(this.http.get<Block[]>(apiUrl));
-      this.blocks = data;
+      this.blocks = data || [];
       this.blocks.sort((a, b) => a.id - b.id);
+      this.logger.log(`Fetched ${this.blocks.length} blocks`);
     } catch (err: any) {
-      console.error('Nepodarilo sa načítať bloky:', err);
+      this.logger.error('Nepodarilo sa načítať bloky:', err);
       this.error = 'Nepodarilo sa načítať bloky z API.';
       this.blocks = [];
     } finally {
@@ -112,6 +116,7 @@ export class Blocks implements OnInit, AfterViewChecked {
       const response = await lastValueFrom(this.http.post<ApiResponse<Block[]>>(this.blocksApiUrl, dataToSend));
       const createdBloky = response.data; 
       if (createdBloky && createdBloky.length > 0) {
+        this.logger.log('New block created', createdBloky[0]);
         this.message = `Blok '${createdBloky[0].name}' bol úspešne vytvorený.`;
         this.onCloseBlokModal();
         await this.fetchBloky();
@@ -119,6 +124,7 @@ export class Blocks implements OnInit, AfterViewChecked {
         this.error = 'Vytvorenie bloku zlyhalo.';
       }
     } catch (err: any) { 
+      this.logger.error("Chyba: Nepodarilo sa vytvoriť blok.", err);
       this.error = "Chyba: Nepodarilo sa vytvoriť blok.";
     } finally {
       this.isLoading = false;
@@ -150,9 +156,11 @@ export class Blocks implements OnInit, AfterViewChecked {
 
       try {
         await lastValueFrom(this.http.delete<ApiResponse<any>>(`${this.blocksApiUrl}/${blokId}`));
+        this.logger.warn(`Block deleted: ID ${blokId}`);
         this.blocks = this.blocks.filter(b => b.id !== blokId);
         this.message = `Blok bol úspešne vymazaný.`;
       } catch (err: any) {
+        this.logger.error(`Delete block ${blokId} failed`, err);
         this.error = `Chyba: Nepodarilo sa vymazať blok.`;
       } finally {
         this.isLoading = false;
@@ -228,13 +236,16 @@ export class Blocks implements OnInit, AfterViewChecked {
 
       if (success) {
           this.blocks = this.blocks.map(b => b.id === updatedBlok.id ? updatedBlok : b);
+          this.logger.log(`Block updated: ID ${updatedBlok.id}`, updatedBlok);
           this.message = `Blok aktualizovaný.`;
           this.error = null;
       } else {
+          this.logger.warn('Update accepted but value mismatch', { sent: updatePayload, received: updatedBlok });
           pendingErrorMessage = "Chyba: Aktualizácia zlyhala (hodnota nebola povolená).";
       }
 
     } catch (err: any) {
+      this.logger.error('Cell save failed', err);
       pendingErrorMessage = `Chyba: Aktualizácia bloku zlyhala.`;
     } finally {
       this.editingBlokId = null;

@@ -16,6 +16,10 @@
     <button *ngFor="let button of sidebarButtons"
       (click)="buttonClick.emit(button.label)"
       class="w-full py-3 px-4 rounded-lg text-left font-medium transition-all duration-200"
+      
+      [hidden]="!shouldShowButton(button)" 
+      [disabled]="!shouldShowButton(button)"
+
       [ngClass]="{ 
           'text-gray-400 hover:bg-gray-800 hover:text-white': button.label !== activeView,
           'bg-emerald-600 text-white shadow-lg': button.label === activeView

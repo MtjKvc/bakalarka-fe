@@ -18,7 +18,7 @@ export class Student {
   private columns!: number;
   private drops!: number[];
   private fontSize = 16;
-  private characters = '01';
+  private characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789';
   
 menuOpen = false;
 
@@ -51,7 +51,7 @@ toggleMenu() {
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
     this.ctx.fillRect(0, 0, this.width, this.height);
 
-    this.ctx.fillStyle = 'rgba(0, 255, 0, 0.4)';
+    this.ctx.fillStyle = 'rgba(0, 255, 0, 0.1)';
     this.ctx.font = `${this.fontSize}px monospace`;
 
     for (let i = 0; i < this.drops.length; i++) {

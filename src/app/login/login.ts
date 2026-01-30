@@ -2,16 +2,18 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { environment } from '../../environments/environment';
-
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
 export class Login {
+  errorMessage: string = '';
+
   loginForm: FormGroup = new FormGroup({
     email: new FormControl(""),
     password: new FormControl("")
@@ -34,13 +36,15 @@ export class Login {
       return decoded;
 
     } catch (error) {
-      console.error("Chyba pri dekódovaní tokenu:", error);
+      console.error(error);
       return null;
     }
   }
 
   onLogin() {
+    this.errorMessage = '';
     const formValue = this.loginForm.value;
+    
     this.http.post(`${environment.apiUrl}/api/v1/auth/authenticate`, formValue).subscribe({
       next: (res: any) => {
         if (res.token) {
@@ -49,8 +53,6 @@ export class Login {
           const payload = this.decodeTokenPayload(res.token);
           
           if (payload) {
-            console.log("Dekódovaný token:", payload);
-            
             localStorage.setItem('user_role', payload.role); 
             localStorage.setItem('user_id', payload.id); 
             localStorage.setItem('user_fullName', payload.sub);
@@ -58,12 +60,11 @@ export class Login {
 
           this.router.navigate(['/teacher']); 
         } else {
-          alert(res.message);
+          this.errorMessage = res.message;
         }
       },
       error: (err) => {
-        console.error("Login error:", err);
-        alert(err?.error?.message || "Login failed");
+        this.errorMessage = err?.error?.message || "Nastala chyba pri prihlasovaní";
       }
     });
   }

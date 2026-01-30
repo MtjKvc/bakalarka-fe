@@ -5,6 +5,7 @@ import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/long-press/long-press';
 import { environment } from '../../../../environments/environment';
+import { LoggerService } from '../../../services/logger';
 
 interface DayOption {
   label: string;
@@ -14,30 +15,31 @@ interface DayOption {
 interface Exercise {
   id: number;
   firstSessionDate: string;
-  startTime: string; 
+  startTime: string;
   roomEnum: string;
-  availableDays?: DayOption[]; 
+  availableDays?: DayOption[];
 }
 
 @Component({
   selector: 'app-exercises',
   standalone: true,
   imports: [CommonModule, FormsModule, LongPressDirective],
-  templateUrl: './exercises.html', 
+  templateUrl: './exercises.html',
   styleUrl: './exercises.css'
 })
 export class ExercisesComponent implements OnInit, AfterViewChecked {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
+  private logger = inject(LoggerService);
 
   @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
   private shouldFocus: boolean = false;
 
   private exercisesApiUrl = `${environment.apiUrl}/api/v1/exercise`;
-  private roomsApiUrl = `${environment.apiUrl}/api/v1/enum/room`; 
+  private roomsApiUrl = `${environment.apiUrl}/api/v1/enum/room`;
 
   public exercises: Exercise[] = [];
-  public availableRooms: string[] = []; 
+  public availableRooms: string[] = [];
   public isLoading: boolean = false;
   public error: string | null = null;
   public message: string | null = null;
@@ -61,16 +63,18 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
   private dayNames = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota'];
 
   ngOnInit(): void {
+    this.logger.log('ExercisesComponent initialized');
     this.loadData();
   }
 
   onSort(field: string): void {
     this.directions[field] = this.directions[field] === 'asc' ? 'desc' : 'asc';
+    this.logger.log(`Sorting by ${field} ${this.directions[field]}`);
     this.loadData();
   }
 
   async loadData(): Promise<void> {
-    this.isLoading = true; 
+    this.isLoading = true;
     this.error = null;
     try {
       const dateDir = this.directions['firstSessionDate'];
@@ -89,9 +93,11 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
         e.availableDays = this.calculateWorkDaysForWeek(e.firstSessionDate);
         return e;
       });
-      
+
       this.availableRooms = roomsData || [];
+      this.logger.log(`Loaded ${this.exercises.length} exercises and ${this.availableRooms.length} rooms`);
     } catch (err) {
+      this.logger.error('Failed to load data', err);
       this.error = 'Chyba pri načítaní dát.';
     } finally {
       this.isLoading = false;
@@ -110,11 +116,14 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     for (let i = 0; i < 5; i++) {
       const d = new Date(monday);
       d.setDate(monday.getDate() + i);
-      options.push({ label: this.dayNames[d.getDay()], date: d.toISOString().split('T')[0] });
+      options.push({
+        label: this.dayNames[i + 1],
+        date: d.toISOString().split('T')[0]
+      });
     }
+
     return options;
   }
-
 
   async onDateChange(ex: Exercise, newDate: string): Promise<void> {
     if (ex.firstSessionDate === newDate) return;
@@ -127,13 +136,16 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
   }
 
   async updateExercise(id: number, payload: any, msg: string) {
+    const { availableDays, ...dataToSend } = payload;
     this.isLoading = true;
     try {
-      await lastValueFrom(this.http.put(`${this.exercisesApiUrl}/${id}`, payload));
+      this.logger.log(`Updating exercise ID ${id}`, dataToSend);
+      await lastValueFrom(this.http.put(`${this.exercisesApiUrl}/${id}`, dataToSend));
       this.message = msg;
       setTimeout(() => this.message = null, 3000);
       await this.loadData();
-    } catch {
+    } catch (err) {
+      this.logger.error(`Update failed for ID ${id}`, err);
       this.error = "Chyba pri aktualizácii.";
       await this.loadData();
     } finally { this.isLoading = false; }
@@ -153,9 +165,13 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     const payload = { exercises: [{ ...this.newExercise, startTime: time }] };
     try {
       await lastValueFrom(this.http.post(this.exercisesApiUrl, payload));
+      this.logger.log('New exercise created', payload);
       this.onCloseModal();
       await this.loadData();
-    } catch { this.error = "Chyba pri vytváraní."; } finally { this.isLoading = false; }
+    } catch (err) {
+      this.logger.error('Create failed', err);
+      this.error = "Chyba pri vytváraní.";
+    } finally { this.isLoading = false; }
   }
 
   onDeleteExerciseClick(exercise: Exercise): void {
@@ -171,16 +187,21 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
 
   async onConfirmDelete(): Promise<void> {
     if (this.deleteConfirmationInput !== this.deleteConfirmText) return;
+    const id = this.exerciseToDelete?.id;
     this.isLoading = true;
     try {
-      await lastValueFrom(this.http.delete(`${this.exercisesApiUrl}/${this.exerciseToDelete?.id}`));
+      await lastValueFrom(this.http.delete(`${this.exercisesApiUrl}/${id}`));
+      this.logger.warn(`Exercise deleted: ID ${id}`);
       this.onCloseDeleteConfirmModal();
       await this.loadData();
-    } catch { this.error = "Chyba pri mazaní."; } finally { this.isLoading = false; }
+    } catch (err) {
+      this.logger.error(`Delete failed for ID ${id}`, err);
+      this.error = "Chyba pri mazaní.";
+    } finally { this.isLoading = false; }
   }
 
   isEditing(id: number, field: string): boolean { return this.editingId === id && this.editingField === field; }
-  
+
   onCellEdit(ex: Exercise, field: 'startTime'): void {
     this.editingId = ex.id;
     this.editingField = field;

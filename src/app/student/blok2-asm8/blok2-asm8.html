@@ -1,13 +1,13 @@
-<main class="px-4 sm:px-6 lg:px-12 py-8 space-y-16">
+<main class="main-student">
     <article
-        class="bg-green-600/10 text-white text-base sm:text-lg p-4 rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_10px_#00ff00] space-y-4 backdrop-blur-xs">
-        <h1 class="text-green-500 text-2xl font-semibold">
+        class="assignment">
+        <h1 class="student-page-h1-title">
             Podpora pre Linux
         </h1>
         Na Linuxe môžete použiť knižnicu Libsdl.<br>
         1. stiahnutie a instalacia kniznic:<br>
         <div
-            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            class="copy-code">
             <pre #linux1>
 sudo apt-get install libsdl2-dev libsdl2-mixer-dev
             </pre>
@@ -15,7 +15,7 @@ sudo apt-get install libsdl2-dev libsdl2-mixer-dev
         </div>
         2. komplovanie a linkovanie:<br>
         <div
-            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            class="copy-code">
             <pre #linux2>
 gcc main.c -o main -lSDL2main -lSDL2 -lSDL2_mixer
             </pre>
@@ -23,7 +23,7 @@ gcc main.c -o main -lSDL2main -lSDL2 -lSDL2_mixer
         </div>
         Ukážkový program:<br>
            <div
-            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            class="copy-code">
             <pre #linux3>
 
 #include &lg;SDL2/SDL.h&gt;
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
         </div>
         Ďalšie príkazy:<br>
                    <div
-            class="bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whietspace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1">
+            class="copy-code">
             <pre #linux4>
 
 Mix_PlayMusic(music, -1); // Play infinitely

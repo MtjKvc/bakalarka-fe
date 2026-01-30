@@ -6,6 +6,7 @@ import { lastValueFrom, forkJoin, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../services/teacher-context';
 import { environment } from '../../../../environments/environment';
+import { LoggerService } from '../../../services/logger';
 
 interface AssignmentHeader {
   id: number;
@@ -14,14 +15,14 @@ interface AssignmentHeader {
 }
 
 interface StudentAssignmentDto {
-  studentAssignmentId: number; 
-  assignmentId?: number; 
+  studentAssignmentId: number;
+  assignmentId?: number;
   earnedPoints: number;
   note?: string;
 }
 
 interface StudentGradingRow {
-  studentId?: number; 
+  studentId?: number;
   studentFullName: string;
   studentAssignments: StudentAssignmentDto[];
 }
@@ -34,17 +35,18 @@ interface StudentGradingRow {
   styleUrl: './grading.css'
 })
 export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
-  
+
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
   public contextService = inject(TeacherContextService);
+  private logger = inject(LoggerService);
   private apiUrl = `${environment.apiUrl}/api/v1`;
 
   @ViewChildren('pointInput') pointInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
   private shouldFocusInput = false;
 
-  public assignments: AssignmentHeader[] = []; 
-  public studentRows: StudentGradingRow[] = []; 
+  public assignments: AssignmentHeader[] = [];
+  public studentRows: StudentGradingRow[] = [];
   public isLoading = false;
   public isSaving = false;
   public isSemesterMode = false;
@@ -66,25 +68,45 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
   private searchSubject = new Subject<string>();
   private searchSubscription: Subscription | undefined;
 
+  tooltipData: { text: string, x: number, y: number } | null = null;
+
   constructor() {
     effect(() => {
       const block = this.contextService.selectedBlock();
       if (block && block.id) {
         this.isSemesterMode = false;
+        this.logger.log('Context block changed', block.id);
         this.loadGradingData(block.id);
       }
     });
   }
 
   ngOnInit() {
+    this.logger.log('GradingComponent initialized');
     this.contextService.loadBlocks().subscribe();
 
     this.searchSubscription = this.searchSubject.pipe(
-      debounceTime(400),    
-      distinctUntilChanged()  
-    ).subscribe(() => {
-      this.performSearch();  
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe((text) => {
+      this.logger.log(`Performing search: "${text}"`);
+      this.performSearch();
     });
+  }
+
+  showTooltip(event: MouseEvent, text: string) {
+    const target = event.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+
+    this.tooltipData = {
+      text: text,
+      x: rect.left + (rect.width / 2),
+      y: rect.top
+    };
+  }
+
+  hideTooltip() {
+    this.tooltipData = null;
   }
 
   ngOnDestroy(): void {
@@ -94,16 +116,16 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked(): void {
-      if (this.shouldFocusInput && this.pointInputsRef && this.pointInputsRef.length > 0) {
-          this.pointInputsRef.first.nativeElement.focus();
-          this.pointInputsRef.first.nativeElement.select();
-          this.shouldFocusInput = false;
-      }
+    if (this.shouldFocusInput && this.pointInputsRef && this.pointInputsRef.length > 0) {
+      this.pointInputsRef.first.nativeElement.focus();
+      this.pointInputsRef.first.nativeElement.select();
+      this.shouldFocusInput = false;
+    }
   }
 
   onSearchInput(text: string) {
     this.studentSearchQuery = text;
-    this.searchSubject.next(text); 
+    this.searchSubject.next(text);
   }
 
   performSearch() {
@@ -117,10 +139,11 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   clearFilter() {
     this.studentSearchQuery = '';
-    this.performSearch(); 
+    this.performSearch();
   }
 
   async selectSemester() {
+    this.logger.log('Switching to Semester Mode');
     this.isSemesterMode = true;
     this.contextService.selectBlock(null as any);
     await this.loadSemesterData();
@@ -154,20 +177,20 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
       if (this.studentSearchQuery.trim()) {
         commonParams = commonParams.set('studentFullName', this.studentSearchQuery.trim());
       }
-      
-      const requests = blocks.map(b => 
+
+      const requests = blocks.map(b =>
         this.http.get<StudentGradingRow[]>(`${this.apiUrl}/student-assignment/grading`, {
           params: commonParams.set('blockId', b.id)
         })
       );
 
       const allBlocksData = await lastValueFrom(forkJoin(requests));
-      
+
       const studentsMap = new Map<string, StudentGradingRow>();
 
       allBlocksData.forEach((blockRows, index) => {
         const blockId = blocks[index].id;
-        
+
         blockRows.forEach(row => {
           if (!studentsMap.has(row.studentFullName)) {
             studentsMap.set(row.studentFullName, {
@@ -178,9 +201,9 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
 
           const student = studentsMap.get(row.studentFullName)!;
           const blockTotalPoints = row.studentAssignments.reduce((sum, sa) => sum + (sa.earnedPoints || 0), 0);
-          
+
           student.studentAssignments.push({
-            studentAssignmentId: -1, 
+            studentAssignmentId: -1,
             assignmentId: blockId,
             earnedPoints: blockTotalPoints
           });
@@ -188,9 +211,10 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
 
       this.studentRows = Array.from(studentsMap.values()).sort((a, b) => a.studentFullName.localeCompare(b.studentFullName));
+      this.logger.log(`Semester data loaded: ${this.studentRows.length} students`);
 
     } catch (err) {
-      console.error(err);
+      this.logger.error('Failed to load semester data', err);
       this.error = 'Nepodarilo sa načítať dáta semestra.';
     } finally {
       this.isLoading = false;
@@ -202,14 +226,14 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     const exerciseId = currentExercise?.exerciseId;
 
     if (!exerciseId) {
-        this.error = 'Prosím, vyberte cvičenie v hornej lište.';
-        this.studentRows = []; this.assignments = []; return;
+      this.error = 'Prosím, vyberte cvičenie v hornej lište.';
+      this.studentRows = []; this.assignments = []; return;
     }
 
     const currentBlock = this.contextService.blocks().find(b => b.id === blockId);
     if (currentBlock) {
-        this.blockMaxPoints = (currentBlock as any).maxPoints || 0;
-        this.blockRequiredPoints = (currentBlock as any).requiredPoints || 0;
+      this.blockMaxPoints = (currentBlock as any).maxPoints || 0;
+      this.blockRequiredPoints = (currentBlock as any).requiredPoints || 0;
     }
 
     this.isLoading = true;
@@ -227,20 +251,22 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
 
       this.assignments = await lastValueFrom(this.http.get<AssignmentHeader[]>(`${this.apiUrl}/assignment?blockId=${blockId}`)) || [];
       const rawData = await lastValueFrom(
-          this.http.get<StudentGradingRow[]>(`${this.apiUrl}/student-assignment/grading`, { params })
+        this.http.get<StudentGradingRow[]>(`${this.apiUrl}/student-assignment/grading`, { params })
       );
-      
+
       this.studentRows = (rawData || []).map((row, index) => {
-          if (row.studentAssignments) {
-              row.studentAssignments.forEach((sa, i) => {
-                  if (this.assignments[i]) sa.assignmentId = this.assignments[i].id;
-              });
-          }
-          return { ...row, studentId: row.studentId ?? index };
+        if (row.studentAssignments) {
+          row.studentAssignments.forEach((sa, i) => {
+            if (this.assignments[i]) sa.assignmentId = this.assignments[i].id;
+          });
+        }
+        return { ...row, studentId: row.studentId ?? index };
       }).sort((a, b) => a.studentFullName.localeCompare(b.studentFullName));
 
+      this.logger.log(`Grading data loaded for Block ${blockId}: ${this.studentRows.length} rows`);
+
     } catch (err) {
-      console.error(err);
+      this.logger.error('Failed to load grading data', err);
       this.error = 'Nepodarilo sa načítať dáta.';
     } finally {
       this.isLoading = false;
@@ -258,43 +284,44 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   isEditing(record: StudentAssignmentDto | undefined): boolean {
-      return !this.isSemesterMode && !!record && this.editingRecordId === record.studentAssignmentId;
+    return !this.isSemesterMode && !!record && this.editingRecordId === record.studentAssignmentId;
   }
 
   onCellClick(record: StudentAssignmentDto | undefined): void {
-      if (this.isSaving || !record || this.isSemesterMode) return;
-      this.editingRecordId = record.studentAssignmentId;
-      this.editingValue = record.earnedPoints;
-      this.shouldFocusInput = true; 
-      this.cdr.detectChanges(); 
+    if (this.isSaving || !record || this.isSemesterMode) return;
+    this.editingRecordId = record.studentAssignmentId;
+    this.editingValue = record.earnedPoints;
+    this.shouldFocusInput = true;
+    this.cdr.detectChanges();
   }
 
   async onCellSave(record: StudentAssignmentDto): Promise<void> {
-      const numericValue = parseFloat(String(this.editingValue));
-      if (this.editingValue === null || isNaN(numericValue) || numericValue === record.earnedPoints) {
-          this.editingRecordId = null; return;
-      }
-      await this.updateRecord(record, numericValue, record.note || '');
-      this.editingRecordId = null;
+    const numericValue = parseFloat(String(this.editingValue));
+    if (this.editingValue === null || isNaN(numericValue) || numericValue === record.earnedPoints) {
+      this.editingRecordId = null; return;
+    }
+    await this.updateRecord(record, numericValue, record.note || '');
+    this.editingRecordId = null;
   }
 
   openNoteModal(record: StudentAssignmentDto, event: MouseEvent): void {
-      event.stopPropagation(); 
-      if (this.isSemesterMode) return;
-      this.noteModalRecord = record;
-      this.noteModalText = record.note || '';
-      this.isNoteModalOpen = true;
+    this.hideTooltip();
+    event.stopPropagation();
+    if (this.isSemesterMode) return;
+    this.noteModalRecord = record;
+    this.noteModalText = record.note || '';
+    this.isNoteModalOpen = true;
   }
 
   closeNoteModal(): void {
-      this.isNoteModalOpen = false;
-      this.noteModalRecord = null;
+    this.isNoteModalOpen = false;
+    this.noteModalRecord = null;
   }
 
   async saveNoteFromModal(): Promise<void> {
-      if (!this.noteModalRecord) return;
-      await this.updateRecord(this.noteModalRecord, this.noteModalRecord.earnedPoints, this.noteModalText.trim());
-      this.closeNoteModal();
+    if (!this.noteModalRecord) return;
+    await this.updateRecord(this.noteModalRecord, this.noteModalRecord.earnedPoints, this.noteModalText.trim());
+    this.closeNoteModal();
   }
 
   private async updateRecord(record: StudentAssignmentDto, newPoints: number, newNote: string): Promise<void> {
@@ -305,14 +332,16 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     record.note = newNote;
 
     try {
-        await lastValueFrom(this.http.put(`${this.apiUrl}/student-assignment/${record.studentAssignmentId}`, { earnedPoints: newPoints, note: newNote }));
-        this.message = 'Uložené.';
-        setTimeout(() => this.message = null, 2000);
+      this.logger.log(`Updating assignment ${record.studentAssignmentId}`, { newPoints, newNote });
+      await lastValueFrom(this.http.put(`${this.apiUrl}/student-assignment/${record.studentAssignmentId}`, { earnedPoints: newPoints, note: newNote }));
+      this.message = 'Uložené.';
+      setTimeout(() => this.message = null, 2000);
     } catch (err) {
-        this.error = 'Chyba ukladania.';
-        record.earnedPoints = oldPoints; record.note = oldNote;
+      this.logger.error('Update grading failed', err);
+      this.error = 'Chyba ukladania.';
+      record.earnedPoints = oldPoints; record.note = oldNote;
     } finally {
-        this.isSaving = false;
+      this.isSaving = false;
     }
   }
 }

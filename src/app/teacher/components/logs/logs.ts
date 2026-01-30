@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { lastValueFrom, Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { LoggerService } from '../../../services/logger';
 
 interface UserDTO {
   id: number;
@@ -51,6 +52,7 @@ interface LogEntry {
 })
 export class Logs implements OnInit, OnDestroy {
   private http = inject(HttpClient);
+  private logger = inject(LoggerService);
   private logsApiUrl = `${environment.apiUrl}/api/v1/student-assignment-log`;
 
   public logs: LogEntry[] = [];
@@ -67,6 +69,7 @@ export class Logs implements OnInit, OnDestroy {
   private searchSubscription?: Subscription;
 
   ngOnInit(): void {
+    this.logger.log('Logs component initialized');
     this.searchSubscription = this.searchSubject.pipe(
       debounceTime(300)
     ).subscribe(() => {
@@ -99,13 +102,16 @@ export class Logs implements OnInit, OnDestroy {
       params = params.set('originalUserFullName', this.searchOriginalBy.trim());
     }
 
+    this.logger.log(`Fetching logs. Sort: ${this.sortField} ${this.sortDir}, UpdatedBy: ${this.searchUpdatedBy}, OriginalBy: ${this.searchOriginalBy}`);
+
     try {
       const data = await lastValueFrom(
         this.http.get<LogEntry[]>(this.logsApiUrl, { params })
       );
       this.logs = data;
+      this.logger.log(`Logs loaded: ${this.logs.length} entries`);
     } catch (err: any) {
-      console.error('Chyba:', err);
+      this.logger.error('Failed to load logs', err);
       this.error = 'Nepodarilo sa načítať históriu zmien.';
     } finally {
       this.isLoading = false;
@@ -119,6 +125,7 @@ export class Logs implements OnInit, OnDestroy {
       this.sortField = field;
       this.sortDir = 'desc';
     }
+    this.logger.log(`Sorting changed to ${this.sortField} ${this.sortDir}`);
     this.fetchLogs();
   }
 }

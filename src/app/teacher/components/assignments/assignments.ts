@@ -5,6 +5,8 @@ import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms'; 
 import { LongPressDirective } from '../../../shared/long-press/long-press'; 
 import { environment } from '../../../../environments/environment';
+import { LoggerService } from '../../../services/logger';
+
 
 interface BlockSimple { id: number; name: string; }
 interface Assignment { id: number; block: BlockSimple | null; name: string; maxPoints: number; }
@@ -24,6 +26,7 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
 
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
+  private logger = inject(LoggerService);
 
   @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
   private shouldFocus: boolean = false;
@@ -57,6 +60,7 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
   readonly deleteConfirmText: string = 'CONFIRM';
 
   ngOnInit(): void {
+    this.logger.log('AssignmentsComponent initialized');
     this.loadData();
   }
 
@@ -78,10 +82,11 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
         const assignmentsData = await lastValueFrom(this.http.get<Assignment[]>(this.assignmentsApiUrl, { params }));
         this.assignments = assignmentsData || [];
         
+        this.logger.log(`Data loaded: ${this.assignments.length} assignments, ${this.availableBlocks.length} blocks`);
         this.sortData();
 
     } catch (err: any) {
-        console.error(err);
+        this.logger.error('Failed to load data', err);
         this.error = 'Nepodarilo sa načítať dáta.';
     } finally {
         this.isLoading = false;
@@ -123,6 +128,7 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
   }
 
   onResetFilters(): void {
+    this.logger.log('Filters reset');
     this.filterBlockId = null;
     this.filterAssignmentId = null;
     this.sortField = 'name';
@@ -143,10 +149,14 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
     const payload = { assignments: [{ blockId: this.newAssignment.blockId, name: this.newAssignment.name.trim(), maxPoints: Number(this.newAssignment.maxPoints) }] };
     try {
         await lastValueFrom(this.http.post(this.assignmentsApiUrl, payload));
+        this.logger.log('New assignment created', payload);
         this.message = `Zadanie vytvorené.`;
         this.onCloseModal();
         await this.loadData();
-    } catch (err: any) { this.error = "Chyba: Nepodarilo sa vytvoriť zadanie."; } 
+    } catch (err: any) { 
+        this.logger.error('Create assignment failed', err);
+        this.error = "Chyba: Nepodarilo sa vytvoriť zadanie."; 
+    } 
     finally { this.isLoading = false; }
   }
 
@@ -158,9 +168,13 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
       const id = this.assignToDelete.id; this.isLoading = true; this.error = null; this.onCloseDeleteConfirmModal();
       try {
           await lastValueFrom(this.http.delete(`${this.assignmentsApiUrl}/${id}`));
+          this.logger.warn(`Assignment deleted: ID ${id}`);
           this.assignments = this.assignments.filter(a => a.id !== id);
           this.message = `Zadanie vymazané.`;
-      } catch (err: any) { this.error = "Chyba: Nepodarilo sa vymazať zadanie."; } 
+      } catch (err: any) { 
+          this.logger.error(`Delete assignment ${id} failed`, err);
+          this.error = "Chyba: Nepodarilo sa vymazať zadanie."; 
+      } 
       finally { this.isLoading = false; }
   }
 
@@ -175,10 +189,15 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
           if (updatedAssign && updatedAssign.block && updatedAssign.block.id === payload.blockId) {
              const index = this.assignments.findIndex(a => a.id === assign.id);
              if (index !== -1) this.assignments[index] = { ...this.assignments[index], ...updatedAssign };
+             
+             this.logger.log(`Block changed for assignment ${assign.id} to ${newBlockId}`);
              this.message = `Blok zmenený.`;
              this.sortData();
           } else { throw new Error('Mismatch'); }
-      } catch (err: any) { this.error = "Chyba: Nepodarilo sa zmeniť blok."; await this.loadData(); } 
+      } catch (err: any) { 
+          this.logger.error('Block change failed', err);
+          this.error = "Chyba: Nepodarilo sa zmeniť blok."; await this.loadData(); 
+      } 
       finally { this.isLoading = false; }
   }
 
@@ -208,6 +227,7 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
 
       const blockId = assign.block?.id; 
       if (!blockId) {
+          this.logger.error('Assignment has no block ID', assign);
           this.error = 'Chyba: Zadanie nemá blok.'; this.editingId = null; return;
       }
 
@@ -240,13 +260,17 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
           if (success) {
               const index = this.assignments.findIndex(a => a.id === assign.id);
               if (index !== -1) this.assignments[index] = { ...this.assignments[index], ...updatedAssign };
+              
+              this.logger.log(`Cell '${field}' updated for ID ${assign.id}`, payload);
               this.message = `Zadanie aktualizované.`;
               this.sortData();
           } else {
               pendingErrorMessage = "Chyba: Aktualizácia zlyhala (hodnota nebola povolená).";
+              this.logger.warn('Update accepted but value mismatch', { sent: payload, received: updatedAssign });
           }
 
       } catch (err: any) {
+          this.logger.error('Cell save failed', err);
           pendingErrorMessage = "Chyba: Aktualizácia zlyhala (chybné údaje).";
       } finally {
           this.editingId = null; 

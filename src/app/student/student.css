@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+.mobile-nav-link {
+    @apply block text-lg font-semibold border-b border-gray-500 hover:text-green-300
+}
+
+.pc-nav-link {
+    @apply font-semibold text-xl border-b-2 border-transparent hover:border-green-500
+}
+
+.pc-nav-link-active {
+    @apply text-green-500 border-green-500
+}
+
+.title {
+    @apply hover:text-green-500
+}
+
+.title-div {
+    @apply text-white text-3xl xl:text-4xl font-bold
+}
+
+.bg-digital-rain {
+    @apply fixed top-0 left-0 w-full h-full -z-10
+}
+
+.mobile-nav-site-blur {
+    @apply fixed inset-0 bg-black/10 backdrop-blur-xs z-40 xl:hidden
+}
+
+.mobile-nav {
+    @apply fixed top-0 right-0 h-full w-64 bg-black/50 backdrop-blur-md text-white z-50 shadow-lg transform transition-transform duration-300 xl:hidden
+}
+
+.mobile-nav-button-div {
+    @apply p-6 space-y-4 h-full relative
+}
+
+.mobile-nav-close-button {
+    @apply absolute top-4 right-4 text-white focus:outline-none
+}
+
+.pc-nav {
+    @apply hidden xl:flex bg-transparent text-white
+}
+
+.header {
+    @apply flex justify-between items-center p-4 m-8 relative z-10
+}
+
+.mobile-nav-hamburger-button {
+    @apply xl:hidden text-white focus:outline-none
+}
+.main{
+    @apply px-4 sm:px-6 lg:px-12 py-8 space-y-16
+}

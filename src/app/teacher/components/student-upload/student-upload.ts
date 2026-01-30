@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { TeacherContextService } from '../../../services/teacher-context';
 import { environment } from '../../../../environments/environment';
+import { LoggerService } from '../../../services/logger';
 
 interface StudentDto {
   aisId: number;
@@ -23,6 +24,7 @@ interface UploadPayload {
 export class StudentUploadComponent {
   contextService = inject(TeacherContextService);
   http = inject(HttpClient);
+  private logger = inject(LoggerService);
 
   parsedStudents = signal<StudentDto[]>([]);
   isUploading = signal(false);
@@ -33,6 +35,7 @@ export class StudentUploadComponent {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
+    this.logger.log('File selected for processing');
     const file = input.files[0];
     const reader = new FileReader();
 
@@ -70,6 +73,7 @@ export class StudentUploadComponent {
       }
     }
 
+    this.logger.log(`Parsed ${students.length} students from CSV`);
     this.parsedStudents.set(students);
     this.uploadStatus.set('idle');
   }
@@ -78,6 +82,7 @@ export class StudentUploadComponent {
     const currentExercise = this.contextService.selectedExercise();
     
     if (!currentExercise) {
+      this.logger.warn('Upload attempted without selected exercise');
       this.errorMessage.set('Musíte vybrať cvičenie v hornej lište!');
       this.uploadStatus.set('error');
       return;
@@ -92,6 +97,8 @@ export class StudentUploadComponent {
       students: this.parsedStudents()
     };
 
+    this.logger.log('Initiating student upload', payload);
+
     const token = localStorage.getItem('auth_token');
     let headers = new HttpHeaders();
     if (token) {
@@ -101,12 +108,13 @@ export class StudentUploadComponent {
     this.http.post(`${environment.apiUrl}/api/v1/student`, payload, { headers })
       .subscribe({
         next: () => {
+          this.logger.log('Student upload successful');
           this.isUploading.set(false);
           this.uploadStatus.set('success');
           this.parsedStudents.set([]);
         },
         error: (err) => {
-          console.error('Upload error:', err);
+          this.logger.error('Student upload failed', err);
           this.isUploading.set(false);
           this.uploadStatus.set('error');
           this.errorMessage.set('Nepodarilo sa uložiť študentov. Skontrolujte konzolu.');

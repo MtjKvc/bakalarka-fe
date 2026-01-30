@@ -5,6 +5,7 @@ import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/long-press/long-press';
 import { environment } from '../../../../environments/environment';
+import { LoggerService } from '../../../services/logger';
 
 interface User {
   id: number;
@@ -51,6 +52,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
 
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
+  private logger = inject(LoggerService);
 
   @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
   private shouldFocus: boolean = false;
@@ -72,7 +74,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
   public availableExercises: Exercise[] = [];
   public selectedExerciseIdToAdd: number | null = null;
   
-  private dayNames = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota'];
+private dayNames = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota'];
 
   public isLoading: boolean = false;
   public error: string | null = null;
@@ -94,6 +96,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
   public assignmentToRemove: UserExerciseAssignment | null = null;
 
   ngOnInit(): void {
+    this.logger.log('UsersComponent initialized');
     this.loadData();
   }
 
@@ -108,9 +111,10 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         this.users = usersData || [];
         this.users.sort((a, b) => a.id - b.id);
         this.availableRoles = rolesData || [];
+        this.logger.log(`Loaded ${this.users.length} users and ${this.availableRoles.length} roles`);
         this.cdr.detectChanges();
     } catch (err: any) { 
-        console.error(err);
+        this.logger.error('Failed to load users data', err);
         this.error = 'Nepodarilo sa načítať dáta používateľov.'; 
     } finally { 
         this.isLoading = false; 
@@ -125,6 +129,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
   }
 
   async onOpenExerciseModal(user: User): Promise<void> {
+    this.logger.log('Opening exercise modal for user', user.id);
     this.selectedUserForExercises = user;
     this.isExerciseModalOpen = true;
     this.selectedExerciseIdToAdd = null;
@@ -149,7 +154,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
             .sort((a, b) => a.id - b.id);
         
     } catch (err: any) {
-        console.error(err);
+        this.logger.error('Failed to load exercises for modal', err);
         this.error = "Nepodarilo sa načítať cvičenia.";
     } finally {
         this.isLoading = false;
@@ -177,13 +182,14 @@ export class UsersComponent implements OnInit, AfterViewChecked {
                 exerciseId: this.selectedExerciseIdToAdd
             }]
         };
-
+        
+        this.logger.log('Assigning exercise', payload);
         await lastValueFrom(this.http.post(this.userExerciseApiUrl, payload));
 
         await this.onOpenExerciseModal(this.selectedUserForExercises);
         
     } catch (err: any) {
-        console.error("Chyba pri priraďovaní:", err);
+        this.logger.error('Error assigning exercise', err);
 
         if (err.status === 409) {
             this.error = "Toto cvičenie už je používateľovi priradené, alebo nastal konflikt dát.";
@@ -216,6 +222,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     this.error = null;
 
     try {
+        this.logger.log('Removing exercise assignment', this.assignmentToRemove.id);
         await lastValueFrom(this.http.delete(`${this.userExerciseApiUrl}/${this.assignmentToRemove.id}`));
 
         this.onCloseRemoveConfirm();
@@ -225,7 +232,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         this.message = "Cvičenie bolo úspešne odobraté.";
 
     } catch (err: any) {
-        console.error(err);
+        this.logger.error('Error removing exercise assignment', err);
         this.error = "Chyba pri odoberaní cvičenia.";
         this.onCloseRemoveConfirm();
     } finally {
@@ -239,10 +246,11 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     }
     this.isLoading = true; this.message = null; this.error = null;
     try {
+      this.logger.log('Requesting password reset for user', user.id);
       await lastValueFrom(this.http.put(`${this.passwordApiUrl}/${user.id}`, {}));
       this.message = `Požiadavka na reset hesla pre ${user.email} bola úspešne odoslaná.`;
     } catch (err: any) {
-      console.error(err);
+      this.logger.error('Error resetting password', err);
       this.error = "Chyba pri resetovaní hesla.";
     } finally {
       this.isLoading = false;
@@ -265,11 +273,12 @@ export class UsersComponent implements OnInit, AfterViewChecked {
   async updateUser(id: number, payload: UpdateUserPayload, onSuccess: () => void, successMsg: string, onError?: () => void) {
       this.isLoading = true; this.error = null; this.message = null;
       try {
+          this.logger.log('Updating user', { id, payload });
           await lastValueFrom(this.http.put(`${this.usersApiUrl}/${id}`, payload));
           onSuccess();
           this.message = successMsg;
       } catch (err: any) {
-          console.error(err);
+          this.logger.error('Error updating user', err);
           this.error = "Chyba pri aktualizácii používateľa.";
           if (onError) onError();
           else await this.loadData();
@@ -296,11 +305,13 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     };
 
     try {
+        this.logger.log('Creating new user', payload);
         await lastValueFrom(this.http.post(this.usersApiUrl, payload));
         this.message = `Používateľ vytvorený.`;
         this.onCloseModal();
         await this.loadData(); 
     } catch (err: any) { 
+        this.logger.error('Error creating user', err);
         this.error = "Chyba pri vytváraní používateľa."; 
     } finally { 
         this.isLoading = false; 
@@ -325,11 +336,12 @@ export class UsersComponent implements OnInit, AfterViewChecked {
       this.onCloseDeleteConfirmModal();
       
       try {
+          this.logger.log('Deleting user', idToDelete);
           await lastValueFrom(this.http.delete(`${this.usersApiUrl}/${idToDelete}`));
           this.users = this.users.filter(u => u.id !== idToDelete);
           this.message = `Používateľ vymazaný.`;
       } catch (err: any) { 
-          console.error(err);
+          this.logger.error('Error deleting user', err);
           this.error = "Chyba: Nepodarilo sa vymazať používateľa."; 
       } finally { 
           this.isLoading = false; 
@@ -371,11 +383,13 @@ export class UsersComponent implements OnInit, AfterViewChecked {
       if (this.editingField === 'email') payload.email = newValue;
 
       try {
+          this.logger.log('Saving cell edit', { userId: user.id, field: this.editingField, newValue });
           await lastValueFrom(this.http.put(`${this.usersApiUrl}/${user.id}`, payload));
           if (this.editingField === 'fullName') user.fullName = newValue;
           if (this.editingField === 'email') user.email = newValue;
           this.message = `Údaje aktualizované.`;
       } catch (err: any) { 
+          this.logger.error('Error saving cell edit', err);
           this.error = "Chyba pri aktualizácii."; 
           await this.loadData();
       } finally { 

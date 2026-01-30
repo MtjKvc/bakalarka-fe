@@ -6,6 +6,7 @@ import { debounceTime, switchMap, tap, catchError } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms'; 
 import { LongPressDirective } from '../../../shared/long-press/long-press';
 import { environment } from '../../../../environments/environment';
+import { LoggerService } from '../../../services/logger';
 
 interface Student {
   id: number; 
@@ -49,6 +50,7 @@ type NewStudent = Omit<Student, 'id' | 'relationshipId' | 'exerciseId'>;
 export class Students implements OnInit, AfterViewChecked, OnDestroy { 
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
+  private logger = inject(LoggerService);
   
   @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
   
@@ -89,11 +91,13 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   readonly deleteConfirmText: string = 'CONFIRM';
 
   ngOnInit(): void {
+    this.logger.log('Students component initialized');
     this.loadExercises();
 
     this.searchSubscription = this.searchSubject.pipe(
       debounceTime(300), 
       tap(() => {
+        this.logger.log('Search triggered');
         this.isLoading = true;
         this.error = null;
         this.cdr.markForCheck();
@@ -121,14 +125,17 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
         }
         params = params.set('sort', sortParam);
 
+        this.logger.log(`Fetching students with params: ${params.toString()}`);
         return this.http.get<StudentExerciseResponse[]>(this.studentExerciseApiUrl, { params }).pipe(
-          catchError(() => {
+          catchError((err) => {
+            this.logger.error('Failed to load students', err);
             this.error = "Nepodarilo sa načítať dáta.";
             return [];
           })
         );
       })
     ).subscribe(data => {
+      this.logger.log(`Loaded ${data ? data.length : 0} students`);
       this.processResponseData(data);
       this.isLoading = false;
       this.cdr.detectChanges();
@@ -138,6 +145,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.logger.log('Students component destroyed');
     this.searchSubscription?.unsubscribe();
     this.searchSubject.complete();
   }
@@ -149,6 +157,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
       this.sortField = field;
       this.sortDirection = 'asc';
     }
+    this.logger.log(`Sorting changed to ${field} ${this.sortDirection}`);
     this.triggerSearch(); 
   }
 
@@ -184,7 +193,11 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
         if (e.firstSessionDate?.includes('T')) e.firstSessionDate = e.firstSessionDate.split('T')[0];
         return e;
       }).sort((a, b) => a.id - b.id);
-    } catch (err) { this.error = "Chyba načítania cvičení."; }
+      this.logger.log(`Loaded ${this.exercises.length} exercises`);
+    } catch (err) { 
+        this.logger.error('Failed to load exercises', err);
+        this.error = "Chyba načítania cvičení."; 
+    }
   }
 
   async onExerciseChange(student: Student, newExerciseId: any): Promise<void> {
@@ -192,13 +205,15 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
     if (student.exerciseId === newId) return;
     this.isLoading = true;
     try {
+        this.logger.log(`Moving student ${student.id} to exercise ${newId}`);
         await lastValueFrom(this.http.put(`${this.studentExerciseApiUrl}/${student.relationshipId}`, {
             studentId: student.id, 
             exerciseId: newId
         }));
         student.exerciseId = newId;
         this.message = `Študent presunutý.`;
-    } catch { 
+    } catch (err) { 
+        this.logger.error('Failed to change exercise', err);
         this.error = `Zmena zlyhala.`; 
         this.triggerSearch();
     } 
@@ -209,13 +224,17 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
     if (this.selectedExerciseId === null) return;
     this.isLoading = true;
     try {
+      this.logger.log('Creating new student', this.novyStudent);
       await lastValueFrom(this.http.post<any>(this.studentsApiUrl, { 
           exerciseId: Number(this.selectedExerciseId), 
           students: [{ aisId: Number(this.novyStudent.aisId), fullName: this.novyStudent.fullName.trim() }] 
       }));
       this.onCloseStudentModal();
       this.triggerSearch(); 
-    } catch (err: any) { this.error = "Chyba pri vytváraní."; } 
+    } catch (err: any) { 
+        this.logger.error('Error creating student', err);
+        this.error = "Chyba pri vytváraní."; 
+    } 
     finally { this.isLoading = false; }
   }
 
@@ -223,10 +242,14 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
     if (!this.studentToDelete || this.deleteConfirmationInput.trim() !== this.deleteConfirmText) return;
     this.isLoading = true;
     try {
+      this.logger.log(`Deleting student ${this.studentToDelete.id}`);
       await lastValueFrom(this.http.delete(`${this.studentsApiUrl}/${this.studentToDelete.id}`));
       this.onCloseDeleteConfirmModal();
       this.triggerSearch();
-    } catch { this.error = `Chyba pri mazaní.`; } 
+    } catch (err) { 
+        this.logger.error('Error deleting student', err);
+        this.error = `Chyba pri mazaní.`; 
+    } 
     finally { this.isLoading = false; }
   }
 
@@ -253,12 +276,14 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
     
     this.isSaving = true;
     try {
+      this.logger.log(`Updating student ${student.id} field ${field}`);
       const payload = { aisId: student.aisId, fullName: student.fullName };
       if (field === 'aisId') payload.aisId = Number(this.editingValue); else payload.fullName = String(this.editingValue);
       
       await lastValueFrom(this.http.put(`${this.studentsApiUrl}/${student.id}`, payload));
       (student as any)[field] = payload[field];
-    } catch { 
+    } catch (err) { 
+        this.logger.error('Update failed', err);
         this.triggerSearch();
     } 
     finally { this.editingStudentId = null; this.isSaving = false; }

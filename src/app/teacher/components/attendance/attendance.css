@@ -1,0 +1,25 @@
+@import "tailwindcss";
+.selected-exercise{
+    @apply px-3 py-1 bg-emerald-100 text-emerald-800 rounded-lg text-sm font-bold uppercase tracking-wider border border-emerald-200 shadow-sm;
+}
+.show-whole-semester-button{
+@apply bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200;
+}
+.show-actual-week{
+    @apply bg-emerald-600 text-white border-transparent hover:bg-emerald-700 shadow-md;
+}
+.show-button{
+    @apply px-4 py-2 text-sm font-medium rounded-lg border transition-all duration-200 flex items-center;
+}
+.attendance-layout{
+   @apply flex flex-col items-start gap-4 m-4 w-full;
+}
+.attendance-week-th{
+   @apply px-2 py-3 text-center text-xs font-extrabold text-gray-700 uppercase tracking-wider border-b border-gray-200 min-w-[90px];
+}
+.attendance-week-data{
+    @apply px-1 py-2 text-center border-r border-gray-100 cursor-pointer hover:bg-emerald-50 active:scale-95 transition-transform duration-75 relative ;
+}
+.attendance-week-data-bubbles{
+    @apply inline-flex items-center justify-center px-2 py-1 rounded-md text-[10px] font-bold border shadow-sm w-full mx-auto max-w-[80px] transition-colors duration-200;
+}

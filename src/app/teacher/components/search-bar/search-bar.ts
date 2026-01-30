@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, Subscription, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { LoggerService } from '../../../services/logger';
 
 interface StudentSearchResult {
   id: number;
@@ -23,8 +24,8 @@ export class SearchBar implements OnDestroy {
   
   private http = inject(HttpClient);
   private elementRef = inject(ElementRef);
-
   private cdr = inject(ChangeDetectorRef);
+  private logger = inject(LoggerService);
   
   private apiUrl = `${environment.apiUrl}/api/v1/student`;
 
@@ -42,7 +43,8 @@ export class SearchBar implements OnDestroy {
     this.searchSubscription = this.searchSubject.pipe(
       debounceTime(300), 
       distinctUntilChanged(), 
-      tap(() => {
+      tap((term) => {
+          this.logger.log(`Starting search for: "${term}"`);
           this.isLoading = true;
           this.showDropdown = true;
           this.cdr.markForCheck(); 
@@ -53,15 +55,14 @@ export class SearchBar implements OnDestroy {
         }
         return this.fetchStudents(term).pipe(
             catchError(err => {
-                console.error(err);
+                this.logger.error('Search API error', err);
                 return of([]); 
             })
         );
       })
     ).subscribe((data) => {
-
+      this.logger.log(`Search results: ${data?.length || 0} items found`);
       this.results = data || [];
-
       this.isLoading = false;
       this.cdr.detectChanges(); 
     });
@@ -77,6 +78,7 @@ export class SearchBar implements OnDestroy {
   }
 
   selectStudent(student: StudentSearchResult): void {
+    this.logger.log('Student selected from dropdown', student);
     this.searchTerm = student.fullName; 
     this.showDropdown = false;
     this.studentSelected.emit(student);
@@ -85,7 +87,9 @@ export class SearchBar implements OnDestroy {
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     if (!this.elementRef.nativeElement.contains(event.target)) {
-      this.showDropdown = false;
+      if (this.showDropdown) {
+          this.showDropdown = false;
+      }
     }
   }
 
@@ -96,6 +100,7 @@ export class SearchBar implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.logger.log('SearchBar component destroyed');
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
     }

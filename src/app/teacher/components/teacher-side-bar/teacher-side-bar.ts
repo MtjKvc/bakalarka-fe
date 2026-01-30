@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core'; 
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core'; 
 import { CommonModule, NgClass } from '@angular/common'; 
 import { SearchBar } from '../search-bar/search-bar';
+import { LoggerService } from '../../../services/logger';
 
 interface UserInfo { 
   meno: string; 
@@ -22,6 +23,7 @@ interface SidebarButton {
   styleUrl: './teacher-side-bar.css'  
 }) 
 export class TeacherSidebarComponent { 
+  private logger = inject(LoggerService);
 
   @Input() currentUser!: UserInfo; 
   @Input() isSidebarOpen: boolean = false; 
@@ -44,19 +46,31 @@ export class TeacherSidebarComponent {
   }  
 
   onButtonClick(label: string): void { 
+    this.logger.log(`Sidebar button clicked: ${label}`);
     this.buttonClick.emit(label);
   } 
 
   onLogoutClick(): void { 
+    this.logger.log('Logout clicked from sidebar');
     this.logout.emit(); 
   } 
 
   onStudentFound(student: any): void {
+    this.logger.log('Student found via sidebar search', student);
     this.studentSelected.emit(student);
     this.closeSidebar();
   }
+  
   closeSidebar(): void {
+    this.logger.log('Closing sidebar');
     this.isSidebarOpen = false;
     this.isSidebarOpenChange.emit(false);
+  }
+
+  shouldShowButton(button: SidebarButton): boolean {
+    if (this.isAdmin()) return button.isAdminAvailable;
+    if (this.isTeacher()) return button.isTeacherAvailable;
+    if (this.isHelper()) return button.isHelperAvailable;
+    return false;
   }
 }

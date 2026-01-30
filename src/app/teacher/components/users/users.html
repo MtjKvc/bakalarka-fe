@@ -1,98 +1,97 @@
-<div class="p-4 rounded-xl bg-white border border-gray-100 shadow-md font-sans">
+<div class="teacher-div">
   
-  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-200 pb-3">
-    <h3 class="text-3xl font-extrabold text-gray-800 mb-4 md:mb-0 flex items-center">
-      <svg class="w-8 h-8 mr-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+  <div class="teacher-div-line">
+    <h1 class="teacher-bigger-title">
+      <svg class="teacher-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
       Správa Používateľov
-    </h3>
-    <button class="flex items-center px-5 py-2.5 bg-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:bg-emerald-700 transition duration-150 transform hover:scale-[1.02] shadow-emerald-500/30" (click)="onCreateUserClick()">
-      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-      Vytvoriť nového Používateľa
+    </h1>
+    <button class="green-button" (click)="onCreateUserClick()">
+      <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+      Pridať Používateľa
     </button>
   </div>
 
-  <div *ngIf="isLoading" class="flex items-center justify-center p-3 bg-amber-50 border border-amber-300 text-amber-700 rounded-lg text-sm font-medium mb-4 shadow-inner animate-pulse">
-    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+  <div *ngIf="isLoading" class="teacher-loading">
+    <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
     Spracúvam požiadavku, prosím počkajte...
   </div>
 
-  <div *ngIf="error && !isCreateModalOpen && !isDeleteConfirmModalOpen && !isExerciseModalOpen && !isRemoveExerciseConfirmOpen" class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold mb-4 shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
+  <div *ngIf="error && !isCreateModalOpen && !isDeleteConfirmModalOpen && !isExerciseModalOpen && !isRemoveExerciseConfirmOpen" class="error-message">{{ error }}</div>
   
-  <div *ngIf="message" class="p-3 bg-emerald-50 border border-emerald-400 text-emerald-700 rounded-lg font-medium mb-4 shadow-sm text-sm flex items-center whitespace-pre-wrap">
-    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+  <div *ngIf="message" class="message">
+    <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
     <span>{{ message }}</span>
   </div>
 
-  <div class="overflow-x-auto bg-white rounded-lg shadow-xl mt-4 border border-gray-100">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
+  <div class="table-div">
+    <table class="teacher-table">
+      <thead class="table-header">
         <tr>
-          <th class="px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Meno a Priezvisko</th>
-          <th class="px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Email</th>
-          <th class="px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Rola</th>
-          <th class="px-6 py-3 text-right text-xs font-extrabold text-gray-700 uppercase tracking-wider">Akcie</th>
+          <th class="table-head">Meno a Priezvisko</th>
+          <th class="table-head">Email</th>
+          <th class="table-head">Rola</th>
+          <th class="table-head-right-text">Akcie</th>
         </tr>
       </thead>
-      <tbody class="bg-white divide-y divide-gray-100">
+      <tbody class="table-body">
 
-        <tr *ngFor="let user of users" class="hover:bg-emerald-50/50 transition duration-150">
+        <tr *ngFor="let user of users" class="table-hover">
           
-          <td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-700 cursor-pointer relative"
+          <td class="table-data"
               [ngClass]="{'z-10': isEditing(user.id, 'fullName')}"
               (dblclick)="onCellEdit(user, 'fullName')"
               longPress (longPress)="onCellEdit(user, 'fullName')">
             <ng-container *ngIf="isEditing(user.id, 'fullName'); else viewName">
               <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(user)" (keydown.enter)="onCellSave(user)"
-                type="text" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm -m-2 focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold" />
+                type="text" class="editing-table-data" />
             </ng-container>
             <ng-template #viewName>{{ user.fullName }}</ng-template>
           </td>
 
-          <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-600 cursor-pointer relative"
+          <td class="table-data"
               [ngClass]="{'z-10': isEditing(user.id, 'email')}"
               (dblclick)="onCellEdit(user, 'email')"
               longPress (longPress)="onCellEdit(user, 'email')">
             <ng-container *ngIf="isEditing(user.id, 'email'); else viewEmail">
               <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(user)" (keydown.enter)="onCellSave(user)"
-                type="email" class="w-full p-2 border-2 border-emerald-500 rounded-md shadow-sm -m-2 focus:outline-none focus:ring-2 focus:ring-emerald-200 bg-white text-gray-900 font-semibold" />
+                type="email" class="editing-table-data" />
             </ng-container>
             <ng-template #viewEmail>{{ user.email }}</ng-template>
           </td>
 
-          <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+          <td class="table-data">
             <select 
                 [ngModel]="user.roleEnum" 
                 (ngModelChange)="onRoleChange(user, $event)"
-                class="block w-full min-w-[140px] py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm cursor-pointer hover:border-emerald-400">
+                class="select-drop-down">
                 <option *ngFor="let role of availableRoles" [value]="role">{{ role }}</option>
             </select>
           </td>
 
-          <td class="px-6 py-3 whitespace-nowrap text-right text-sm font-medium space-x-2">
+          <td class="table-data-right">
             
             <button (click)="onOpenExerciseModal(user)" 
                     title="Spravovať cvičenia" 
-                    class="text-emerald-600 hover:text-emerald-800 p-2 rounded-full hover:bg-emerald-50 transition-colors">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    class="exercise-button">
+              <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
             </button>
 
             <button (click)="onResetPassword(user)" 
                     title="Resetovať heslo a poslať email" 
-                    class="text-amber-500 hover:text-amber-700 p-2 rounded-full hover:bg-amber-50 transition-colors">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+                    class="reset-password-button">
+              <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
             </button>
 
             <button (click)="onDeleteUserClick(user)" 
                     title="Vymazať používateľa"
-                    class="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    class="red-button">
+              <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
             </button>
           </td>
         </tr>
-
         <tr *ngIf="users.length === 0 && !isLoading && !error">
-          <td colspan="4" class="px-6 py-4 text-center text-sm font-semibold text-gray-500 bg-gray-50">
-            Žiadni používatelia. <span (click)="onCreateUserClick()" class="text-emerald-500 cursor-pointer hover:underline">Vytvoriť nového.</span>
+          <td colspan="4" class="teacher-no-data-row ">
+            Žiadni používatelia. <span (click)="onCreateUserClick()" class="teacher-create-text">Vytvoriť nového.</span>
           </td>
         </tr>
       </tbody>
@@ -100,8 +99,8 @@
   </div>
 </div>
 
-<div *ngIf="isExerciseModalOpen" (click)="onBackdropClick($event)" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl border-t-8 border-emerald-600 flex flex-col max-h-[90vh]" (click)="$event.stopPropagation()">
+<div *ngIf="isExerciseModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">
+  <div class="teacher-modal" (click)="$event.stopPropagation()">
     <div class="p-6 sm:p-8 overflow-y-auto">
       
       <div class="flex justify-between items-center mb-6 border-b pb-2 border-emerald-300">
@@ -109,9 +108,6 @@
            <h3 class="text-2xl sm:text-3xl font-bold text-gray-800">Cvičenia používateľa</h3>
            <p class="text-emerald-600 font-semibold text-base sm:text-lg mt-1">{{ selectedUserForExercises?.fullName }}</p>
         </div>
-        <button (click)="onCloseExerciseModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
       </div>
 
       <div *ngIf="error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
@@ -119,53 +115,49 @@
       <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6">
         <label class="block text-sm font-bold text-gray-700 mb-2">Pridať nové cvičenie</label>
         <div class="flex flex-col sm:flex-row gap-3">
-            <select [(ngModel)]="selectedExerciseIdToAdd" class="w-full min-w-[140px] sm:flex-grow p-2 border border-gray-300 bg-white rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+            <select [(ngModel)]="selectedExerciseIdToAdd" class="select-drop-down">
                 <option [ngValue]="null" disabled selected>Vyberte cvičenie zo zoznamu...</option>
                 <option *ngFor="let ex of availableExercises" [ngValue]="ex.id">
                     {{ getDayName(ex.firstSessionDate) }} - {{ ex.startTime | slice:0:5 }} ({{ ex.roomEnum }})
                 </option>
             </select>
             <button (click)="onAssignExercise()" [disabled]="!selectedExerciseIdToAdd || isLoading"
-                class="w-full sm:w-auto justify-center px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors flex items-center shadow-md shadow-emerald-500/20 transform hover:scale-[1.02]">
-                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                class="green-button">
+                <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Pridať
             </button>
         </div>
       </div>
 
       <div class="overflow-y-auto max-h-60 rounded-lg border border-gray-100 shadow-inner">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-100 sticky top-0">
+        <table class="teacher-table">
+            <thead class="table-header">
                 <tr>
-                    <th class="px-4 py-2 text-left text-xs font-extrabold text-gray-600 uppercase tracking-wider">Deň</th>
-                    <th class="px-4 py-2 text-left text-xs font-extrabold text-gray-600 uppercase tracking-wider">Čas</th>
-                    <th class="px-4 py-2 text-left text-xs font-extrabold text-gray-600 uppercase tracking-wider">Miestnosť</th>
-                    <th class="px-4 py-2 text-right"></th>
+                    <th class="table-head">Deň</th>
+                    <th class="table-head">Čas</th>
+                    <th class="table-head">Miestnosť</th>
+                    <th class="table-head-right-text"></th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-100">
-                <tr *ngFor="let assign of userAssignments" class="hover:bg-emerald-50/50">
-                    <td class="px-4 py-2 text-sm font-medium text-gray-800">{{ getDayName(assign.exercise.firstSessionDate) }}</td>
-                    <td class="px-4 py-2 text-sm text-gray-600 font-mono">{{ assign.exercise.startTime | slice:0:5 }}</td>
-                    <td class="px-4 py-2 text-sm text-gray-600">{{ assign.exercise.roomEnum }}</td>
-                    <td class="px-4 py-2 text-right">
+            <tbody class="table-body">
+                <tr *ngFor="let assign of userAssignments" class="table-hover">
+                    <td class="table-data">{{ getDayName(assign.exercise.firstSessionDate) }}</td>
+                    <td class="table-data">{{ assign.exercise.startTime | slice:0:5 }}</td>
+                    <td class="table-data">{{ assign.exercise.roomEnum }}</td>
+                    <td class="table-data-right">
                         <button (click)="onOpenRemoveConfirm(assign)" [disabled]="isLoading" 
-                                class="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors" title="Odobrať cvičenie">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                class="red-button" title="Odobrať cvičenie">
+                            <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </td>
                 </tr>
-                <tr *ngIf="userAssignments.length === 0">
-                    <td colspan="4" class="px-4 py-6 text-center text-gray-500 italic text-sm">
-                        Používateľ nemá priradené žiadne cvičenia.
-                    </td>
-                </tr>
+
             </tbody>
         </table>
       </div>
       
       <div class="mt-6 flex justify-end">
-        <button (click)="onCloseExerciseModal()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150 shadow-md">Zavrieť</button>
+        <button (click)="onCloseExerciseModal()" class="close-button">Zavrieť</button>
       </div>
 
     </div>
@@ -180,38 +172,38 @@
       <form (ngSubmit)="onSubmitNewUser()">
         <div class="mb-4">
           <label class="block text-sm font-semibold text-gray-700 mb-1">Meno a Priezvisko</label>
-          <input name="fullName" type="text" [(ngModel)]="newUser.fullName" required placeholder="Janko Hraško" class="block w-full px-4 py-3 placeholder-gray-500 border border-gray-300 rounded-lg shadow-sm focus:ring-emerald-500 bg-white">
+          <input name="fullName" type="text" [(ngModel)]="newUser.fullName" required placeholder="Janko Hraško" class="modal-input">
         </div>
         <div class="mb-4">
           <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-          <input name="email" type="email" [(ngModel)]="newUser.email" required placeholder="janko@example.com" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-emerald-500 bg-white">
+          <input name="email" type="email" [(ngModel)]="newUser.email" required placeholder="janko@example.com" class="modal-input">
         </div>
         <div class="mb-6">
           <label class="block text-sm font-semibold text-gray-700 mb-1">Rola</label>
-          <select name="roleEnum" [(ngModel)]="newUser.roleEnum" required class="block w-full min-w-[140px] px-4 py-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:ring-emerald-500">
+          <select name="roleEnum" [(ngModel)]="newUser.roleEnum" required class="select-drop-down">
              <option value="" disabled selected>Vyberte rolu...</option>
              <option *ngFor="let role of availableRoles" [value]="role">{{ role }}</option>
           </select>
         </div>
         <div class="flex justify-end space-x-3 pt-4">
-          <button type="button" (click)="onCloseModal()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150">Zrušiť</button>
-          <button type="submit" [disabled]="isLoading || !newUser.fullName || !newUser.email || !newUser.roleEnum" class="px-6 py-3 text-sm font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition duration-150 shadow-md shadow-emerald-500/20">Vytvoriť</button>
+          <button type="button" (click)="onCloseModal()" class="close-button">Zrušiť</button>
+          <button type="submit" [disabled]="isLoading || !newUser.fullName || !newUser.email || !newUser.roleEnum" class="green-button">Vytvoriť</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
-<div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg border-t-8 border-red-700" (click)="$event.stopPropagation()"> 
+<div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">
+  <div class="delete-modal" (click)="$event.stopPropagation()"> 
     <div class="p-8">
       
       <div class="flex items-center space-x-4 mb-6">
         <svg class="w-8 h-8 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-        <h3 class="text-2xl font-bold text-red-700">Potvrďte trvalé vymazanie</h3>
+        <h3 class="delete-modal-title">Potvrďte trvalé vymazanie</h3>
       </div>
 
-      <div *ngIf="error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold shadow-sm text-sm whitespace-pre-wrap">{{ error }}</div>
+      <div *ngIf="error" class="error-message">{{ error }}</div>
       
       <p class="text-gray-700 mb-4">
         Naozaj chcete **natrvalo vymazať** používateľa:
@@ -225,14 +217,14 @@
       
       <form (ngSubmit)="onConfirmDelete()">
         <div class="mb-6">
-          <input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm" placeholder="Sem napíšte CONFIRM" class="block w-full px-4 py-3 placeholder-gray-500 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-lg font-mono tracking-wider bg-white">
+          <input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm" placeholder="Sem napíšte CONFIRM" class="delete-input">
         </div>
         
         <div class="flex justify-end space-x-3 pt-4">
-          <button type="button" (click)="onCloseDeleteConfirmModal()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-150">
+          <button type="button" (click)="onCloseDeleteConfirmModal()" class="close-button">
             Zrušiť
           </button>
-          <button type="submit" [disabled]="isLoading || deleteConfirmationInput.trim() !== deleteConfirmText" class="px-6 py-3 text-sm font-semibold text-white bg-red-700 rounded-lg hover:bg-red-800 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-red-500/20">
+          <button type="submit" [disabled]="isLoading || deleteConfirmationInput.trim() !== deleteConfirmText" class="red-button">
             {{ isLoading ? 'Mažem...' : 'Vymazať natrvalo' }}
           </button>
         </div>
@@ -249,7 +241,7 @@
         <div class="bg-red-100 p-2 rounded-full">
             <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z"></path></svg>
         </div>
-        <h3 class="text-xl font-bold text-gray-800">Odobrať cvičenie?</h3>
+        <h3 class="delete-modal-title">Odobrať cvičenie?</h3>
       </div>
 
       <p class="text-sm text-gray-600 mb-4">
@@ -273,13 +265,13 @@
 
       <div class="flex justify-end gap-3">
         <button (click)="onCloseRemoveConfirm()" 
-                class="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors focus:ring-2 focus:ring-gray-300">
+                class="close-button">
           Zrušiť
         </button>
         
         <button (click)="onConfirmRemoveExercise()" 
                 [disabled]="isLoading"
-                class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-md shadow-red-500/20 transition-colors flex items-center">
+                class="red-button">
           <span *ngIf="isLoading" class="mr-2">
             <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
           </span>

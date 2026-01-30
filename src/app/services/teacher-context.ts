@@ -30,27 +30,34 @@ export class TeacherContextService {
     return this.http.get<ExerciseSession[]>(`${this.apiUrl}/user-exercise/current`).pipe(
       tap(data => {
         this.exercises.set(data);
-        if (data.length > 0 && !this.selectedExercise()) {
-          this.selectedExercise.set(data[0]);
+        
+        const current = this.selectedExercise();
+        const isCurrentValid = current && data.some(e => e.exerciseId === current.exerciseId);
+
+        if (!isCurrentValid) {
+          this.selectedExercise.set(data.length > 0 ? data[0] : null);
         }
       })
     );
   }
 
-  selectExercise(exercise: ExerciseSession) {
+  selectExercise(exercise: ExerciseSession | null) {
     this.selectedExercise.set(exercise);
   }
 
   blocks = signal<Block[]>([]);
-
   selectedBlock = signal<Block | null>(null);
 
   loadBlocks() {
     return this.http.get<Block[]>(`${this.apiUrl}/block`).pipe(
       tap(data => {
         this.blocks.set(data);
-        if (data.length > 0 && !this.selectedBlock()) {
-          this.selectedBlock.set(data[0]);
+
+        const current = this.selectedBlock();
+        const isCurrentValid = current && data.some(b => b.id === current.id);
+
+        if (!isCurrentValid) {
+          this.selectedBlock.set(data.length > 0 ? data[0] : null);
         }
       })
     );
@@ -58,5 +65,12 @@ export class TeacherContextService {
 
   selectBlock(block: Block) {
     this.selectedBlock.set(block);
+  }
+
+  clearContext() {
+    this.exercises.set([]);
+    this.selectedExercise.set(null);
+    this.blocks.set([]);
+    this.selectedBlock.set(null);
   }
 }
