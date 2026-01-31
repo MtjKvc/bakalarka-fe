@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/long-press/long-press';
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../services/logger';
+import { CloseOnEscDirective } from '../../../../directives/close-on-esc';
 
 interface ApiResponse<T> {
   status?: string;
@@ -27,7 +28,7 @@ type NewBlock = Omit<Block, 'id'>;
 @Component({
   selector: 'app-blocks',
   standalone: true, 
-  imports: [CommonModule, FormsModule, LongPressDirective],
+  imports: [CommonModule, FormsModule, LongPressDirective, CloseOnEscDirective],
   templateUrl: './blocks.html',
   styleUrl: './blocks.css'
 })

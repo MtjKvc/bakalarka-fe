@@ -6,6 +6,7 @@ import { lastValueFrom } from 'rxjs';
 import { Block, TeacherContextService } from '../../../services/teacher-context';
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../services/logger';
+import { CloseOnEscDirective } from '../../../../directives/close-on-esc';
 
 export interface StudentSearchResult {
   id: number;
@@ -56,7 +57,7 @@ interface AttendanceMapValue {
 @Component({
   selector: 'app-search-bar-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CloseOnEscDirective],
   templateUrl: './search-bar-modal.html',
   styleUrl: './search-bar-modal.css'
 })

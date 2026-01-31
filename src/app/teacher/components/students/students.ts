@@ -1,19 +1,21 @@
 import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common'; 
-import { HttpClient, HttpParams } from '@angular/common/http'; 
-import { lastValueFrom, Subject, Subscription } from 'rxjs'; 
+import { CommonModule, DatePipe } from '@angular/common';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { lastValueFrom, Subject, Subscription } from 'rxjs';
 import { debounceTime, switchMap, tap, catchError } from 'rxjs/operators';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/long-press/long-press';
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../services/logger';
+import { CloseOnEscDirective } from '../../../../directives/close-on-esc';
+import { SearchBarModalComponent, StudentSearchResult } from '../search-bar-modal/search-bar-modal';
 
 interface Student {
-  id: number; 
+  id: number;
   relationshipId: number;
   aisId: number;
   fullName: string;
-  exerciseId?: number | null; 
+  exerciseId?: number | null;
 }
 
 interface Exercise {
@@ -25,12 +27,12 @@ interface Exercise {
 
 interface StudentExerciseResponse {
   id: number;
-  student: { 
+  student: {
     id: number;
     aisId: number;
     fullName: string;
   };
-  exercise: { 
+  exercise: {
     id: number;
     firstSessionDate: string;
     startTime: string;
@@ -42,31 +44,31 @@ type NewStudent = Omit<Student, 'id' | 'relationshipId' | 'exerciseId'>;
 
 @Component({
   selector: 'app-students',
-  standalone: true, 
-  imports: [CommonModule, FormsModule, LongPressDirective, DatePipe], 
+  standalone: true,
+  imports: [CommonModule, FormsModule, LongPressDirective, DatePipe, CloseOnEscDirective, SearchBarModalComponent],
   templateUrl: './students.html',
   styleUrl: './students.css'
 })
-export class Students implements OnInit, AfterViewChecked, OnDestroy { 
+export class Students implements OnInit, AfterViewChecked, OnDestroy {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
   private logger = inject(LoggerService);
-  
+
   @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
-  
-  private shouldFocus: boolean = false; 
-  public isSaving: boolean = false; 
+
+  private shouldFocus: boolean = false;
+  public isSaving: boolean = false;
 
   private studentsApiUrl = `${environment.apiUrl}/api/v1/student`;
-  private exercisesApiUrl = `${environment.apiUrl}/api/v1/exercise`; 
+  private exercisesApiUrl = `${environment.apiUrl}/api/v1/exercise`;
   private studentExerciseApiUrl = `${environment.apiUrl}/api/v1/student-exercise`;
 
   public students: Student[] = [];
-  public exercises: Exercise[] = []; 
-  
+  public exercises: Exercise[] = [];
+
   public searchName: string = '';
   public searchAisId: string = '';
-  
+
   public sortField: string = 'id';
   public sortDirection: 'asc' | 'desc' = 'asc';
 
@@ -75,11 +77,11 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
 
   public isLoading: boolean = false;
   public error: string | null = null;
-  public message: string | null = null; 
+  public message: string | null = null;
 
   public isCreateStudentModalOpen: boolean = false;
   public novyStudent: NewStudent = { aisId: 0, fullName: '' };
-  public selectedExerciseId: number | null = null; 
+  public selectedExerciseId: number | null = null;
 
   public editingStudentId: number | null = null;
   public editingField: keyof Student | null = null;
@@ -90,12 +92,15 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   public deleteConfirmationInput: string = '';
   readonly deleteConfirmText: string = 'CONFIRM';
 
+  public isDetailModalOpen: boolean = false;
+  public selectedStudentForDetail: StudentSearchResult | null = null;
+
   ngOnInit(): void {
     this.logger.log('Students component initialized');
     this.loadExercises();
 
     this.searchSubscription = this.searchSubject.pipe(
-      debounceTime(300), 
+      debounceTime(300),
       tap(() => {
         this.logger.log('Search triggered');
         this.isLoading = true;
@@ -106,22 +111,22 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
         let params = new HttpParams();
 
         if (this.searchName.trim()) {
-            params = params.set('fullName', this.searchName.trim());
+          params = params.set('fullName', this.searchName.trim());
         }
-        
+
         if (this.searchAisId.trim()) {
-            params = params.set('aisId', this.searchAisId.trim());
+          params = params.set('aisId', this.searchAisId.trim());
         }
 
         let sortParam = 'id,asc';
         if (this.sortField === 'fullName') {
-            sortParam = `StudentEntity.fullName,${this.sortDirection}`;
+          sortParam = `StudentEntity.fullName,${this.sortDirection}`;
         } else if (this.sortField === 'aisId') {
-            sortParam = `StudentEntity.aisId,${this.sortDirection}`;
+          sortParam = `StudentEntity.aisId,${this.sortDirection}`;
         } else if (this.sortField === 'exercise') {
-            sortParam = `ExerciseEntity.id,${this.sortDirection}`; 
+          sortParam = `ExerciseEntity.id,${this.sortDirection}`;
         } else {
-             sortParam = `id,${this.sortDirection}`;
+          sortParam = `id,${this.sortDirection}`;
         }
         params = params.set('sort', sortParam);
 
@@ -150,6 +155,20 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
     this.searchSubject.complete();
   }
 
+openStudentDetail(student: Student): void {
+    this.selectedStudentForDetail = {
+      id: student.id,
+      fullName: student.fullName,
+      aisId: student.aisId
+    };
+    this.isDetailModalOpen = true;
+  }
+
+  onCloseDetailModal(): void {
+    this.isDetailModalOpen = false;
+    this.selectedStudentForDetail = null;
+  }
+
   onSort(field: string): void {
     if (this.sortField === field) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
@@ -158,7 +177,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
       this.sortDirection = 'asc';
     }
     this.logger.log(`Sorting changed to ${field} ${this.sortDirection}`);
-    this.triggerSearch(); 
+    this.triggerSearch();
   }
 
   triggerSearch(): void {
@@ -171,8 +190,8 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
 
   private processResponseData(data: StudentExerciseResponse[]): void {
     if (!data) {
-        this.students = [];
-        return;
+      this.students = [];
+      return;
     }
 
     this.students = data.map(item => {
@@ -194,29 +213,29 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
         return e;
       }).sort((a, b) => a.id - b.id);
       this.logger.log(`Loaded ${this.exercises.length} exercises`);
-    } catch (err) { 
-        this.logger.error('Failed to load exercises', err);
-        this.error = "Chyba načítania cvičení."; 
+    } catch (err) {
+      this.logger.error('Failed to load exercises', err);
+      this.error = "Chyba načítania cvičení.";
     }
   }
 
   async onExerciseChange(student: Student, newExerciseId: any): Promise<void> {
-    const newId = Number(newExerciseId); 
+    const newId = Number(newExerciseId);
     if (student.exerciseId === newId) return;
     this.isLoading = true;
     try {
-        this.logger.log(`Moving student ${student.id} to exercise ${newId}`);
-        await lastValueFrom(this.http.put(`${this.studentExerciseApiUrl}/${student.relationshipId}`, {
-            studentId: student.id, 
-            exerciseId: newId
-        }));
-        student.exerciseId = newId;
-        this.message = `Študent presunutý.`;
-    } catch (err) { 
-        this.logger.error('Failed to change exercise', err);
-        this.error = `Zmena zlyhala.`; 
-        this.triggerSearch();
-    } 
+      this.logger.log(`Moving student ${student.id} to exercise ${newId}`);
+      await lastValueFrom(this.http.put(`${this.studentExerciseApiUrl}/${student.relationshipId}`, {
+        studentId: student.id,
+        exerciseId: newId
+      }));
+      student.exerciseId = newId;
+      this.message = `Študent presunutý.`;
+    } catch (err) {
+      this.logger.error('Failed to change exercise', err);
+      this.error = `Zmena zlyhala.`;
+      this.triggerSearch();
+    }
     finally { this.isLoading = false; }
   }
 
@@ -225,16 +244,16 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
     this.isLoading = true;
     try {
       this.logger.log('Creating new student', this.novyStudent);
-      await lastValueFrom(this.http.post<any>(this.studentsApiUrl, { 
-          exerciseId: Number(this.selectedExerciseId), 
-          students: [{ aisId: Number(this.novyStudent.aisId), fullName: this.novyStudent.fullName.trim() }] 
+      await lastValueFrom(this.http.post<any>(this.studentsApiUrl, {
+        exerciseId: Number(this.selectedExerciseId),
+        students: [{ aisId: Number(this.novyStudent.aisId), fullName: this.novyStudent.fullName.trim() }]
       }));
       this.onCloseStudentModal();
-      this.triggerSearch(); 
-    } catch (err: any) { 
-        this.logger.error('Error creating student', err);
-        this.error = "Chyba pri vytváraní."; 
-    } 
+      this.triggerSearch();
+    } catch (err: any) {
+      this.logger.error('Error creating student', err);
+      this.error = "Chyba pri vytváraní.";
+    }
     finally { this.isLoading = false; }
   }
 
@@ -246,10 +265,10 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
       await lastValueFrom(this.http.delete(`${this.studentsApiUrl}/${this.studentToDelete.id}`));
       this.onCloseDeleteConfirmModal();
       this.triggerSearch();
-    } catch (err) { 
-        this.logger.error('Error deleting student', err);
-        this.error = `Chyba pri mazaní.`; 
-    } 
+    } catch (err) {
+      this.logger.error('Error deleting student', err);
+      this.error = `Chyba pri mazaní.`;
+    }
     finally { this.isLoading = false; }
   }
 
@@ -262,30 +281,30 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   isEditing(id: number, field: string): boolean { return this.editingStudentId === id && this.editingField === field; }
   onCellEdit(student: Student, field: keyof Student): void {
     if (this.isSaving) return;
-    this.editingStudentId = student.id; 
-    this.editingField = field; 
+    this.editingStudentId = student.id;
+    this.editingField = field;
     this.editingValue = student[field] as string | number;
-    this.shouldFocus = true; 
-    this.cdr.detectChanges(); 
+    this.shouldFocus = true;
+    this.cdr.detectChanges();
   }
-  
+
   async onCellSave(student: Student): Promise<void> {
     if (this.isSaving || this.editingStudentId === null) return;
     const field = this.editingField as 'aisId' | 'fullName';
     if (String(student[field]) === String(this.editingValue)) { this.editingStudentId = null; return; }
-    
+
     this.isSaving = true;
     try {
       this.logger.log(`Updating student ${student.id} field ${field}`);
       const payload = { aisId: student.aisId, fullName: student.fullName };
       if (field === 'aisId') payload.aisId = Number(this.editingValue); else payload.fullName = String(this.editingValue);
-      
+
       await lastValueFrom(this.http.put(`${this.studentsApiUrl}/${student.id}`, payload));
       (student as any)[field] = payload[field];
-    } catch (err) { 
-        this.logger.error('Update failed', err);
-        this.triggerSearch();
-    } 
+    } catch (err) {
+      this.logger.error('Update failed', err);
+      this.triggerSearch();
+    }
     finally { this.editingStudentId = null; this.isSaving = false; }
   }
 

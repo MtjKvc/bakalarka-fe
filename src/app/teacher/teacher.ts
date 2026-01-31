@@ -17,6 +17,7 @@ import { TeacherContextService } from '../services/teacher-context';
 import { SearchBarModalComponent, StudentSearchResult } from './components/search-bar-modal/search-bar-modal';
 import { Logs } from './components/logs/logs'; 
 import { LoggerService } from '../services/logger';
+import { CloseOnEscDirective } from '../../directives/close-on-esc';
 
 interface SidebarButton {
   label: string;

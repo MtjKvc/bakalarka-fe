@@ -1,25 +1,36 @@
 <div class="teacher-div">
-  
+
   <div class="teacher-div-line">
     <h1 class="teacher-bigger-title">
-      <svg class="teacher-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+      <svg class="teacher-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
       Správa Cvičení
     </h1>
     <button class="green-button" (click)="onCreateExerciseClick()">
-      <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+      <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
       Pridať Cvičenie
     </button>
   </div>
 
   <div *ngIf="isLoading" class="teacher-loading">
-    <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
     Spracúvam požiadavku, prosím počkajte...
   </div>
 
   <div *ngIf="error && !isCreateModalOpen && !isDeleteConfirmModalOpen" class="error-message">{{ error }}</div>
-  
+
   <div *ngIf="message" class="message">
-    <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
     <span>{{ message }}</span>
   </div>
 
@@ -31,7 +42,7 @@
             <div class="flex items-center">
               Deň v týždni
               <span class="teacher-asc-desc-icon">
-                 {{ directions['firstSessionDate'] === 'asc' ? '▲' : '▼' }}
+                {{ directions['firstSessionDate'] === 'asc' ? '▲' : '▼' }}
               </span>
             </div>
           </th>
@@ -40,57 +51,57 @@
             <div class="flex items-center">
               Čas
               <span class="teacher-asc-desc-icon">
-                 {{ directions['startTime'] === 'asc' ? '▲' : '▼' }}
+                {{ directions['startTime'] === 'asc' ? '▲' : '▼' }}
               </span>
             </div>
           </th>
 
           <th class="table-head">Miestnosť</th>
-          <th class="table-head-right-text">Akcie</th>
+          <th class="table-head-center-text">Akcie</th>
         </tr>
       </thead>
       <tbody class="table-body">
         <tr *ngFor="let exercise of exercises" class="table-hover">
           <td class="table-data">
-             <select [ngModel]="exercise.firstSessionDate" (ngModelChange)="onDateChange(exercise, $event)"
-                class="select-drop-down">
-                <option *ngFor="let dayOption of exercise.availableDays" [value]="dayOption.date">
-                    {{ dayOption.label }} 
-                </option>
+            <select [ngModel]="exercise.firstSessionDate" (ngModelChange)="onDateChange(exercise, $event)"
+              class="select-drop-down">
+              <option *ngFor="let dayOption of exercise.availableDays" [value]="dayOption.date">
+                {{ dayOption.label }}
+              </option>
             </select>
           </td>
 
-          <td class="table-data"
-              [ngClass]="{'z-10': isEditing(exercise.id, 'startTime')}"
-              (dblclick)="onCellEdit(exercise, 'startTime')"
-              longPress (longPress)="onCellEdit(exercise, 'startTime')">
+          <td class="table-data" [ngClass]="{'z-10': isEditing(exercise.id, 'startTime')}"
+            (dblclick)="onCellEdit(exercise, 'startTime')" longPress (longPress)="onCellEdit(exercise, 'startTime')">
             <ng-container *ngIf="isEditing(exercise.id, 'startTime'); else viewTime">
-                <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(exercise)" (keydown.enter)="onCellSave(exercise)"
-                type="time" class="editing-table-data" />
+              <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(exercise)"
+                (keydown.enter)="onCellSave(exercise)" type="time" class="editing-table-data" />
             </ng-container>
             <ng-template #viewTime>{{ exercise.startTime | slice:0:5 }}</ng-template>
           </td>
 
           <td class="table-data">
             <select [ngModel]="exercise.roomEnum" (ngModelChange)="onRoomChange(exercise, $event)"
-                class="select-drop-down">
-                <option *ngFor="let room of availableRooms" [value]="room">{{ room }}</option>
+              class="select-drop-down">
+              <option *ngFor="let room of availableRooms" [value]="room">{{ room }}</option>
             </select>
           </td>
 
           <td class="table-data-right">
-            <button (click)="onDeleteExerciseClick(exercise)" 
-                    title="Vymazať cvičenie"
-                    class="red-button">
-              <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            <button (click)="onDeleteExerciseClick(exercise)" title="Vymazať cvičenie" class="red-button">
+              <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                </path>
+              </svg>
             </button>
           </td>
         </tr>
-        
+
         <tr *ngIf="exercises.length === 0 && !isLoading && !error">
-            <td colspan="4" class="teacher-no-data-row">
-              Žiadne cvičenia. <span (click)="onCreateExerciseClick()" class="teacher-create-text">Vytvoriť nové.</span>
-            </td>
+          <td colspan="4" class="teacher-no-data-row">
+            Žiadne cvičenia. <span (click)="onCreateExerciseClick()" class="teacher-create-text">Vytvoriť nové.</span>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -98,7 +109,7 @@
 </div>
 
 <div *ngIf="isCreateModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">
-  <div class="teacher-modal" (click)="$event.stopPropagation()">
+  <div class="teacher-modal" (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseModal()">
     <div class="p-8">
       <h3 class="modal-title">Vytvoriť nové cvičenie</h3>
       <div *ngIf="error" class="error-message">{{ error }}</div>
@@ -107,23 +118,27 @@
         <div class="space-y-4">
           <div>
             <label class="modal-label">Deň</label>
-            <input name="firstSessionDate" type="date" [(ngModel)]="newExercise.firstSessionDate" required class="modal-input">
+            <input name="firstSessionDate" type="date" [(ngModel)]="newExercise.firstSessionDate" required
+              class="modal-input">
           </div>
           <div>
             <label class="modal-label">Čas</label>
-            <input name="startTime" type="time" [(ngModel)]="newExercise.startTime" required class="modal-input">
+            <input name="startTime" type="time" step="900" [(ngModel)]="newExercise.startTime" required
+              class="modal-input">
           </div>
           <div>
             <label class="modal-label">Miestnosť</label>
             <select name="roomEnum" [(ngModel)]="newExercise.roomEnum" required class="select-drop-down">
-               <option value="" disabled selected>Vyberte...</option>
-               <option *ngFor="let room of availableRooms" [value]="room">{{ room }}</option>
+              <option value="" disabled selected>Vyberte...</option>
+              <option *ngFor="let room of availableRooms" [value]="room">{{ room }}</option>
             </select>
           </div>
         </div>
         <div class="modal-button-layout">
           <button type="button" (click)="onCloseModal()" class="close-button">Zrušiť</button>
-          <button type="submit" [disabled]="isLoading || !newExercise.firstSessionDate || !newExercise.startTime || !newExercise.roomEnum" class="green-button">Vytvoriť</button>
+          <button type="submit"
+            [disabled]="isLoading || !newExercise.firstSessionDate || !newExercise.startTime || !newExercise.roomEnum"
+            class="green-button">Vytvoriť</button>
         </div>
       </form>
     </div>
@@ -131,41 +146,45 @@
 </div>
 
 <div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">
-  <div class="delete-modal" (click)="$event.stopPropagation()"> 
+  <div class="delete-modal" (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseDeleteConfirmModal()">
     <div class="p-8">
-      
+
       <div class="flex items-center space-x-4 mb-6">
-      
+
         <h3 class="delete-modal-title">Potvrďte trvalé vymazanie</h3>
       </div>
 
       <div *ngIf="error" class="error-message">{{ error }}</div>
-      
+
       <p class="text-gray-700 mb-4">Naozaj chcete **natrvalo vymazať** toto cvičenie?</p>
-      
+
       <div class="bg-gray-100 p-3 rounded mb-4 text-sm font-mono text-gray-800">
-         Deň: 
-         <ng-container *ngFor="let day of exerciseToDelete?.availableDays">
-            <span *ngIf="day.date === exerciseToDelete?.firstSessionDate" class="font-bold text-gray-900">
-                {{ day.label }}
-            </span>
-         </ng-container>
-         <br>
-         Čas: {{ exerciseToDelete?.startTime | slice:0:5 }}<br>
-         Miestnosť: {{ exerciseToDelete?.roomEnum }}
+        Deň:
+        <ng-container *ngFor="let day of exerciseToDelete?.availableDays">
+          <span *ngIf="day.date === exerciseToDelete?.firstSessionDate" class="font-bold text-gray-900">
+            {{ day.label }}
+          </span>
+        </ng-container>
+        <br>
+        Čas: {{ exerciseToDelete?.startTime | slice:0:5 }}<br>
+        Miestnosť: {{ exerciseToDelete?.roomEnum }}
       </div>
 
       <p class="text-sm text-gray-600 mb-4">
-        **Táto akcia je nezvratná.** Pre potvrdenie prosím napíšte presne slovo <span class="font-mono bg-gray-200 px-2 py-0.5 rounded text-red-700 font-semibold">{{ deleteConfirmText }}</span> do poľa nižšie:
+        **Táto akcia je nezvratná.** Pre potvrdenie prosím napíšte presne slovo <span
+          class="font-mono bg-gray-200 px-2 py-0.5 rounded text-red-700 font-semibold">{{ deleteConfirmText }}</span> do
+        poľa nižšie:
       </p>
 
       <form (ngSubmit)="onConfirmDelete()">
         <div class="mb-6">
-            <input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm" placeholder="Sem napíšte CONFIRM" class="delete-input">
+          <input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm"
+            placeholder="Sem napíšte CONFIRM" class="delete-input">
         </div>
         <div class="flex justify-end space-x-3 pt-4">
           <button type="button" (click)="onCloseDeleteConfirmModal()" class="close-button">Zrušiť</button>
-          <button type="submit" [disabled]="isLoading || deleteConfirmationInput.trim() !== deleteConfirmText" class="red-button">Vymazať natrvalo</button>
+          <button type="submit" [disabled]="isLoading || deleteConfirmationInput.trim() !== deleteConfirmText"
+            class="red-button">Vymazať natrvalo</button>
         </div>
       </form>
     </div>

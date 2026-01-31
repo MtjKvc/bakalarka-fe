@@ -58,7 +58,7 @@
             </div>
           </th>
 
-          <th class="table-head-right-text">Akcie</th>
+          <th class="table-head-center-text">Akcie</th>
         </tr>
       </thead>
 
@@ -129,7 +129,7 @@
 </div>
 
 <div *ngIf="isCreateModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">
-  <div class="teacher-modal" (click)="$event.stopPropagation()">
+  <div class="teacher-modal" (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseModal()">
     <div class="p-8">
       <h3 class="modal-title">Vytvoriť nové zadanie</h3>
       <form (ngSubmit)="onSubmitNewAssignment()">
@@ -163,7 +163,7 @@
 </div>
 
 <div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">
-  <div class="delete-modal" (click)="$event.stopPropagation()">
+  <div class="delete-modal" (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseDeleteConfirmModal()">
     <div class="p-8">
       <h3 class="delete-modal-title">Potvrdiť vymazanie</h3>
       <p class="mb-4 text-gray-600">Naozaj chcete vymazať zadanie <span class="font-bold">{{ assignToDelete?.name

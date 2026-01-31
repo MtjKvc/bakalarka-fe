@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/long-press/long-press';
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../services/logger';
+import { CloseOnEscDirective } from '../../../../directives/close-on-esc';
 
 interface User {
   id: number;
@@ -44,7 +45,7 @@ type EditableField = 'fullName' | 'email';
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, LongPressDirective],
+  imports: [CommonModule, FormsModule, LongPressDirective, CloseOnEscDirective],
   templateUrl: './users.html',
   styleUrl: './users.css'
 })

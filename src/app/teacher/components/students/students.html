@@ -60,7 +60,7 @@
             </div>
           </th>
 
-          <th class="table-head-right-text">Akcie</th>
+          <th class="table-head-center-text">Akcie</th>
         </tr>
       </thead>
       <tbody class="table-body">
@@ -109,6 +109,12 @@
           </td>
 
           <td class="table-data-right">
+            <button (click)="openStudentDetail(student)" class="info-button">
+              <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+              </svg>
+            </button>
             <button (click)="onDeleteStudentClick(student)" class="red-button">
               <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -120,8 +126,7 @@
         </tr>
         <tr *ngIf="students.length === 0 && !isLoading && !error">
           <td colspan="4" class="teacher-no-data-row">
-            Žiadny študenti. <span (click)="onCreateStudentClick()"
-              class="teacher-create-text">Vytvoriť nového.</span>
+            Žiadny študenti. <span (click)="onCreateStudentClick()" class="teacher-create-text">Vytvoriť nového.</span>
           </td>
         </tr>
       </tbody>
@@ -130,9 +135,9 @@
 </div>
 
 <div *ngIf="isCreateStudentModalOpen" (click)="onBackdropClick($event)"
-  class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl border-t-8 border-emerald-600"
-    (click)="$event.stopPropagation()">
+  class="teacher-modal-bg">
+  <div class="teacher-modal"
+    (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseStudentModal()">
     <div class="p-8">
       <h3 class="modal-title">Pridať študenta</h3>
       <form (ngSubmit)="onSubmitNovyStudent()">
@@ -157,7 +162,7 @@
             </select>
           </div>
         </div>
-        <div class="flex justify-end space-x-3 pt-8">
+        <div class="modal-button-layout">
           <button type="button" (click)="onCloseStudentModal()" class="close-button">Zrušiť</button>
           <button type="submit" [disabled]="isLoading || !novyStudent.fullName || !selectedExerciseId"
             class="green-button">Uložiť</button>
@@ -168,7 +173,7 @@
 </div>
 
 <div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">
-  <div class="delete-modal" (click)="$event.stopPropagation()">
+  <div class="delete-modal" (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseDeleteConfirmModal()">
     <div class="p-8">
       <h3 class="delete-modal-title">Potvrdiť vymazanie</h3>
       <p class="mb-4 text-gray-600">Naozaj chcete vymazať študenta <span class="font-bold">{{ studentToDelete?.fullName
@@ -183,3 +188,8 @@
     </div>
   </div>
 </div>
+<app-search-bar-modal
+  *ngIf="isDetailModalOpen && selectedStudentForDetail"
+  [student]="selectedStudentForDetail"
+  (close)="onCloseDetailModal()">
+</app-search-bar-modal>

@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/long-press/long-press'; 
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../services/logger';
+import { CloseOnEscDirective } from '../../../../directives/close-on-esc';
 
 
 interface BlockSimple { id: number; name: string; }
@@ -18,7 +19,7 @@ type SortDirection = 'asc' | 'desc';
 @Component({
   selector: 'app-assignments',
   standalone: true,
-  imports: [CommonModule, FormsModule, LongPressDirective],
+  imports: [CommonModule, FormsModule, LongPressDirective,CloseOnEscDirective],
   templateUrl: './assignments.html',
   styleUrl: './assignments.css' 
 })

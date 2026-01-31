@@ -41,7 +41,7 @@
           <th class="table-head">Názov bloku</th>
           <th class="table-head">Max. bodov</th>
           <th class="table-head">Požad. bodov</th>
-          <th class="table-head-right-text">Akcie</th>
+          <th class="table-head-center-text">Akcie</th>
         </tr>
       </thead>
       <tbody class="table-body">
@@ -90,7 +90,7 @@
 </div>
 
 <div *ngIf="isCreateBlokModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">
-  <div class="teacher-modal" (click)="$event.stopPropagation()">
+  <div class="teacher-modal" (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseBlokModal()">
     <div class="p-8">
       <h3 class="modal-title">Vytvoriť nový blok</h3>
 
@@ -128,7 +128,7 @@
 </div>
 
 <div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">
-  <div class="delete-modal" (click)="$event.stopPropagation()">
+  <div class="delete-modal" (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseDeleteConfirmModal()">
     <div class="p-8">
       <div class="flex items-center space-x-4 mb-6">
         <h3 class="delete-modal-title">Potvrďte trvalé vymazanie</h3>
