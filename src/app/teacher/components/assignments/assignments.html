@@ -132,6 +132,7 @@
   <div class="teacher-modal" (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseModal()">
     <div class="p-8">
       <h3 class="modal-title">Vytvoriť nové zadanie</h3>
+      <div *ngIf="error" class="error-message">{{ error }}</div>
       <form (ngSubmit)="onSubmitNewAssignment()">
         <div class="space-y-4">
           <div>

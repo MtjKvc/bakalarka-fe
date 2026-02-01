@@ -2,7 +2,7 @@ import { Component, OnInit, inject, effect, ViewChildren, QueryList, ElementRef,
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { lastValueFrom, forkJoin, Subject, Subscription } from 'rxjs';
+import { lastValueFrom, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../services/teacher-context';
 import { environment } from '../../../../environments/environment';
@@ -24,7 +24,19 @@ interface StudentAssignmentDto {
 interface StudentGradingRow {
   studentId?: number;
   studentFullName: string;
+  aisId: number;
   studentAssignments: StudentAssignmentDto[];
+}
+
+interface BlockPointDto {
+  blockId: number;
+  blockPoints: number;
+}
+
+interface StudentBlockPointsDto {
+  studentFullName: string;
+  aisId: number;
+  allBlockPoints: BlockPointDto[];
 }
 
 @Component({
@@ -79,6 +91,13 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.loadGradingData(block.id);
       }
     });
+    effect(() => {
+      const exercise = this.contextService.selectedExercise();
+      if (exercise && this.isSemesterMode) {
+        this.logger.log('Context exercise changed in Semester Mode', exercise.exerciseId);
+        this.loadSemesterData();
+      }
+    }, { allowSignalWrites: true });
   }
 
   ngOnInit() {
@@ -158,7 +177,6 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.blockRequiredPoints = 0;
 
     try {
-      const blocks = this.contextService.blocks();
       const currentExercise = this.contextService.selectedExercise() as ContextExercise | null;
       const exerciseId = currentExercise?.exerciseId;
 
@@ -167,50 +185,37 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
         return;
       }
 
+      const blocks = this.contextService.blocks();
       this.assignments = blocks.map(b => ({
         id: b.id,
         name: b.name,
         maxPoints: 0
       }));
 
-      let commonParams = new HttpParams().set('exerciseId', exerciseId);
+      let params = new HttpParams().set('exerciseId', exerciseId);
       if (this.studentSearchQuery.trim()) {
-        commonParams = commonParams.set('studentFullName', this.studentSearchQuery.trim());
+        params = params.set('studentFullName', this.studentSearchQuery.trim());
       }
 
-      const requests = blocks.map(b =>
-        this.http.get<StudentGradingRow[]>(`${this.apiUrl}/student-assignment/grading`, {
-          params: commonParams.set('blockId', b.id)
-        })
+      const response = await lastValueFrom(
+        this.http.get<StudentBlockPointsDto[]>(`${this.apiUrl}/student-assignment/block-points`, { params })
       );
 
-      const allBlocksData = await lastValueFrom(forkJoin(requests));
-
-      const studentsMap = new Map<string, StudentGradingRow>();
-
-      allBlocksData.forEach((blockRows, index) => {
-        const blockId = blocks[index].id;
-
-        blockRows.forEach(row => {
-          if (!studentsMap.has(row.studentFullName)) {
-            studentsMap.set(row.studentFullName, {
-              studentFullName: row.studentFullName,
-              studentAssignments: []
-            });
-          }
-
-          const student = studentsMap.get(row.studentFullName)!;
-          const blockTotalPoints = row.studentAssignments.reduce((sum, sa) => sum + (sa.earnedPoints || 0), 0);
-
-          student.studentAssignments.push({
-            studentAssignmentId: -1,
-            assignmentId: blockId,
-            earnedPoints: blockTotalPoints
-          });
-        });
+      this.studentRows = (response || []).map((dto, index) => {
+        return {
+          studentId: index,
+          studentFullName: dto.studentFullName,
+          aisId: dto.aisId,
+          studentAssignments: dto.allBlockPoints.map(bp => ({
+            studentAssignmentId: 0,
+            assignmentId: bp.blockId,
+            earnedPoints: bp.blockPoints,
+            note: ''
+          }))
+        };
       });
 
-      this.studentRows = Array.from(studentsMap.values()).sort((a, b) => a.studentFullName.localeCompare(b.studentFullName));
+      this.studentRows.sort((a, b) => a.studentFullName.localeCompare(b.studentFullName));
       this.logger.log(`Semester data loaded: ${this.studentRows.length} students`);
 
     } catch (err) {

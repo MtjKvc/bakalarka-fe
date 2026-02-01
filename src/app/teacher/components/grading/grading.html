@@ -112,7 +112,11 @@
       <tbody class="table-body">
         <tr *ngFor="let student of studentRows" class="table-hover">
           <td class="table-data">
-            {{ student.studentFullName }}</td>
+            <div class="flex flex-col">
+           <span> {{ student.studentFullName }} </span>
+          <span class="text-[10px] text-gray-400 font-normal" *ngIf="student.aisId != null">AIS: {{ student.aisId }}</span>
+        </div>  
+        </td>
           <td *ngFor="let assign of assignments" class="assignment-data">
             <ng-container *ngIf="getAssignmentRecord(student, assign.id) as record; else emptyCell">
               <div class="w-full h-full flex items-center justify-center transition-colors"

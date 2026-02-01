@@ -65,27 +65,47 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
 
   ngOnInit(): void {
     this.logger.log('ExercisesComponent initialized');
-    this.loadData();
+    this.initialLoad();
   }
 
-  onSort(field: string): void {
-    this.directions[field] = this.directions[field] === 'asc' ? 'desc' : 'asc';
-    this.logger.log(`Sorting by ${field} ${this.directions[field]}`);
-    this.loadData();
-  }
-
-  async loadData(): Promise<void> {
+  async initialLoad(): Promise<void> {
     this.isLoading = true;
     this.error = null;
+    try {
+      await Promise.all([
+        this.loadRooms(),
+        this.loadExercises()
+      ]);
+    } catch (err) {
+      this.logger.error('Failed to init data', err);
+      this.error = 'Chyba pri inicializácii dát.';
+    } finally {
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  async loadRooms(): Promise<void> {
+    try {
+      const roomsData = await lastValueFrom(this.http.get<string[]>(this.roomsApiUrl));
+      this.availableRooms = roomsData || [];
+      this.logger.log(`Loaded ${this.availableRooms.length} rooms`);
+    } catch (err) {
+      this.logger.error('Failed to load rooms', err);
+      throw err;
+    }
+  }
+
+  async loadExercises(): Promise<void> {
+    this.isLoading = true; 
+    this.error = null;
+    
     try {
       const dateDir = this.directions['firstSessionDate'];
       const timeDir = this.directions['startTime'];
       const url = `${this.exercisesApiUrl}?sort=firstSessionDate,${dateDir}&sort=startTime,${timeDir}`;
 
-      const [exercisesData, roomsData] = await Promise.all([
-        lastValueFrom(this.http.get<Exercise[]>(url)),
-        lastValueFrom(this.http.get<string[]>(this.roomsApiUrl))
-      ]);
+      const exercisesData = await lastValueFrom(this.http.get<Exercise[]>(url));
 
       this.exercises = (exercisesData || []).map(e => {
         if (e.firstSessionDate?.includes('T')) {
@@ -95,16 +115,23 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
         return e;
       });
 
-      this.availableRooms = roomsData || [];
-      this.logger.log(`Loaded ${this.exercises.length} exercises and ${this.availableRooms.length} rooms`);
+      this.logger.log(`Loaded ${this.exercises.length} exercises`);
     } catch (err) {
-      this.logger.error('Failed to load data', err);
-      this.error = 'Chyba pri načítaní dát.';
+      this.logger.error('Failed to load exercises', err);
+      this.error = 'Chyba pri načítaní cvičení.';
     } finally {
       this.isLoading = false;
       this.cdr.detectChanges();
     }
   }
+
+  onSort(field: string): void {
+    this.directions[field] = this.directions[field] === 'asc' ? 'desc' : 'asc';
+    this.logger.log(`Sorting by ${field} ${this.directions[field]}`);
+    this.loadExercises();
+  }
+
+
 
   calculateWorkDaysForWeek(currentDateStr: string): DayOption[] {
     if (!currentDateStr) return [];
@@ -144,11 +171,11 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
       await lastValueFrom(this.http.put(`${this.exercisesApiUrl}/${id}`, dataToSend));
       this.message = msg;
       setTimeout(() => this.message = null, 3000);
-      await this.loadData();
+      await this.loadExercises();
     } catch (err) {
       this.logger.error(`Update failed for ID ${id}`, err);
       this.error = "Chyba pri aktualizácii.";
-      await this.loadData();
+      await this.loadExercises();
     } finally { this.isLoading = false; }
   }
 
@@ -168,7 +195,7 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
       await lastValueFrom(this.http.post(this.exercisesApiUrl, payload));
       this.logger.log('New exercise created', payload);
       this.onCloseModal();
-      await this.loadData();
+      await this.loadExercises();
     } catch (err) {
       this.logger.error('Create failed', err);
       this.error = "Chyba pri vytváraní.";
@@ -194,7 +221,7 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
       await lastValueFrom(this.http.delete(`${this.exercisesApiUrl}/${id}`));
       this.logger.warn(`Exercise deleted: ID ${id}`);
       this.onCloseDeleteConfirmModal();
-      await this.loadData();
+      await this.loadExercises();
     } catch (err) {
       this.logger.error(`Delete failed for ID ${id}`, err);
       this.error = "Chyba pri mazaní.";
