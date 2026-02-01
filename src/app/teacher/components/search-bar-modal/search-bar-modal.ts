@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { lastValueFrom } from 'rxjs';
-import { Block, TeacherContextService } from '../../../services/teacher-context';
+import { Block, TeacherContextService } from '../../../core/context/teacher-context';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../services/logger';
-import { CloseOnEscDirective } from '../../../../directives/close-on-esc';
+import { LoggerService } from '../../../core/logging/logger';
+import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc';
 
 export interface StudentSearchResult {
   id: number;

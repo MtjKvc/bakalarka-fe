@@ -10,7 +10,7 @@ export class LongPressDirective {
   @Output() longPress = new EventEmitter<MouseEvent | TouchEvent>();
   @Input() preventDefaultOnLongPress: boolean = true;
 
-  private touchTimeout: any;
+  private touchTimeout: ReturnType<typeof setTimeout> | null = null;
   private longPressActive: boolean = false;
   private startX: number = 0;
   private startY: number = 0;

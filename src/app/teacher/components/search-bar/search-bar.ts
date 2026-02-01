@@ -1,11 +1,11 @@
-import { Component, inject, OnDestroy, ElementRef, HostListener, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnDestroy, ElementRef, HostListener, Output, EventEmitter, ChangeDetectorRef, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Subject, Subscription, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../services/logger';
+import { LoggerService } from '../../../core/logging/logger';
 
 interface StudentSearchResult {
   id: number;
@@ -21,6 +21,8 @@ interface StudentSearchResult {
   styleUrl: './search-bar.css'
 })
 export class SearchBar implements OnDestroy {
+
+
   
   private http = inject(HttpClient);
   private elementRef = inject(ElementRef);

@@ -1,9 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { TeacherContextService } from '../../../services/teacher-context';
+import { TeacherContextService } from '../../../core/context/teacher-context';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../services/logger';
+import { LoggerService } from '../../../core/logging/logger';
 
 interface StudentDto {
   aisId: number;

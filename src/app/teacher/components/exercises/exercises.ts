@@ -5,8 +5,8 @@ import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/long-press/long-press';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../services/logger';
-import { CloseOnEscDirective } from '../../../../directives/close-on-esc';
+import { LoggerService } from '../../../core/logging/logger';
+import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc';
 
 interface DayOption {
   label: string;
@@ -163,7 +163,7 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     await this.updateExercise(ex.id, { ...ex, roomEnum: newRoom }, "Miestnosť zmenená.");
   }
 
-  async updateExercise(id: number, payload: any, msg: string) {
+  async updateExercise(id: number, payload: Exercise, msg: string) {
     const { availableDays, ...dataToSend } = payload;
     this.isLoading = true;
     try {

@@ -44,7 +44,7 @@
 
     <div class="flex items-center shrink-0 ml-1 gap-2">
       <div class="hidden md:block w-64 lg:w-72">
-          <app-search-bar (studentSelected)="onStudentSelected($event)"></app-search-bar>
+          <app-search-bar (studentSelected)="onStudentSelected($event)" *ngIf="showSearch"></app-search-bar>
       </div>
     </div>
 

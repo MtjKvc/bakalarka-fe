@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../services/teacher-context';
+import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../core/context/teacher-context';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../services/logger';
+import { LoggerService } from '../../../core/logging/logger';
 
 interface AttendanceItemDto {
   attendanceId: number;
@@ -162,7 +162,7 @@ export class Attendance implements OnInit {
       if (row.studentAttendances && row.studentAttendances.length > 0) {
         row.studentAttendances.forEach((att, attIndex) => {
 
-          const syntheticSessionId = (att as any).exerciseSessionId || (attIndex + 1);
+          const syntheticSessionId = att.exerciseSessionId || (attIndex + 1);
 
           if (!sessionsMap.has(syntheticSessionId)) {
 

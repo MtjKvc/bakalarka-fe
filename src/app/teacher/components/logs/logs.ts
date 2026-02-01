@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { lastValueFrom, Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../services/logger';
+import { LoggerService } from '../../../core/logging/logger';
 
 interface UserDTO {
   id: number;
@@ -110,7 +110,7 @@ export class Logs implements OnInit, OnDestroy {
       );
       this.logs = data;
       this.logger.log(`Logs loaded: ${this.logs.length} entries`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.logger.error('Failed to load logs', err);
       this.error = 'Nepodarilo sa načítať históriu zmien.';
     } finally {

@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { authInterceptor } from './auth/auth-interceptor';
+import { authInterceptor } from './core/auth/auth-interceptor';
 
 import { registerLocaleData } from '@angular/common'; 
 import localeSk from '@angular/common/locales/sk'; 

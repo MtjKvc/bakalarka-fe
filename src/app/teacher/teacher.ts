@@ -1,7 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common'; 
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+
+import { AuthService } from '../core/auth/auth.service';
+import { TeacherContextService } from '../core/context/teacher-context';
+import { LoggerService } from '../core/logging/logger';
 
 import { TeacherHeader, UserInfo } from './components/teacher-header/teacher-header'; 
 import { TeacherSidebarComponent } from './components/teacher-side-bar/teacher-side-bar';
@@ -13,11 +16,8 @@ import { Students } from './components/students/students';
 import { StudentUploadComponent } from './components/student-upload/student-upload'; 
 import { Attendance } from './components/attendance/attendance';
 import { GradingComponent } from './components/grading/grading';
-import { TeacherContextService } from '../services/teacher-context';
 import { SearchBarModalComponent, StudentSearchResult } from './components/search-bar-modal/search-bar-modal';
 import { Logs } from './components/logs/logs'; 
-import { LoggerService } from '../services/logger';
-import { CloseOnEscDirective } from '../../directives/close-on-esc';
 
 interface SidebarButton {
   label: string;
@@ -50,6 +50,9 @@ interface SidebarButton {
 })
 export class Teacher implements OnInit {
   private logger = inject(LoggerService);
+  private authService = inject(AuthService);
+  public contextService = inject(TeacherContextService);
+  private router = inject(Router);
 
   currentUser: UserInfo & { id: number | null } = { 
     id: null,
@@ -58,13 +61,7 @@ export class Teacher implements OnInit {
   }
   
   activeView: string = 'default';
-  
-  router = inject(Router);
-  http = inject(HttpClient);
-  public contextService = inject(TeacherContextService);
-
   isSidebarOpen: boolean = false; 
-
   selectedStudent: StudentSearchResult | null = null;
 
   sidebarButtons: SidebarButton[] = [
@@ -79,31 +76,31 @@ export class Teacher implements OnInit {
     { label: 'záznamy', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false,},  
   ];
 
+  searchBarConfig = {
+    isAdminAvailable: true,
+    isTeacherAvailable: true,
+    isHelperAvailable: false
+  };
+
+  get isSearchBarVisible(): boolean {
+    if (this.isAdmin()) return this.searchBarConfig.isAdminAvailable;
+    if (this.isTeacher()) return this.searchBarConfig.isTeacherAvailable;
+    if (this.isHelper()) return this.searchBarConfig.isHelperAvailable;
+    return false;
+  }
+
   constructor() { }
 
   ngOnInit(): void {
     this.logger.log('Teacher component initialized');
-    const token = localStorage.getItem('auth_token');
 
-    if (token) {
-      const userData = this.parseJwt(token);
-      if (userData) {
-        this.logger.log('User data parsed from token', { role: userData.role || userData.roleEnum, name: userData.fullName || userData.sub });
-        if (userData.id) this.currentUser.id = userData.id;
-        
-        if (userData.fullName) {
-           this.currentUser.meno = userData.fullName;
-        } else if (userData.sub) {
-           this.currentUser.meno = userData.sub;
-        }
-        
-        if (userData.role) {
-           this.currentUser.rola = userData.role;
-        } else if (userData.roleEnum) {
-           this.currentUser.rola = userData.roleEnum;
-        }
-      }
-    }
+    const user = this.authService.currentUserValue;
+    
+    this.currentUser = {
+      id: user.id,
+      meno: user.meno,
+      rola: user.rola
+    };
 
     this.contextService.loadCurrentExercises().subscribe({
       next: () => this.logger.log('Context exercises loaded'),
@@ -111,35 +108,16 @@ export class Teacher implements OnInit {
     });
   }
 
-  private parseJwt(token: string): any {
-    try {
-      
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-
-      return JSON.parse(jsonPayload);
-    } catch (e) {
-      this.logger.error('Failed to parse JWT', e);
-      return null;
-    }
-  }
-
   onLogout(): void {
-    this.logger.log('User logging out');
-    localStorage.clear();
-    this.router.navigate(['login']);
+    this.contextService.clearContext();
+    this.authService.logout();
   }
 
   onToggleSidebar(): void {
       this.isSidebarOpen = !this.isSidebarOpen;
-      this.logger.log(`Sidebar toggled. Open: ${this.isSidebarOpen}`);
   }
   
   onStudentFound(student: StudentSearchResult): void {
-      this.logger.log('Student found via search', student.id);
       this.selectedStudent = student;
   }
 
@@ -152,17 +130,18 @@ export class Teacher implements OnInit {
   }
 
   isAdmin(): boolean {
-    return this.currentUser.rola?.toUpperCase() === 'ADMIN';
+    return this.authService.hasRole('ADMIN');
   }
+
   isTeacher(): boolean {
-    return this.currentUser.rola?.toUpperCase() === 'TEACHER';
+    return this.authService.hasRole('TEACHER');
   }
+
   isHelper(): boolean {
-    return this.currentUser.rola?.toUpperCase() === 'HELPER';
+    return this.authService.hasRole('HELPER');
   }
   
   onSidebarButtonClick(buttonLabel: string): void {
-    this.logger.log(`Navigating to view: ${buttonLabel}`);
     this.activeView = buttonLabel; 
     this.isSidebarOpen = false; 
   }

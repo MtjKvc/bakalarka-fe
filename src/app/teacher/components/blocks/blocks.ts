@@ -5,8 +5,8 @@ import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms'; 
 import { LongPressDirective } from '../../../shared/long-press/long-press';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../services/logger';
-import { CloseOnEscDirective } from '../../../../directives/close-on-esc';
+import { LoggerService } from '../../../core/logging/logger';
+import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc';
 
 interface ApiResponse<T> {
   status?: string;
@@ -76,7 +76,7 @@ export class Blocks implements OnInit, AfterViewChecked {
       this.blocks = data || [];
       this.blocks.sort((a, b) => a.id - b.id);
       this.logger.log(`Fetched ${this.blocks.length} blocks`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.logger.error('Nepodarilo sa načítať bloky:', err);
       this.error = 'Nepodarilo sa načítať bloky z API.';
       this.blocks = [];
@@ -124,7 +124,7 @@ export class Blocks implements OnInit, AfterViewChecked {
       } else {
         this.error = 'Vytvorenie bloku zlyhalo.';
       }
-    } catch (err: any) { 
+    } catch (err: unknown) { 
       this.logger.error("Chyba: Nepodarilo sa vytvoriť blok.", err);
       this.error = "Chyba: Nepodarilo sa vytvoriť blok.";
     } finally {
@@ -156,11 +156,11 @@ export class Blocks implements OnInit, AfterViewChecked {
       this.onCloseDeleteConfirmModal();
 
       try {
-        await lastValueFrom(this.http.delete<ApiResponse<any>>(`${this.blocksApiUrl}/${blokId}`));
+        await lastValueFrom(this.http.delete<ApiResponse<unknown>>(`${this.blocksApiUrl}/${blokId}`));
         this.logger.warn(`Block deleted: ID ${blokId}`);
         this.blocks = this.blocks.filter(b => b.id !== blokId);
         this.message = `Blok bol úspešne vymazaný.`;
-      } catch (err: any) {
+      } catch (err: unknown) {
         this.logger.error(`Delete block ${blokId} failed`, err);
         this.error = `Chyba: Nepodarilo sa vymazať blok.`;
       } finally {
@@ -199,10 +199,10 @@ export class Blocks implements OnInit, AfterViewChecked {
       return;
     }
 
-    let newValue: any = String(rawValue).trim();
+    let newValue: string | number = String(rawValue).trim();
     if (fieldToSave === 'maxPoints' || fieldToSave === 'requiredPoints') {
         const num = parseFloat(newValue);
-        newValue = !isNaN(num) ? num : newValue;
+        newValue = !isNaN(num) ? num : 0;
     }
     
     const blokToUpdate = this.blocks.find(b => b.id === idToSave);
@@ -220,7 +220,7 @@ export class Blocks implements OnInit, AfterViewChecked {
     }
     
     this.isSaving = true;
-    this.isLoading = true;
+
     
     let pendingErrorMessage: string | null = null;
 
@@ -245,7 +245,7 @@ export class Blocks implements OnInit, AfterViewChecked {
           pendingErrorMessage = "Chyba: Aktualizácia zlyhala (hodnota nebola povolená).";
       }
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.logger.error('Cell save failed', err);
       pendingErrorMessage = `Chyba: Aktualizácia bloku zlyhala.`;
     } finally {

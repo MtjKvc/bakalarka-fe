@@ -1,38 +1,37 @@
-import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ViewChildren, QueryList, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms'; 
 import { LongPressDirective } from '../../../shared/long-press/long-press'; 
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../services/logger';
-import { CloseOnEscDirective } from '../../../../directives/close-on-esc';
-
+import { LoggerService } from '../../../core/logging/logger';
+import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc';
 
 interface BlockSimple { id: number; name: string; }
 interface Assignment { id: number; block: BlockSimple | null; name: string; maxPoints: number; }
 interface NewAssignmentForm { blockId: number | null; name: string; maxPoints: number; }
-interface UpdateAssignmentPayload { blockId: number; name: string; maxPoints: any; }
+interface UpdateAssignmentPayload { blockId: number; name: string; maxPoints: number; }
+
 type EditableField = 'name' | 'maxPoints';
 type SortDirection = 'asc' | 'desc';
 
 @Component({
   selector: 'app-assignments',
   standalone: true,
-  imports: [CommonModule, FormsModule, LongPressDirective,CloseOnEscDirective],
+  imports: [CommonModule, FormsModule, LongPressDirective, CloseOnEscDirective],
   templateUrl: './assignments.html',
   styleUrl: './assignments.css' 
 })
-export class AssignmentsComponent implements OnInit, AfterViewChecked {
+export class AssignmentsComponent implements OnInit {
 
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
   private logger = inject(LoggerService);
 
   @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
-  private shouldFocus: boolean = false;
+  
   private isSaving: boolean = false;
-
   private assignmentsApiUrl = `${environment.apiUrl}/api/v1/assignment`;
   private blocksApiUrl = `${environment.apiUrl}/api/v1/block`;
 
@@ -65,6 +64,7 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
     this.loadData();
   }
 
+
   async loadData(): Promise<void> {
     this.isLoading = true;
     this.error = null;
@@ -73,12 +73,8 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
         this.availableBlocks = blocksData || [];
 
         let params = new HttpParams();
-        if (this.filterBlockId) {
-            params = params.set('blockId', this.filterBlockId);
-        }
-        if (this.filterAssignmentId) {
-            params = params.set('id', this.filterAssignmentId);
-        }
+        if (this.filterBlockId) params = params.set('blockId', this.filterBlockId);
+        if (this.filterAssignmentId) params = params.set('id', this.filterAssignmentId);
 
         const assignmentsData = await lastValueFrom(this.http.get<Assignment[]>(this.assignmentsApiUrl, { params }));
         this.assignments = assignmentsData || [];
@@ -86,13 +82,13 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
         this.logger.log(`Data loaded: ${this.assignments.length} assignments, ${this.availableBlocks.length} blocks`);
         this.sortData();
 
-    } catch (err: any) {
-        this.logger.error('Failed to load data', err);
-        this.error = 'Nepodarilo sa načítať dáta.';
+    } catch (err: unknown) {
+        this.handleError(err, 'Nepodarilo sa načítať dáta.');
     } finally {
         this.isLoading = false;
     }
   }
+
 
   onSort(field: string): void {
     if (this.sortField === field) {
@@ -108,23 +104,25 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
     if (!this.assignments) return;
 
     this.assignments.sort((a, b) => {
-      let valA: any;
-      let valB: any;
+      let comparison = 0;
 
       if (this.sortField === 'block') {
-        valA = a.block?.name?.toLowerCase() || '';
-        valB = b.block?.name?.toLowerCase() || '';
+        const nameA = a.block?.name?.toLowerCase() || '';
+        const nameB = b.block?.name?.toLowerCase() || '';
+        comparison = nameA.localeCompare(nameB);
       } else {
-        valA = a[this.sortField as keyof Assignment];
-        valB = b[this.sortField as keyof Assignment];
-        
-        if (typeof valA === 'string') valA = valA.toLowerCase();
-        if (typeof valB === 'string') valB = valB.toLowerCase();
+        const key = this.sortField as keyof Assignment;
+        const valA = a[key];
+        const valB = b[key];
+
+        if (typeof valA === 'string' && typeof valB === 'string') {
+           comparison = valA.localeCompare(valB);
+        } else if (typeof valA === 'number' && typeof valB === 'number') {
+           comparison = valA - valB;
+        }
       }
 
-      if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
-      if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
-      return 0;
+      return this.sortDirection === 'asc' ? comparison : -comparison;
     });
   }
 
@@ -137,6 +135,7 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
     this.loadData();
   }
 
+
   onCreateAssignmentClick(): void {
     this.newAssignment = { blockId: null, name: '', maxPoints: 0 };
     this.error = null; this.message = null; this.isCreateModalOpen = true;
@@ -147,59 +146,83 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
   async onSubmitNewAssignment(): Promise<void> {
     if (!this.newAssignment.blockId) return;
     this.isLoading = true; this.error = null; this.message = null;
-    const payload = { assignments: [{ blockId: this.newAssignment.blockId, name: this.newAssignment.name.trim(), maxPoints: Number(this.newAssignment.maxPoints) }] };
+    
+    const payload = { 
+        assignments: [{ 
+            blockId: this.newAssignment.blockId, 
+            name: this.newAssignment.name.trim(), 
+            maxPoints: Number(this.newAssignment.maxPoints) 
+        }] 
+    };
+
     try {
         await lastValueFrom(this.http.post(this.assignmentsApiUrl, payload));
         this.logger.log('New assignment created', payload);
         this.message = `Zadanie vytvorené.`;
         this.onCloseModal();
         await this.loadData();
-    } catch (err: any) { 
-        this.logger.error('Create assignment failed', err);
-        this.error = "Chyba: Nepodarilo sa vytvoriť zadanie."; 
-    } 
-    finally { this.isLoading = false; }
+    } catch (err: unknown) { 
+        this.handleError(err, 'Chyba: Nepodarilo sa vytvoriť zadanie.');
+    } finally { 
+        this.isLoading = false; 
+    }
   }
 
-  onDeleteAssignmentClick(assign: Assignment): void { this.assignToDelete = assign; this.deleteConfirmationInput = ''; this.error = null; this.message = null; this.isDeleteConfirmModalOpen = true; }
-  onCloseDeleteConfirmModal(): void { this.isDeleteConfirmModalOpen = false; this.assignToDelete = null; this.deleteConfirmationInput = ''; this.error = null; }
+
+  onDeleteAssignmentClick(assign: Assignment): void { 
+    this.assignToDelete = assign; 
+    this.deleteConfirmationInput = ''; 
+    this.error = null; this.message = null; 
+    this.isDeleteConfirmModalOpen = true; 
+  }
+
+  onCloseDeleteConfirmModal(): void { 
+    this.isDeleteConfirmModalOpen = false; 
+    this.assignToDelete = null; 
+    this.deleteConfirmationInput = ''; 
+    this.error = null; 
+  }
   
   async onConfirmDelete(): Promise<void> {
       if (!this.assignToDelete || this.deleteConfirmationInput.trim() !== this.deleteConfirmText) return;
-      const id = this.assignToDelete.id; this.isLoading = true; this.error = null; this.onCloseDeleteConfirmModal();
+      const id = this.assignToDelete.id; 
+      this.isLoading = true; 
+      this.error = null; 
+      this.onCloseDeleteConfirmModal();
+
       try {
           await lastValueFrom(this.http.delete(`${this.assignmentsApiUrl}/${id}`));
           this.logger.warn(`Assignment deleted: ID ${id}`);
           this.assignments = this.assignments.filter(a => a.id !== id);
           this.message = `Zadanie vymazané.`;
-      } catch (err: any) { 
-          this.logger.error(`Delete assignment ${id} failed`, err);
-          this.error = "Chyba: Nepodarilo sa vymazať zadanie."; 
-      } 
-      finally { this.isLoading = false; }
+      } catch (err: unknown) { 
+          this.handleError(err, 'Chyba: Nepodarilo sa vymazať zadanie.');
+      } finally { 
+          this.isLoading = false; 
+      }
   }
+
 
   async onBlockChange(assign: Assignment, newBlockId: number): Promise<void> {
       if (assign.block?.id === newBlockId) return;
       this.isLoading = true; this.error = null; this.message = null;
-      const payload = { blockId: Number(newBlockId), name: assign.name, maxPoints: assign.maxPoints };
+      
+      const payload: UpdateAssignmentPayload = { blockId: Number(newBlockId), name: assign.name, maxPoints: assign.maxPoints };
+      
       try {
           const url = `${this.assignmentsApiUrl}/${assign.id}`;
-          const response: any = await lastValueFrom(this.http.put(url, payload));
+          const response = await lastValueFrom(this.http.put<{ data: Assignment }>(url, payload));
           const updatedAssign = response.data || response;
-          if (updatedAssign && updatedAssign.block && updatedAssign.block.id === payload.blockId) {
-             const index = this.assignments.findIndex(a => a.id === assign.id);
-             if (index !== -1) this.assignments[index] = { ...this.assignments[index], ...updatedAssign };
-             
-             this.logger.log(`Block changed for assignment ${assign.id} to ${newBlockId}`);
-             this.message = `Blok zmenený.`;
-             this.sortData();
-          } else { throw new Error('Mismatch'); }
-      } catch (err: any) { 
-          this.logger.error('Block change failed', err);
-          this.error = "Chyba: Nepodarilo sa zmeniť blok."; await this.loadData(); 
-      } 
-      finally { this.isLoading = false; }
+
+          this.updateLocalAssignment(assign.id, updatedAssign);
+          this.message = `Blok zmenený.`;
+          this.sortData();
+      } catch (err: unknown) { 
+          this.handleError(err, 'Chyba: Nepodarilo sa zmeniť blok.');
+          await this.loadData(); 
+      } finally { 
+          this.isLoading = false; 
+      }
   }
 
   isEditing(id: number, field: string): boolean { return this.editingId === id && this.editingField === field; }
@@ -209,98 +232,94 @@ export class AssignmentsComponent implements OnInit, AfterViewChecked {
       this.error = null; this.message = null;
       this.editingId = assign.id;
       this.editingField = field;
-      this.editingValue = assign[field] as string | number;
-      this.shouldFocus = true;
+      this.editingValue = assign[field];
+
       this.cdr.detectChanges();
+      const inputRef = this.editInputsRef.find((item, index) => {
+         return !!item.nativeElement.offsetParent;
+      });
+
+      if (inputRef) {
+          inputRef.nativeElement.focus();
+          inputRef.nativeElement.select();
+      }
   }
 
   async onCellSave(assign: Assignment): Promise<void> {
-      this.shouldFocus = false;
       if (this.isSaving) return;
       if (this.editingId === null || this.editingField === null) return;
 
       const field = this.editingField;
-      const val = this.editingValue;
-      
-      if (String(assign[field]) == String(val).trim()) {
-          this.editingId = null; this.editingField = null; return;
+      const rawVal = this.editingValue;
+
+      if (String(assign[field]) === String(rawVal).trim()) {
+          this.resetEditState();
+          return;
       }
 
       const blockId = assign.block?.id; 
       if (!blockId) {
-          this.logger.error('Assignment has no block ID', assign);
-          this.error = 'Chyba: Zadanie nemá blok.'; this.editingId = null; return;
+          this.error = 'Chyba: Zadanie nemá blok.'; 
+          this.resetEditState(); 
+          return;
       }
 
       const payload: UpdateAssignmentPayload = { blockId: blockId, name: assign.name, maxPoints: assign.maxPoints };
-      let newValStr = String(val).trim();
+      const cleanVal = String(rawVal).trim();
 
-      if (field === 'name') payload.name = newValStr;
-      if (field === 'maxPoints') {
-          const num = parseFloat(newValStr);
-          payload.maxPoints = !isNaN(num) ? num : newValStr;
+      if (field === 'name') {
+        payload.name = cleanVal;
+      } else if (field === 'maxPoints') {
+          const num = parseFloat(cleanVal);
+          if (isNaN(num)) {
+              this.error = "Max body musí byť číslo.";
+              return;
+          }
+          payload.maxPoints = num;
       }
 
       this.isSaving = true;
       this.isLoading = true;
       
-      let pendingErrorMessage: string | null = null;
-
       try {
           const url = `${this.assignmentsApiUrl}/${assign.id}`;
-          const response: any = await lastValueFrom(this.http.put(url, payload));
-          const updatedAssign: Assignment = response.data || response;
+          const response = await lastValueFrom(this.http.put<{ data: Assignment }>(url, payload));
+          const updatedAssign = response.data || response;
 
-          let success = true;
-          if (field === 'maxPoints') {
-              if (Number(updatedAssign.maxPoints) !== Number(payload.maxPoints)) success = false;
-          } else if (field === 'name') {
-              if (updatedAssign.name !== payload.name) success = false;
-          }
+          this.updateLocalAssignment(assign.id, updatedAssign);
+          this.logger.log(`Cell '${field}' updated for ID ${assign.id}`, payload);
+          this.message = `Zadanie aktualizované.`;
+          this.sortData();
 
-          if (success) {
-              const index = this.assignments.findIndex(a => a.id === assign.id);
-              if (index !== -1) this.assignments[index] = { ...this.assignments[index], ...updatedAssign };
-              
-              this.logger.log(`Cell '${field}' updated for ID ${assign.id}`, payload);
-              this.message = `Zadanie aktualizované.`;
-              this.sortData();
-          } else {
-              pendingErrorMessage = "Chyba: Aktualizácia zlyhala (hodnota nebola povolená).";
-              this.logger.warn('Update accepted but value mismatch', { sent: payload, received: updatedAssign });
-          }
-
-      } catch (err: any) {
-          this.logger.error('Cell save failed', err);
-          pendingErrorMessage = "Chyba: Aktualizácia zlyhala (chybné údaje).";
+      } catch (err: unknown) {
+          this.handleError(err, 'Chyba: Aktualizácia zlyhala.');
+          await this.loadData();
       } finally {
-          this.editingId = null; 
-          this.editingField = null;
-          
-          if (pendingErrorMessage) {
-              await this.loadData();
-              this.error = pendingErrorMessage;
-              this.message = null;
-          }
-
+          this.resetEditState();
           this.isLoading = false;
           this.isSaving = false;
       }
   }
 
-  ngAfterViewChecked(): void {
-    if (!this.shouldFocus || !this.editInputsRef || this.editInputsRef.length === 0) return;
-    const inputElement = this.editInputsRef.first.nativeElement;
-    if (inputElement) {
-        this.shouldFocus = false;
-        let attempts = 0;
-        const intervalId = setInterval(() => {
-            attempts++;
-            inputElement.focus();
-            if (inputElement instanceof HTMLInputElement) inputElement.select(); 
-            if (document.activeElement === inputElement || attempts >= 20) clearInterval(intervalId);
-        }, 10);
+  private resetEditState() {
+      this.editingId = null;
+      this.editingField = null;
+  }
+
+  private updateLocalAssignment(id: number, updatedData: Partial<Assignment>) {
+    const index = this.assignments.findIndex(a => a.id === id);
+    if (index !== -1) {
+        this.assignments[index] = { ...this.assignments[index], ...updatedData };
     }
+  }
+
+  private handleError(err: unknown, defaultMsg: string) {
+      this.logger.error(defaultMsg, err);
+      if (err instanceof HttpErrorResponse) {
+          this.error = `${defaultMsg} (${err.status} ${err.statusText})`;
+      } else {
+          this.error = defaultMsg;
+      }
   }
 
   onBackdropClick(event: MouseEvent): void {

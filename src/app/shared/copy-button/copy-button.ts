@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ClipboardUtilityService } from '../../core/clipboard-utility';
+import { ClipboardUtilityService } from '../../core/utils/clipboard-utility';
 import { CommonModule } from '@angular/common';
 
 @Component({

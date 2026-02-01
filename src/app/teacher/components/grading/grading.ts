@@ -4,9 +4,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { lastValueFrom, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../services/teacher-context';
+import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../core/context/teacher-context';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../services/logger';
+import { LoggerService } from '../../../core/logging/logger';
 
 interface AssignmentHeader {
   id: number;

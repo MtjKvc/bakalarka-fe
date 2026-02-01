@@ -6,8 +6,8 @@ import { debounceTime, switchMap, tap, catchError } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/long-press/long-press';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../services/logger';
-import { CloseOnEscDirective } from '../../../../directives/close-on-esc';
+import { LoggerService } from '../../../core/logging/logger';
+import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc';
 import { SearchBarModalComponent, StudentSearchResult } from '../search-bar-modal/search-bar-modal';
 
 interface Student {
@@ -250,7 +250,7 @@ openStudentDetail(student: Student): void {
       }));
       this.onCloseStudentModal();
       this.triggerSearch();
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.logger.error('Error creating student', err);
       this.error = "Chyba pri vytváraní.";
     }

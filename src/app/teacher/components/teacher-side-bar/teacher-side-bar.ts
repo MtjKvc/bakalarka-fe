@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core'; 
 import { CommonModule, NgClass } from '@angular/common'; 
 import { SearchBar } from '../search-bar/search-bar';
-import { LoggerService } from '../../../services/logger';
+import { LoggerService } from '../../../core/logging/logger';
+import { AuthService } from '../../../core/auth/auth.service';
 
 interface UserInfo { 
   meno: string; 
@@ -24,11 +25,14 @@ interface SidebarButton {
 }) 
 export class TeacherSidebarComponent { 
   private logger = inject(LoggerService);
+  private authService = inject(AuthService);
 
   @Input() currentUser!: UserInfo; 
   @Input() isSidebarOpen: boolean = false; 
   @Input() sidebarButtons: SidebarButton[] = []; 
   @Input() activeView!: string;
+
+  @Input() showSearch: boolean = false;
 
   @Output() logout = new EventEmitter<void>(); 
   @Output() buttonClick = new EventEmitter<string>(); 
@@ -36,14 +40,16 @@ export class TeacherSidebarComponent {
   @Output() isSidebarOpenChange = new EventEmitter<boolean>();
 
   isAdmin(): boolean { 
-    return this.currentUser?.rola?.toUpperCase() === 'ADMIN';
+    return this.authService.hasRole('ADMIN');
   }
+  
   isTeacher(): boolean { 
-    return this.currentUser?.rola?.toUpperCase() === 'TEACHER';
+    return this.authService.hasRole('TEACHER');
   }
+  
   isHelper(): boolean { 
-    return this.currentUser?.rola?.toUpperCase() === 'HELPER';
-  }  
+    return this.authService.hasRole('HELPER');
+  }   
 
   onButtonClick(label: string): void { 
     this.logger.log(`Sidebar button clicked: ${label}`);

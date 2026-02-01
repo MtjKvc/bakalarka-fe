@@ -10,7 +10,7 @@
     
     <div class="md:hidden mb-6 pb-4 border-b border-gray-800">
        <p class="text-xs text-gray-400 font-bold uppercase mb-2">Vyhľadať študenta</p>
-       <app-search-bar (studentSelected)="studentSelected.emit($event)"></app-search-bar> 
+       <app-search-bar (studentSelected)="studentSelected.emit($event)" *ngIf="showSearch"></app-search-bar> 
     </div>
 
     <button *ngFor="let button of sidebarButtons"

@@ -1,13 +1,13 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { environment } from '../../environments/environment';
+import { AuthResponse, AuthService } from '../core/auth/auth.service'; 
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule], 
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
@@ -19,51 +19,20 @@ export class Login {
     password: new FormControl("")
   });
 
-  http = inject(HttpClient);
-  router = inject(Router);
-
-  private decodeTokenPayload(token: string): any {
-    try {
-      const payloadBase64 = token.split('.')[1];
-      
-      let correctedPayload = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
-      while (correctedPayload.length % 4) {
-        correctedPayload += '=';
-      }
-
-      const decoded = JSON.parse(atob(correctedPayload));
-      
-      return decoded;
-
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
-  }
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   onLogin() {
     this.errorMessage = '';
     const formValue = this.loginForm.value;
-    
-    this.http.post(`${environment.apiUrl}/api/v1/auth/authenticate`, formValue).subscribe({
-      next: (res: any) => {
-        if (res.token) {
-          localStorage.setItem('auth_token', res.token);
 
-          const payload = this.decodeTokenPayload(res.token);
-          
-          if (payload) {
-            localStorage.setItem('user_role', payload.role); 
-            localStorage.setItem('user_id', payload.id); 
-            localStorage.setItem('user_fullName', payload.sub);
-          }
+    this.authService.login(formValue).subscribe({
+      next: (res: AuthResponse) => {
 
-          this.router.navigate(['/teacher']); 
-        } else {
-          this.errorMessage = res.message;
-        }
+         this.router.navigate(['/teacher']); 
       },
-      error: (err) => {
+
+      error: (err: HttpErrorResponse) => {
         this.errorMessage = err?.error?.message || "Nastala chyba pri prihlasovaní";
       }
     });

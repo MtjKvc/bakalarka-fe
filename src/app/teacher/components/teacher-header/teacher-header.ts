@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
-import { ExerciseSession } from '../../../services/teacher-context';
+import { ExerciseSession } from '../../../core/context/teacher-context';
 import { SearchBar } from '../search-bar/search-bar';
-import { LoggerService } from '../../../services/logger';
+import { LoggerService } from '../../../core/logging/logger';
 
 export interface UserInfo {
   meno: string;
@@ -23,6 +23,7 @@ export class TeacherHeader {
   @Input() isSidebarOpen: boolean = false;
   @Input() exercises: ExerciseSession[] = [];
   @Input() activeExerciseId: number | undefined = undefined;
+  @Input() showSearch: boolean = false;
 
   @Output() toggleSidebar = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
