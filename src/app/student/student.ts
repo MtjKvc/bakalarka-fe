@@ -5,12 +5,12 @@ import { RouterModule, } from '@angular/router';
 
 @Component({
   selector: 'app-student',
-  imports: [RouterModule,CommonModule],
+  imports: [RouterModule, CommonModule],
   templateUrl: './student.html',
   styleUrl: './student.css'
 })
-export class Student {
-  @ViewChild('canvasDigitalRain') canvasRef!: ElementRef<HTMLCanvasElement>;
+export class Student implements AfterViewInit {
+  @ViewChild('canvasDigitalRain') private canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private ctx!: CanvasRenderingContext2D;
   private width!: number;
@@ -19,19 +19,23 @@ export class Student {
   private drops!: number[];
   private fontSize = 16;
   private characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789';
-  
-menuOpen = false;
 
-toggleMenu() {
-  this.menuOpen = !this.menuOpen;
-}
-  ngAfterViewInit() {
+  private fps = 10;
+  private fpsInterval = 1000 / this.fps;
+  private lastDrawTime = 0;
+
+  public menuOpen = false;
+
+  public toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
+  public ngAfterViewInit() {
     this.initCanvas();
-    this.animate();
+    this.animate(0);
   }
 
   @HostListener('window:resize')
-  onResize() {
+  public onResize() {
     this.initCanvas();
   }
 
@@ -47,7 +51,13 @@ toggleMenu() {
     this.drops = Array(this.columns).fill(1);
   }
 
-  private animate() {
+  private animate(currentTime: number) {
+    requestAnimationFrame((time) => this.animate(time));
+    const elapsed = currentTime - this.lastDrawTime;
+    if (elapsed < this.fpsInterval) return;
+    this.lastDrawTime = currentTime - (elapsed % this.fpsInterval);
+    if (!this.ctx) return;
+
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
     this.ctx.fillRect(0, 0, this.width, this.height);
 
@@ -67,8 +77,7 @@ toggleMenu() {
 
       this.drops[i]++;
     }
-
-    setTimeout(() => this.animate(), 50);
+    //setTimeout(() => this.animate(), 50);
   }
 
 }
