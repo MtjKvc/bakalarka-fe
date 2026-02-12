@@ -4,7 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-frontpage',
   imports: [],
   templateUrl: './frontpage.html',
-  styleUrl: './frontpage.css'
 })
 export class Frontpage {
 

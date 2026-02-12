@@ -2,28 +2,20 @@ import { Component, inject, OnDestroy, ElementRef, HostListener, Output, EventEm
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { Subject, Subscription, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, catchError, tap } from 'rxjs/operators';
+import { Subject, Subscription, of, Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, catchError, tap, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../core/logging/logger';
-
-interface StudentSearchResult {
-  id: number;
-  fullName: string;
-  aisId?: number;
-}
+import { LoggerService } from '../../../core/logging/logger.service';
+import { StudentBasic, ApiResponse } from '../../../shared/models/interfaces';
 
 @Component({
   selector: 'app-search-bar',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './search-bar.html',
-  styleUrl: './search-bar.css'
 })
 export class SearchBar implements OnDestroy {
 
-
-  
   private http = inject(HttpClient);
   private elementRef = inject(ElementRef);
   private cdr = inject(ChangeDetectorRef);
@@ -31,13 +23,13 @@ export class SearchBar implements OnDestroy {
   
   private apiUrl = `${environment.apiUrl}/api/v1/student`;
 
-  @Output() studentSelected = new EventEmitter<StudentSearchResult>();
+  @Output() public studentSelected = new EventEmitter<StudentBasic>();
 
   private searchSubject = new Subject<string>();
   private searchSubscription: Subscription;
 
   public searchTerm: string = '';
-  public results: StudentSearchResult[] = [];
+  public results: StudentBasic[] = [];
   public isLoading: boolean = false;
   public showDropdown: boolean = false;
 
@@ -70,16 +62,19 @@ export class SearchBar implements OnDestroy {
     });
   }
 
-  onSearch(term: string): void {
+  public onSearch(term: string): void {
     this.searchSubject.next(term);
   }
 
-  private fetchStudents(term: string) {
+  private fetchStudents(term: string): Observable<StudentBasic[]> {
     const url = `${this.apiUrl}/search?q=${encodeURIComponent(term.trim())}`;
-    return this.http.get<StudentSearchResult[]>(url);
+    
+    return this.http.get<StudentBasic[]>(url).pipe(
+        map(response => response || [])
+    );
   }
 
-  selectStudent(student: StudentSearchResult): void {
+  public selectStudent(student: StudentBasic): void {
     this.logger.log('Student selected from dropdown', student);
     this.searchTerm = student.fullName; 
     this.showDropdown = false;
@@ -87,7 +82,7 @@ export class SearchBar implements OnDestroy {
   }
 
   @HostListener('document:click', ['$event'])
-  onClickOutside(event: Event) {
+  public onClickOutside(event: Event) {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       if (this.showDropdown) {
           this.showDropdown = false;
@@ -95,13 +90,13 @@ export class SearchBar implements OnDestroy {
     }
   }
 
-  onFocus() {
+  public onFocus() {
       if (this.searchTerm.length >= 1) {
           this.showDropdown = true;
       }
   }
 
-  ngOnDestroy() {
+  public ngOnDestroy() {
     this.logger.log('SearchBar component destroyed');
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();

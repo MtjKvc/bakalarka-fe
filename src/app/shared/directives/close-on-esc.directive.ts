@@ -6,11 +6,10 @@ import { Directive, EventEmitter, HostListener, Output } from '@angular/core';
 })
 export class CloseOnEscDirective {
 
-  @Output() appCloseOnEsc = new EventEmitter<void>();
+  @Output() public appCloseOnEsc = new EventEmitter<void>();
 
-  constructor() { }
   @HostListener('document:keydown.escape')
-onKeydownHandler() {
+public onKeydownHandler() {
     this.appCloseOnEsc.emit();
   }
 }

@@ -31,7 +31,7 @@ export class AuthService {
     private router = inject(Router);
     private tokenKey = 'auth_token';
 
-    login(credentials: LoginRequest) {
+   public login(credentials: LoginRequest) {
         return this.http.post<AuthResponse>(`${environment.apiUrl}/api/v1/auth/authenticate`, credentials).pipe(
             tap(res => {
                 if (res.token) {
@@ -42,16 +42,16 @@ export class AuthService {
         );
     }
 
-    logout() {
+   public logout() {
         localStorage.clear();
         this.router.navigate(['/login']);
     }
 
-    getToken(): string | null {
+   public getToken(): string | null {
         return localStorage.getItem(this.tokenKey);
     }
 
-    isAuthenticated(): boolean {
+   public isAuthenticated(): boolean {
         return !!this.getToken();
     }
 
@@ -78,7 +78,7 @@ export class AuthService {
         }
     }
 
-    get currentUserValue() {
+   public get currentUserValue() {
         return {
             id: Number(localStorage.getItem('user_id')),
             meno: localStorage.getItem('user_fullName') || 'Používateľ',
@@ -86,7 +86,7 @@ export class AuthService {
         };
     }
 
-    hasRole(role: string): boolean {
+   public hasRole(role: string): boolean {
         const currentRole = localStorage.getItem('user_role');
         return currentRole?.toUpperCase() === role.toUpperCase();
     }

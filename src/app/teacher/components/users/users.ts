@@ -3,41 +3,23 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { LongPressDirective } from '../../../shared/long-press/long-press';
+import { LongPressDirective } from '../../../shared/directives/long-press.directive';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../core/logging/logger';
-import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc';
+import { LoggerService } from '../../../core/logging/logger.service';
+import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc.directive';
+import { ApiResponse, Exercise, UserDTO } from '../../../shared/models/interfaces';
 
-interface User {
-    id: number;
+
+interface UserForm {
     fullName: string;
-    email: string;
+    email: string; 
     roleEnum: string;
-}
-
-interface Exercise {
-    id: number;
-    firstSessionDate: string;
-    startTime: string;
-    roomEnum: string;
 }
 
 interface UserExerciseAssignment {
     id: number;
-    user: User;
+    user: UserDTO;
     exercise: Exercise;
-}
-
-interface NewUserForm {
-    fullName: string;
-    email: string;
-    roleEnum: string;
-}
-
-interface UpdateUserPayload {
-    fullName: string;
-    email: string;
-    roleEnum: string;
 }
 
 type EditableField = 'fullName' | 'email';
@@ -55,7 +37,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     private cdr = inject(ChangeDetectorRef);
     private logger = inject(LoggerService);
 
-    @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
+    @ViewChildren('editInput') private editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
     private shouldFocus: boolean = false;
     private isSaving: boolean = false;
 
@@ -65,11 +47,11 @@ export class UsersComponent implements OnInit, AfterViewChecked {
 
     private exercisesApiUrl = `${environment.apiUrl}/api/v1/exercise`;
     private userExerciseApiUrl = `${environment.apiUrl}/api/v1/user-exercise`;
-    public users: User[] = [];
+    public users: UserDTO[] = [];
     public availableRoles: string[] = [];
 
     public isExerciseModalOpen: boolean = false;
-    public selectedUserForExercises: User | null = null;
+    public selectedUserForExercises: UserDTO | null = null;
 
     public userAssignments: UserExerciseAssignment[] = [];
     public availableExercises: Exercise[] = [];
@@ -82,30 +64,30 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     public message: string | null = null;
 
     public isCreateModalOpen: boolean = false;
-    public newUser: NewUserForm = { fullName: '', email: '', roleEnum: '' };
+    public newUser: UserForm = { fullName: '', email: '', roleEnum: '' };
 
-    editingId: number | null = null;
-    editingField: EditableField | null = null;
-    editingValue: string = '';
+    public editingId: number | null = null;
+    public editingField: EditableField | null = null;
+    public editingValue: string = '';
 
-    isDeleteConfirmModalOpen: boolean = false;
-    userToDelete: User | null = null;
-    deleteConfirmationInput: string = '';
-    readonly deleteConfirmText: string = 'CONFIRM';
+    public isDeleteConfirmModalOpen: boolean = false;
+    public userToDelete: UserDTO | null = null;
+    public deleteConfirmationInput: string = '';
+    public readonly deleteConfirmText: string = 'CONFIRM';
 
     public isRemoveExerciseConfirmOpen: boolean = false;
     public assignmentToRemove: UserExerciseAssignment | null = null;
 
-    ngOnInit(): void {
+    public ngOnInit(): void {
         this.logger.log('UsersComponent initialized');
         this.loadData();
     }
 
-    async loadData(): Promise<void> {
+    public async loadData(): Promise<void> {
         this.isLoading = true; this.error = null;
         try {
             const [usersData, rolesData] = await Promise.all([
-                lastValueFrom(this.http.get<User[]>(this.usersApiUrl)),
+                lastValueFrom(this.http.get<UserDTO[]>(this.usersApiUrl)),
                 lastValueFrom(this.http.get<string[]>(this.rolesApiUrl))
             ]);
 
@@ -122,14 +104,14 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         }
     }
 
-    getDayName(dateStr: string): string {
+    public getDayName(dateStr: string): string {
         if (!dateStr) return '';
         const date = new Date(dateStr.split('T')[0]);
         if (isNaN(date.getTime())) return dateStr;
         return this.dayNames[date.getDay()];
     }
 
-    async onOpenExerciseModal(user: User): Promise<void> {
+    public async onOpenExerciseModal(user: UserDTO): Promise<void> {
         this.logger.log('Opening exercise modal for user', user.id);
         this.selectedUserForExercises = user;
         this.isExerciseModalOpen = true;
@@ -139,10 +121,13 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         this.isLoading = true;
 
         try {
-            const [allExercises, allAssignments] = await Promise.all([
+            const [allExercisesResponse, allAssignmentsResponse] = await Promise.all([
                 lastValueFrom(this.http.get<Exercise[]>(this.exercisesApiUrl)),
                 lastValueFrom(this.http.get<UserExerciseAssignment[]>(this.userExerciseApiUrl))
             ]);
+
+            const allAssignments = allAssignmentsResponse || [];
+            const allExercises = allExercisesResponse || [];
 
             this.userAssignments = (allAssignments || [])
                 .filter(assignment => assignment.user && assignment.user.id === user.id)
@@ -162,7 +147,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         }
     }
 
-    onCloseExerciseModal(): void {
+    public onCloseExerciseModal(): void {
         this.isExerciseModalOpen = false;
         this.selectedUserForExercises = null;
         this.userAssignments = [];
@@ -170,7 +155,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         this.error = null;
     }
 
-    async onAssignExercise(): Promise<void> {
+    public async onAssignExercise(): Promise<void> {
         if (!this.selectedUserForExercises || !this.selectedExerciseIdToAdd) return;
 
         this.isLoading = true;
@@ -185,7 +170,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
             };
 
             this.logger.log('Assigning exercise', payload);
-            await lastValueFrom(this.http.post(this.userExerciseApiUrl, payload));
+            await lastValueFrom(this.http.post<ApiResponse<unknown>>(this.userExerciseApiUrl, payload));
 
             await this.onOpenExerciseModal(this.selectedUserForExercises);
 
@@ -205,18 +190,18 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         }
     }
 
-    onOpenRemoveConfirm(assignment: UserExerciseAssignment): void {
+    public onOpenRemoveConfirm(assignment: UserExerciseAssignment): void {
         this.assignmentToRemove = assignment;
         this.isRemoveExerciseConfirmOpen = true;
         this.error = null;
     }
 
-    onCloseRemoveConfirm(): void {
+    public onCloseRemoveConfirm(): void {
         this.isRemoveExerciseConfirmOpen = false;
         this.assignmentToRemove = null;
     }
 
-    async onConfirmRemoveExercise(): Promise<void> {
+    public async onConfirmRemoveExercise(): Promise<void> {
         if (!this.selectedUserForExercises || !this.assignmentToRemove) return;
 
         this.isLoading = true;
@@ -224,7 +209,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
 
         try {
             this.logger.log('Removing exercise assignment', this.assignmentToRemove.id);
-            await lastValueFrom(this.http.delete(`${this.userExerciseApiUrl}/${this.assignmentToRemove.id}`));
+            await lastValueFrom(this.http.delete<ApiResponse<unknown>>(`${this.userExerciseApiUrl}/${this.assignmentToRemove.id}`));
 
             this.onCloseRemoveConfirm();
 
@@ -241,14 +226,14 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         }
     }
 
-    async onResetPassword(user: User): Promise<void> {
+    public async onResetPassword(user: UserDTO): Promise<void> {
         if (!confirm(`Naozaj chcete vygenerovať nové heslo pre používateľa "${user.fullName}" a poslať ho na email ${user.email}?`)) {
             return;
         }
         this.isLoading = true; this.message = null; this.error = null;
         try {
             this.logger.log('Requesting password reset for user', user.id);
-            await lastValueFrom(this.http.put(`${this.passwordApiUrl}/${user.id}`, {}));
+            await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.passwordApiUrl}/${user.id}`, {}));
             this.message = `Požiadavka na reset hesla pre ${user.email} bola úspešne odoslaná.`;
         } catch (err: unknown) {
             this.logger.error('Error resetting password', err);
@@ -258,7 +243,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         }
     }
 
-    async onRoleChange(user: User, newRole: string): Promise<void> {
+    public async onRoleChange(user: UserDTO, newRole: string): Promise<void> {
         if (user.roleEnum === newRole) return;
         const originalRole = user.roleEnum;
         user.roleEnum = newRole;
@@ -271,11 +256,11 @@ export class UsersComponent implements OnInit, AfterViewChecked {
             () => { user.roleEnum = originalRole; });
     }
 
-    async updateUser(id: number, payload: UpdateUserPayload, onSuccess: () => void, successMsg: string, onError?: () => void) {
+    private async updateUser(id: number, payload: UserForm, onSuccess: () => void, successMsg: string, onError?: () => void) {
         this.isLoading = true; this.error = null; this.message = null;
         try {
             this.logger.log('Updating user', { id, payload });
-            await lastValueFrom(this.http.put(`${this.usersApiUrl}/${id}`, payload));
+            await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.usersApiUrl}/${id}`, payload));
             onSuccess();
             this.message = successMsg;
         } catch (err: unknown) {
@@ -286,14 +271,14 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         } finally { this.isLoading = false; }
     }
 
-    onCreateUserClick(): void {
+    public onCreateUserClick(): void {
         this.newUser = { fullName: '', email: '', roleEnum: '' };
         this.isCreateModalOpen = true;
         this.error = null; this.message = null;
     }
-    onCloseModal(): void { this.isCreateModalOpen = false; }
+    public onCloseModal(): void { this.isCreateModalOpen = false; }
 
-    async onSubmitNewUser(): Promise<void> {
+    public async onSubmitNewUser(): Promise<void> {
         if (!this.newUser.fullName || !this.newUser.email || !this.newUser.roleEnum) return;
         this.isLoading = true;
 
@@ -307,7 +292,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
 
         try {
             this.logger.log('Creating new user', payload);
-            await lastValueFrom(this.http.post(this.usersApiUrl, payload));
+            await lastValueFrom(this.http.post<ApiResponse<unknown>>(this.usersApiUrl, payload));
             this.message = `Používateľ vytvorený.`;
             this.onCloseModal();
             await this.loadData();
@@ -319,18 +304,18 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         }
     }
 
-    onDeleteUserClick(user: User): void {
+    public onDeleteUserClick(user: UserDTO): void {
         this.userToDelete = user;
         this.deleteConfirmationInput = '';
         this.isDeleteConfirmModalOpen = true;
         this.error = null; this.message = null;
     }
-    onCloseDeleteConfirmModal(): void {
+    public onCloseDeleteConfirmModal(): void {
         this.isDeleteConfirmModalOpen = false;
         this.userToDelete = null;
         this.deleteConfirmationInput = '';
     }
-    async onConfirmDelete(): Promise<void> {
+    public async onConfirmDelete(): Promise<void> {
         if (!this.userToDelete || this.deleteConfirmationInput.trim() !== this.deleteConfirmText) return;
         this.isLoading = true;
         const idToDelete = this.userToDelete.id;
@@ -338,7 +323,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
 
         try {
             this.logger.log('Deleting user', idToDelete);
-            await lastValueFrom(this.http.delete(`${this.usersApiUrl}/${idToDelete}`));
+            await lastValueFrom(this.http.delete<ApiResponse<unknown>>(`${this.usersApiUrl}/${idToDelete}`));
             this.users = this.users.filter(u => u.id !== idToDelete);
             this.message = `Používateľ vymazaný.`;
         } catch (err: unknown) {
@@ -349,9 +334,9 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         }
     }
 
-    isEditing(id: number, field: string): boolean { return this.editingId === id && this.editingField === field; }
+    public isEditing(id: number, field: string): boolean { return this.editingId === id && this.editingField === field; }
 
-    onCellEdit(user: User, field: EditableField): void {
+    public onCellEdit(user: UserDTO, field: EditableField): void {
         if (this.isSaving) return;
         this.editingId = user.id;
         this.editingField = field;
@@ -360,7 +345,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         this.cdr.detectChanges();
     }
 
-    async onCellSave(user: User): Promise<void> {
+    public async onCellSave(user: UserDTO): Promise<void> {
         this.shouldFocus = false;
         if (this.isSaving || this.editingId === null || this.editingField === null) return;
 
@@ -374,7 +359,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         }
 
         this.isSaving = true; this.isLoading = true;
-        const payload: UpdateUserPayload = {
+        const payload: UserForm = {
             fullName: user.fullName,
             email: user.email,
             roleEnum: user.roleEnum
@@ -385,11 +370,11 @@ export class UsersComponent implements OnInit, AfterViewChecked {
 
         try {
             this.logger.log('Saving cell edit', { userId: user.id, field: this.editingField, newValue });
-            await lastValueFrom(this.http.put(`${this.usersApiUrl}/${user.id}`, payload));
+            await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.usersApiUrl}/${user.id}`, payload));
             if (this.editingField === 'fullName') user.fullName = newValue;
             if (this.editingField === 'email') user.email = newValue;
             this.message = `Údaje aktualizované.`;
-        } catch (err: any) {
+        } catch (err: unknown) {
             this.logger.error('Error saving cell edit', err);
             this.error = "Chyba pri aktualizácii.";
             await this.loadData();
@@ -399,14 +384,14 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         }
     }
 
-    ngAfterViewChecked(): void {
+    public ngAfterViewChecked(): void {
         if (this.shouldFocus && this.editInputsRef.first) {
             this.shouldFocus = false;
             setTimeout(() => this.editInputsRef.first.nativeElement.focus(), 10);
         }
     }
 
-    onBackdropClick(event: MouseEvent): void {
+    public onBackdropClick(event: MouseEvent): void {
         if (event.target === event.currentTarget) {
             this.onCloseModal();
             this.onCloseDeleteConfirmModal();

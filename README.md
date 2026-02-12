@@ -1,59 +1,49 @@
-# ApPortal
+# 🎓 ARCHITEKTURA POCITACOV - Školský Manažment Systém
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.5.
 
-## Development server
+Komplexná Angular aplikácia navrhnutá na zefektívnenie výučby a administratívy. Systém je rozdelený na dva hlavné moduly: **Študentský portál** a **Učiteľský panel**, pričom prístup je riadený na základe rolí (Role-Based Access Control).
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+## 🚀 Kľúčové Funkcionality
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Aplikácia je rozdelená do dvoch hlavných sekcií podľa typu používateľa:
 
-## Code scaffolding
+### 👨‍🎓 Sekcia pre Študentov
+Prostredie navrhnuté pre prehľadnosť a sledovanie študijných povinností.
+* **Prehľad úloh (Dashboard):** Zobrazenie aktuálnych, nadchádzajúcich zadaní.
+* **Detail úlohy:** Možnosť prezerať zadania, sťahovať prílohy.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
-```bash
-ng generate component component-name
-```
+### 👩‍🏫 Sekcia pre Učiteľov
+Administratívne rozhranie pre správu kurzu a hodnotenie.
+* **Manažment úloh a cvičení:** Vytváranie nových zadaní, nastavovanie blokov.
+* **Bodovanie a Hodnotenie:** Zapisovanie bodov za úlohy.
+* **Evidencia dochádzky:** Digitálny záznam prítomnosti študentov na cvičeniach.
+* **Správa študentov:** Prehľad zoznamu študentov a ich individuálneho progresu.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## 🛠 Použité Technológie
 
-## Building
+* **Frontend:** [Angular](https://angular.io/) (vLatest)
+* **UI Knižnica:** (Tailwind CSS)
+* **Autentifikácia:** JWT Interceptors & Auth Guards
 
-To build the project run:
+---
 
-```bash
-ng build
-```
+## ⚙️ Inštalácia a Spustenie
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Pre spustenie projektu na lokálnom stroji postupujte nasledovne:
 
-## Running unit tests
+1.  **Inštalácia závislostí:**
+    ```bash
+    npm install
+    ```
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+2.  **Spustenie vývojového servera:**
+    ```bash
+    ng serve
+    ```
+    Aplikácia je dostupná na adrese `http://localhost:4200/`.
 
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

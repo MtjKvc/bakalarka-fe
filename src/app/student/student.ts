@@ -1,6 +1,6 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, AfterViewInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import { RouterModule, } from '@angular/router';
 
 @Component({
@@ -9,7 +9,7 @@ import { RouterModule, } from '@angular/router';
   templateUrl: './student.html',
   styleUrl: './student.css'
 })
-export class Student implements AfterViewInit {
+export class Student implements AfterViewInit, OnDestroy{
   @ViewChild('canvasDigitalRain') private canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private ctx!: CanvasRenderingContext2D;
@@ -20,11 +20,13 @@ export class Student implements AfterViewInit {
   private fontSize = 16;
   private characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789';
 
-  private fps = 10;
+  private fps = 15;
   private fpsInterval = 1000 / this.fps;
   private lastDrawTime = 0;
 
   public menuOpen = false;
+
+  private animationId: number = 0;
 
   public toggleMenu() {
     this.menuOpen = !this.menuOpen;
@@ -32,6 +34,12 @@ export class Student implements AfterViewInit {
   public ngAfterViewInit() {
     this.initCanvas();
     this.animate(0);
+  }
+
+  public ngOnDestroy() {
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+    }
   }
 
   @HostListener('window:resize')
@@ -52,7 +60,7 @@ export class Student implements AfterViewInit {
   }
 
   private animate(currentTime: number) {
-    requestAnimationFrame((time) => this.animate(time));
+    this.animationId = requestAnimationFrame((time) => this.animate(time));
     const elapsed = currentTime - this.lastDrawTime;
     if (elapsed < this.fpsInterval) return;
     this.lastDrawTime = currentTime - (elapsed % this.fpsInterval);
@@ -77,7 +85,5 @@ export class Student implements AfterViewInit {
 
       this.drops[i]++;
     }
-    //setTimeout(() => this.animate(), 50);
   }
-
 }

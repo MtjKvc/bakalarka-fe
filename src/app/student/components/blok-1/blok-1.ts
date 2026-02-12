@@ -1,7 +1,7 @@
 import { CommonModule, } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CopyButton } from '../../../shared/copy-button/copy-button';
+import { CopyButton } from '../../../shared/components/copy-button/copy-button';
 
 
 @Component({
@@ -9,7 +9,6 @@ import { CopyButton } from '../../../shared/copy-button/copy-button';
   standalone: true,
   imports: [CommonModule,RouterModule,CopyButton],
   templateUrl: './blok-1.html',
-  styleUrl: './blok-1.css'
 })
 export class Blok1 {
 

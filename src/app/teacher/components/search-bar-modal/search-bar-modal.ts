@@ -3,51 +3,17 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { lastValueFrom } from 'rxjs';
-import { Block, TeacherContextService } from '../../../core/context/teacher-context';
+import { Block, TeacherContextService } from '../../../core/context/teacher-context.service';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../core/logging/logger';
-import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc';
-
-export interface StudentSearchResult {
-  id: number;
-  fullName: string;
-  aisId?: number;
-}
-
-interface AssignmentHeader {
-  id: number;
-  name: string;
-  maxPoints: number;
-}
-
-interface StudentAssignmentDto {
-  studentAssignmentId: number;
-  assignmentId?: number;
-  earnedPoints: number;
-  note?: string;
-}
-
-interface StudentGradingRow {
-  studentFullName: string;
-  studentAssignments: StudentAssignmentDto[];
-}
-
-interface AttendanceItemDto {
-  attendanceId: number;
-  attendance: string; 
-  exerciseSessionId?: number;
-  sessionDate?: string;
-}
+import { LoggerService } from '../../../core/logging/logger.service';
+import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc.directive';
+import { StudentBasic,ApiResponse,AssignmentHeader,StudentAssignmentDto,SessionColumn,StudentGradingRow,AttendanceItemDto } from '../../../shared/models/interfaces';
 
 interface StudentAttendanceRow {
   studentFullName: string;
   studentAttendances: AttendanceItemDto[];
 }
 
-interface SessionColumn {
-  id: number;
-  label: string;
-}
 
 interface AttendanceMapValue {
   id: number;      
@@ -59,7 +25,6 @@ interface AttendanceMapValue {
   standalone: true,
   imports: [CommonModule, FormsModule, CloseOnEscDirective],
   templateUrl: './search-bar-modal.html',
-  styleUrl: './search-bar-modal.css'
 })
 export class SearchBarModalComponent implements OnInit, AfterViewChecked {
   
@@ -69,16 +34,16 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
   private logger = inject(LoggerService);
   private apiUrl = `${environment.apiUrl}/api/v1`;
 
-  student = input.required<StudentSearchResult>();
-  close = output<void>();
+  public student = input.required<StudentBasic>();
+  public close = output<void>();
 
-  gradingAssignments: AssignmentHeader[] = [];
-  gradingRow: StudentGradingRow | null = null;
+  public gradingAssignments: AssignmentHeader[] = [];
+  public gradingRow: StudentGradingRow | null = null;
 
-  attendanceSessions: SessionColumn[] = [];
-  attendanceMap = new Map<number, AttendanceMapValue>(); 
+  public attendanceSessions: SessionColumn[] = [];
+  public attendanceMap = new Map<number, AttendanceMapValue>(); 
 
-  attendanceOptions: string[] = [];
+  public attendanceOptions: string[] = [];
 
   private translations: Record<string, string> = {
     'PRESENT': 'Prítomný',
@@ -86,22 +51,22 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     'SUBSTITUTED': 'Nahradené'
   };
 
-  isLoading = false;
-  isSaving = false;
+  public isLoading = false;
+  public isSaving = false;
   
-  message: string | null = null;
-  error: string | null = null;
+  public message: string | null = null;
+  public error: string | null = null;
 
-  @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
-  editingAssignmentId: number | null = null;
-  editingValue: number | string = '';      
-  shouldFocus: boolean = false;
+  @ViewChildren('editInput') private editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
+  public editingAssignmentId: number | null = null;
+  public editingValue: number | string = '';      
+  private shouldFocus: boolean = false;
 
-  isNoteModalOpen = false;
-  noteModalText = '';
-  noteModalAssignmentId: number | null = null;
+  public isNoteModalOpen = false;
+  public noteModalText = '';
+  public noteModalAssignmentId: number | null = null;
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.logger.log('SearchBarModal initialized', this.student());
     this.loadAttendanceOptions();
     if (this.contextService.blocks().length === 0) {
@@ -111,23 +76,24 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  async loadAttendanceOptions() {
+  private async loadAttendanceOptions() {
     try {
-        this.attendanceOptions = await lastValueFrom(
+        const response = await lastValueFrom(
             this.http.get<string[]>(`${this.apiUrl}/enum/attendance`)
         );
+        this.attendanceOptions = response || [];
     } catch (e) {
         this.logger.error('Nepodarilo sa načítať statusy dochádzky.', e);
     }
   }
 
-  onSelectBlock(block: Block): void {
+  public onSelectBlock(block: Block): void {
       this.logger.log('Block selected in modal', block);
       this.contextService.selectBlock(block);
       this.loadData();
   }
 
-  async loadData() {
+  private async loadData() {
     this.isLoading = true;
     this.resetState();
 
@@ -136,13 +102,15 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
 
     if (block && block.id) {
       try {
-        this.gradingAssignments = await lastValueFrom(
+        const assignmentsRes = await lastValueFrom(
           this.http.get<AssignmentHeader[]>(`${this.apiUrl}/assignment?blockId=${block.id}`)
         ) || [];
+        this.gradingAssignments = assignmentsRes || [];
 
-        const gradingData = await lastValueFrom(
+        const gradingRes = await lastValueFrom(
           this.http.get<StudentGradingRow[]>(`${this.apiUrl}/student-assignment/grading?blockId=${block.id}&studentId=${studentId}`)
         );
+        const gradingData = gradingRes || [];
 
         if (gradingData && gradingData.length > 0) {
           this.gradingRow = gradingData[0];
@@ -157,9 +125,11 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     }
 
     try {
-      const attendanceData = await lastValueFrom(
+      const attendanceRes = await lastValueFrom(
         this.http.get<StudentAttendanceRow[]>(`${this.apiUrl}/student-attendance/attendance?studentId=${studentId}`)
       );
+      const attendanceData = attendanceRes || [];
+
       if (attendanceData && attendanceData.length > 0) {
         this.processAttendanceData(attendanceData[0]);
       } else {
@@ -210,11 +180,11 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     this.attendanceSessions = Array.from(sessionsMap.values()).sort((a, b) => a.id - b.id);
   }
 
-  getAssignmentRecord(assignmentId: number): StudentAssignmentDto | undefined {
+  public getAssignmentRecord(assignmentId: number): StudentAssignmentDto | undefined {
     return this.gradingRow?.studentAssignments?.find(a => a.assignmentId === assignmentId);
   }
 
-  onEditPoint(assignmentId: number): void {
+  public onEditPoint(assignmentId: number): void {
     if (this.isSaving) return;
     
     const currentPoints = this.getPoints(assignmentId);
@@ -224,7 +194,7 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     this.cdr.detectChanges();
   }
 
-  async onSavePoint(assignmentId: number): Promise<void> {
+  public async onSavePoint(assignmentId: number): Promise<void> {
     this.shouldFocus = false;
     
     if (this.isSaving || this.editingAssignmentId !== assignmentId) return;
@@ -252,7 +222,7 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
 
       try {
           this.logger.log(`Updating points for assignment ${record.studentAssignmentId}`, newPoints);
-          await lastValueFrom(this.http.put(`${this.apiUrl}/student-assignment/${record.studentAssignmentId}`, {
+          await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.apiUrl}/student-assignment/${record.studentAssignmentId}`, {
               earnedPoints: newPoints,
               note: record.note || ""
           }));
@@ -266,20 +236,20 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
       }
   }
 
-  openNoteModal(assignmentId: number, currentNote: string | undefined, event: Event) {
+  public openNoteModal(assignmentId: number, currentNote: string | undefined, event: Event) {
     event.stopPropagation();
     this.noteModalAssignmentId = assignmentId;
     this.noteModalText = currentNote || '';
     this.isNoteModalOpen = true;
   }
 
-  closeNoteModal() {
+  public closeNoteModal() {
     this.isNoteModalOpen = false;
     this.noteModalAssignmentId = null;
     this.noteModalText = '';
   }
 
-  async saveNoteFromModal() {
+  public async saveNoteFromModal() {
     if (this.isSaving || !this.noteModalAssignmentId) return;
 
     const record = this.gradingRow?.studentAssignments.find(a => a.assignmentId === this.noteModalAssignmentId);
@@ -289,7 +259,7 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     
     try {
       this.logger.log(`Saving note for assignment ${record.studentAssignmentId}`);
-      await lastValueFrom(this.http.put(`${this.apiUrl}/student-assignment/${record.studentAssignmentId}`, {
+      await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.apiUrl}/student-assignment/${record.studentAssignmentId}`, {
         earnedPoints: record.earnedPoints,
         note: this.noteModalText
       }));
@@ -306,7 +276,7 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  async onAttendanceClick(sessionId: number): Promise<void> {
+  public async onAttendanceClick(sessionId: number): Promise<void> {
       if (this.isSaving) return; 
 
       const record = this.attendanceMap.get(sessionId);
@@ -331,7 +301,7 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
 
       try {
           this.logger.log(`Updating attendance ${record.id} to ${newStatus}`);
-          await lastValueFrom(this.http.put(`${this.apiUrl}/student-attendance/${record.id}`, {
+          await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.apiUrl}/student-attendance/${record.id}`, {
               attendanceEnum: newStatus
           }));
           
@@ -347,12 +317,12 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
       }
   }
 
-  showMessage(msg: string) {
+  private showMessage(msg: string) {
       this.message = msg;
       setTimeout(() => this.message = null, 2000);
   }
 
-  ngAfterViewChecked(): void {
+  public ngAfterViewChecked(): void {
     if (this.shouldFocus && this.editInputsRef.first) {
         this.shouldFocus = false;
         setTimeout(() => {
@@ -364,19 +334,19 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  getPoints(assignmentId: number): string | number {
+  public getPoints(assignmentId: number): string | number {
     if (!this.gradingRow?.studentAssignments) return '-';
     const record = this.gradingRow.studentAssignments.find(a => a.assignmentId === assignmentId);
     return record ? record.earnedPoints : '-';
   }
 
-  getAttendanceStatus(sessionId: number): string {
+  public getAttendanceStatus(sessionId: number): string {
     const record = this.attendanceMap.get(sessionId);
     if (!record) return '-';
     return this.translations[record.status] || record.status;
   }
 
-  getStatusColor(status: string): string {
+  public getStatusColor(status: string): string {
     switch (status?.toUpperCase()) {
       case 'PRÍTOMNÝ':
       case 'PRESENT': return 'bg-emerald-100 text-emerald-800 border border-emerald-200';
@@ -395,7 +365,7 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
     } catch { return dateStr; }
   }
 
-  onClose() {
+  public onClose() {
     this.logger.log('Closing search modal');
     this.close.emit();
   }

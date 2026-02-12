@@ -7,8 +7,8 @@ const LONG_PRESS_THRESHOLD = 500;
   standalone: true
 })
 export class LongPressDirective {
-  @Output() longPress = new EventEmitter<MouseEvent | TouchEvent>();
-  @Input() preventDefaultOnLongPress: boolean = true;
+  @Output() public longPress = new EventEmitter<MouseEvent | TouchEvent>();
+  @Input() public preventDefaultOnLongPress: boolean = true;
 
   private touchTimeout: ReturnType<typeof setTimeout> | null = null;
   private longPressActive: boolean = false;
@@ -17,7 +17,7 @@ export class LongPressDirective {
 
   @HostListener('mousedown', ['$event'])
   @HostListener('touchstart', ['$event'])
-  onPressStart(event: MouseEvent | TouchEvent): void {
+  public onPressStart(event: MouseEvent | TouchEvent): void {
     this.longPressActive = false;
 
     if (this.touchTimeout) {
@@ -42,7 +42,7 @@ export class LongPressDirective {
   }
 
   @HostListener('touchmove', ['$event'])
-  onTouchMove(event: TouchEvent): void {
+  public onTouchMove(event: TouchEvent): void {
     const xDiff = Math.abs(event.touches[0].clientX - this.startX);
     const yDiff = Math.abs(event.touches[0].clientY - this.startY);
 
@@ -58,7 +58,7 @@ export class LongPressDirective {
   @HostListener('touchend')
   @HostListener('mouseleave')
   @HostListener('touchcancel')
-  onPressEnd(event: MouseEvent | null = null): void {
+  public onPressEnd(event: MouseEvent | null = null): void {
     if (this.touchTimeout) {
       clearTimeout(this.touchTimeout);
       this.touchTimeout = null;
@@ -73,7 +73,7 @@ export class LongPressDirective {
   }
 
   @HostListener('contextmenu', ['$event'])
-  onContextMenu(event: MouseEvent) {
+  public onContextMenu(event: MouseEvent) {
     if (this.longPressActive) {
       event.preventDefault();
     }

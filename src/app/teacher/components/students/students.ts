@@ -2,13 +2,14 @@ import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, E
 import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { lastValueFrom, Subject, Subscription } from 'rxjs';
-import { debounceTime, switchMap, tap, catchError } from 'rxjs/operators';
+import { debounceTime, switchMap, tap, catchError, map } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
-import { LongPressDirective } from '../../../shared/long-press/long-press';
+import { LongPressDirective } from '../../../shared/directives/long-press.directive';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../core/logging/logger';
-import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc';
-import { SearchBarModalComponent, StudentSearchResult } from '../search-bar-modal/search-bar-modal';
+import { LoggerService } from '../../../core/logging/logger.service';
+import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc.directive';
+import { SearchBarModalComponent, } from '../search-bar-modal/search-bar-modal';
+import { StudentBasic, ApiResponse, Exercise } from '../../../shared/models/interfaces';
 
 interface Student {
   id: number;
@@ -18,12 +19,6 @@ interface Student {
   exerciseId?: number | null;
 }
 
-interface Exercise {
-  id: number;
-  firstSessionDate: string;
-  startTime: string;
-  roomEnum: string;
-}
 
 interface StudentExerciseResponse {
   id: number;
@@ -54,7 +49,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private logger = inject(LoggerService);
 
-  @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
+  @ViewChildren('editInput') private editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
 
   private shouldFocus: boolean = false;
   public isSaving: boolean = false;
@@ -93,9 +88,9 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   readonly deleteConfirmText: string = 'CONFIRM';
 
   public isDetailModalOpen: boolean = false;
-  public selectedStudentForDetail: StudentSearchResult | null = null;
+  public selectedStudentForDetail: StudentBasic | null = null;
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.logger.log('Students component initialized');
     this.loadExercises();
 
@@ -131,7 +126,9 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
         params = params.set('sort', sortParam);
 
         this.logger.log(`Fetching students with params: ${params.toString()}`);
+        
         return this.http.get<StudentExerciseResponse[]>(this.studentExerciseApiUrl, { params }).pipe(
+          map(response => response || []),
           catchError((err) => {
             this.logger.error('Failed to load students', err);
             this.error = "Nepodarilo sa načítať dáta.";
@@ -149,13 +146,13 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
     this.triggerSearch();
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     this.logger.log('Students component destroyed');
     this.searchSubscription?.unsubscribe();
     this.searchSubject.complete();
   }
 
-openStudentDetail(student: Student): void {
+  public openStudentDetail(student: Student): void {
     this.selectedStudentForDetail = {
       id: student.id,
       fullName: student.fullName,
@@ -164,12 +161,12 @@ openStudentDetail(student: Student): void {
     this.isDetailModalOpen = true;
   }
 
-  onCloseDetailModal(): void {
+  public onCloseDetailModal(): void {
     this.isDetailModalOpen = false;
     this.selectedStudentForDetail = null;
   }
 
-  onSort(field: string): void {
+  public onSort(field: string): void {
     if (this.sortField === field) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
@@ -180,11 +177,11 @@ openStudentDetail(student: Student): void {
     this.triggerSearch();
   }
 
-  triggerSearch(): void {
+  public triggerSearch(): void {
     this.searchSubject.next();
   }
 
-  onSearchInputChange(): void {
+  public onSearchInputChange(): void {
     this.triggerSearch();
   }
 
@@ -205,13 +202,15 @@ openStudentDetail(student: Student): void {
     });
   }
 
-  async loadExercises(): Promise<void> {
+  private async loadExercises(): Promise<void> {
     try {
-      const data = await lastValueFrom(this.http.get<Exercise[]>(this.exercisesApiUrl));
-      this.exercises = (data || []).map(e => {
+      const response = await lastValueFrom(this.http.get<Exercise[]>(this.exercisesApiUrl));
+      
+      this.exercises = (response || []).map(e => {
         if (e.firstSessionDate?.includes('T')) e.firstSessionDate = e.firstSessionDate.split('T')[0];
         return e;
       }).sort((a, b) => a.id - b.id);
+      
       this.logger.log(`Loaded ${this.exercises.length} exercises`);
     } catch (err) {
       this.logger.error('Failed to load exercises', err);
@@ -219,13 +218,13 @@ openStudentDetail(student: Student): void {
     }
   }
 
-  async onExerciseChange(student: Student, newExerciseId: any): Promise<void> {
+  public async onExerciseChange(student: Student, newExerciseId: string | number): Promise<void> {
     const newId = Number(newExerciseId);
     if (student.exerciseId === newId) return;
     this.isLoading = true;
     try {
       this.logger.log(`Moving student ${student.id} to exercise ${newId}`);
-      await lastValueFrom(this.http.put(`${this.studentExerciseApiUrl}/${student.relationshipId}`, {
+      await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.studentExerciseApiUrl}/${student.relationshipId}`, {
         studentId: student.id,
         exerciseId: newId
       }));
@@ -239,12 +238,12 @@ openStudentDetail(student: Student): void {
     finally { this.isLoading = false; }
   }
 
-  async onSubmitNovyStudent(): Promise<void> {
+  public async onSubmitNovyStudent(): Promise<void> {
     if (this.selectedExerciseId === null) return;
     this.isLoading = true;
     try {
       this.logger.log('Creating new student', this.novyStudent);
-      await lastValueFrom(this.http.post<any>(this.studentsApiUrl, {
+      await lastValueFrom(this.http.post<ApiResponse<unknown>>(this.studentsApiUrl, {
         exerciseId: Number(this.selectedExerciseId),
         students: [{ aisId: Number(this.novyStudent.aisId), fullName: this.novyStudent.fullName.trim() }]
       }));
@@ -257,12 +256,12 @@ openStudentDetail(student: Student): void {
     finally { this.isLoading = false; }
   }
 
-  async onConfirmDelete(): Promise<void> {
+  public async onConfirmDelete(): Promise<void> {
     if (!this.studentToDelete || this.deleteConfirmationInput.trim() !== this.deleteConfirmText) return;
     this.isLoading = true;
     try {
       this.logger.log(`Deleting student ${this.studentToDelete.id}`);
-      await lastValueFrom(this.http.delete(`${this.studentsApiUrl}/${this.studentToDelete.id}`));
+      await lastValueFrom(this.http.delete<ApiResponse<unknown>>(`${this.studentsApiUrl}/${this.studentToDelete.id}`));
       this.onCloseDeleteConfirmModal();
       this.triggerSearch();
     } catch (err) {
@@ -272,14 +271,14 @@ openStudentDetail(student: Student): void {
     finally { this.isLoading = false; }
   }
 
-  onCreateStudentClick(): void { this.novyStudent = { aisId: 0, fullName: '' }; this.selectedExerciseId = this.exercises[0]?.id || null; this.isCreateStudentModalOpen = true; }
-  onCloseStudentModal(): void { this.isCreateStudentModalOpen = false; }
-  onDeleteStudentClick(student: Student): void { this.studentToDelete = student; this.deleteConfirmationInput = ''; this.isDeleteConfirmModalOpen = true; }
-  onCloseDeleteConfirmModal(): void { this.isDeleteConfirmModalOpen = false; }
-  onBackdropClick(event: MouseEvent): void { if (event.target === event.currentTarget) { this.onCloseStudentModal(); this.onCloseDeleteConfirmModal(); } }
+  public onCreateStudentClick(): void { this.novyStudent = { aisId: 0, fullName: '' }; this.selectedExerciseId = this.exercises[0]?.id || null; this.isCreateStudentModalOpen = true; }
+  public onCloseStudentModal(): void { this.isCreateStudentModalOpen = false; }
+  public onDeleteStudentClick(student: Student): void { this.studentToDelete = student; this.deleteConfirmationInput = ''; this.isDeleteConfirmModalOpen = true; }
+  public onCloseDeleteConfirmModal(): void { this.isDeleteConfirmModalOpen = false; }
+  public onBackdropClick(event: MouseEvent): void { if (event.target === event.currentTarget) { this.onCloseStudentModal(); this.onCloseDeleteConfirmModal(); } }
 
-  isEditing(id: number, field: string): boolean { return this.editingStudentId === id && this.editingField === field; }
-  onCellEdit(student: Student, field: keyof Student): void {
+  public isEditing(id: number, field: string): boolean { return this.editingStudentId === id && this.editingField === field; }
+  public onCellEdit(student: Student, field: keyof Student): void {
     if (this.isSaving) return;
     this.editingStudentId = student.id;
     this.editingField = field;
@@ -288,25 +287,59 @@ openStudentDetail(student: Student): void {
     this.cdr.detectChanges();
   }
 
-  async onCellSave(student: Student): Promise<void> {
-    if (this.isSaving || this.editingStudentId === null) return;
+  public async onCellSave(student: Student): Promise<void> {
+    this.shouldFocus = false;
+    if (this.isSaving || this.editingStudentId === null || this.editingField === null) return;
+
     const field = this.editingField as 'aisId' | 'fullName';
-    if (String(student[field]) === String(this.editingValue)) { this.editingStudentId = null; return; }
+    const rawValue = String(this.editingValue).trim();
+
+    let payloadAisId = student.aisId;
+    let payloadFullName = student.fullName;
+
+    if (field === 'aisId') {
+      const parsedId = Number(rawValue);
+      if (isNaN(parsedId) || !Number.isInteger(parsedId) || parsedId < 0) {
+        this.error = "Chyba: AIS ID musí byť celé kladné číslo!";
+        return;
+      }
+      if (parsedId === student.aisId) {
+        this.editingStudentId = null;
+        this.editingField = null;
+        return;
+      }
+      payloadAisId = parsedId;
+    } else if (field === 'fullName') {
+      if (!rawValue) {
+        this.error = "Chyba: Meno nesmie byť prázdne!";
+        return;
+      }
+      if (rawValue === student.fullName) {
+        this.editingStudentId = null;
+        this.editingField = null;
+        return;
+      }
+      payloadFullName = rawValue;
+    }
 
     this.isSaving = true;
+    this.error = null;
+
     try {
       this.logger.log(`Updating student ${student.id} field ${field}`);
-      const payload = { aisId: student.aisId, fullName: student.fullName };
-      if (field === 'aisId') payload.aisId = Number(this.editingValue); else payload.fullName = String(this.editingValue);
+      const payload = { aisId: payloadAisId, fullName: payloadFullName };
 
-      await lastValueFrom(this.http.put(`${this.studentsApiUrl}/${student.id}`, payload));
-      (student as any)[field] = payload[field];
+      await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.studentsApiUrl}/${student.id}`, payload));
+      
+      student.aisId = payloadAisId;
+      student.fullName = payloadFullName;
+      this.message = "Údaje uložené.";
     } catch (err) {
       this.logger.error('Update failed', err);
-      this.triggerSearch();
+      this.error = "Uloženie zlyhalo. Skontrolujte formát.";
     }
     finally { this.editingStudentId = null; this.isSaving = false; }
   }
 
-  ngAfterViewChecked(): void { if (this.shouldFocus && this.editInputsRef.first) { this.shouldFocus = false; setTimeout(() => this.editInputsRef.first?.nativeElement.focus(), 10); } }
+  public ngAfterViewChecked(): void { if (this.shouldFocus && this.editInputsRef.first) { this.shouldFocus = false; setTimeout(() => this.editInputsRef.first?.nativeElement.focus(), 10); } }
 }

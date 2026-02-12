@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class ClipboardUtilityService {
 
-  copyText(element: HTMLElement, onSuccessCallback: () => void): void {
+ public copyText(element: HTMLElement, onSuccessCallback: () => void): void {
     const textToCopy = element.textContent || element.innerText; 
     
     navigator.clipboard.writeText(textToCopy).then(() => {

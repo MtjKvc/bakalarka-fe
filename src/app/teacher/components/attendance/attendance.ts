@@ -3,34 +3,16 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../core/context/teacher-context';
+import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../core/context/teacher-context.service';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../core/logging/logger';
-
-interface AttendanceItemDto {
-  attendanceId: number;
-  attendance: string;
-  exerciseSessionId?: number;
-  sessionDate?: string;
-}
+import { LoggerService } from '../../../core/logging/logger.service';
+import { AttendanceItemDto,StudentBasic,SessionColumn,ApiResponse } from '../../../shared/models/interfaces';
 
 interface StudentRowDto {
   studentId?: number;
   studentFullName: string;
   studentAttendances: AttendanceItemDto[];
   aisId?: number;
-}
-
-interface Student {
-  id: number;
-  fullName: string;
-  aisId?: number;
-}
-
-interface SessionColumn {
-  id: number;
-  label: string;
-  date?: string;
 }
 
 interface AttendanceRecord {
@@ -58,7 +40,7 @@ export class Attendance implements OnInit {
   private logger = inject(LoggerService);
   private apiUrl = `${environment.apiUrl}/api/v1`;
 
-  public uniqueStudents: Student[] = [];
+  public uniqueStudents: StudentBasic[] = [];
   public uniqueSessions: SessionColumn[] = [];
 
   public attendanceMap = new Map<string, AttendanceRecord>();
@@ -90,12 +72,12 @@ export class Attendance implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.logger.log('Attendance initialized');
     this.fetchEnums();
   }
 
-  async fetchEnums(): Promise<void> {
+  private async fetchEnums(): Promise<void> {
     try {
       const enums = await lastValueFrom(this.http.get<string[]>(`${this.apiUrl}/enum/attendance`));
       this.attendanceOptions = enums || [];
@@ -105,13 +87,13 @@ export class Attendance implements OnInit {
     }
   }
 
-  toggleHistory(): void {
+  public toggleHistory(): void {
     this.showFullHistory = !this.showFullHistory;
     this.logger.log(`Toggling history: ${this.showFullHistory}`);
     this.fetchAttendance();
   }
 
-  async fetchAttendance(exerciseId?: number): Promise<void> {
+  private async fetchAttendance(exerciseId?: number): Promise<void> {
     this.isLoading = true;
     this.clearTable();
     this.error = null;
@@ -132,9 +114,9 @@ export class Attendance implements OnInit {
       const data = await lastValueFrom(
         this.http.get<StudentRowDto[]>(url)
       );
-
-      this.logger.log(`Attendance data loaded: ${data?.length || 0} rows`);
-      this.processData(data);
+      const rows = data || [];
+      this.logger.log(`Attendance data loaded: ${rows.length || 0} rows`);
+      this.processData(rows);
 
     } catch (err) {
       this.logger.error('Nepodarilo sa načítať záznamy', err);
@@ -145,14 +127,14 @@ export class Attendance implements OnInit {
   }
 
   private processData(rows: StudentRowDto[]): void {
-    const studentsTemp: Student[] = [];
+    const studentsTemp: StudentBasic[] = [];
     const sessionsMap = new Map<number, SessionColumn>();
 
     rows.forEach((row, index) => {
 
       const syntheticStudentId = row.studentId !== undefined ? row.studentId : index;
 
-      const studentObj: Student = {
+      const studentObj: StudentBasic = {
         id: syntheticStudentId,
         fullName: row.studentFullName,
         aisId: row.aisId
@@ -219,11 +201,11 @@ export class Attendance implements OnInit {
     return `${String(studentId)}_${String(sessionId)}`;
   }
 
-  getRecord(studentId: number, sessionId: number): AttendanceRecord | undefined {
+  public getRecord(studentId: number, sessionId: number): AttendanceRecord | undefined {
     return this.attendanceMap.get(this.getMapKey(studentId, sessionId));
   }
 
-  async onCellClick(student: Student, session: SessionColumn): Promise<void> {
+  public async onCellClick(student: StudentBasic, session: SessionColumn): Promise<void> {
     if (this.attendanceOptions.length === 0) return;
 
     const key = this.getMapKey(student.id, session.id);
@@ -255,7 +237,7 @@ export class Attendance implements OnInit {
 
       this.logger.log(`PUT ${url}`, payload);
 
-      await lastValueFrom(this.http.put(url, payload));
+      await lastValueFrom(this.http.put<ApiResponse<unknown>>(url, payload));
 
     } catch (err) {
       this.logger.error('Update failed', err);
@@ -265,22 +247,22 @@ export class Attendance implements OnInit {
       this.processingSet.delete(key);
     }
   }
-  getTranslation(status: string): string {
+  public getTranslation(status: string): string {
     return this.translations[status] || status;
   }
 
-getStatusColor(status: string): string {
-  if (!status) return 'bg-gray-100 text-gray-500 border-gray-200';
-  
-  const s = status.toUpperCase();
-  if (s === 'PRESENT' || s === 'PRÍTOMNÝ') return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-  if (s === 'ABSENT' || s === 'NEPRÍTOMNÝ') return 'bg-red-100 text-red-800 border-red-200';
-  if (s === 'SUBSTITUTED' || s === 'NAHRADENÉ') return 'bg-purple-100 text-purple-800 border-purple-200';
-  
-  return 'bg-gray-100 text-gray-500 border-gray-200';
-}
+  public getStatusColor(status: string): string {
+    if (!status) return 'bg-gray-100 text-gray-500 border-gray-200';
 
-  getStudentFullName(s: Student): string {
+    const s = status.toUpperCase();
+    if (s === 'PRESENT' || s === 'PRÍTOMNÝ') return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+    if (s === 'ABSENT' || s === 'NEPRÍTOMNÝ') return 'bg-red-100 text-red-800 border-red-200';
+    if (s === 'SUBSTITUTED' || s === 'NAHRADENÉ') return 'bg-purple-100 text-purple-800 border-purple-200';
+
+    return 'bg-gray-100 text-gray-500 border-gray-200';
+  }
+
+  public getStudentFullName(s: StudentBasic): string {
     return s.fullName || `ID: ${s.id}`;
   }
 

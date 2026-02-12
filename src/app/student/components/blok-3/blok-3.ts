@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { ClipboardUtilityService } from '../../../core/utils/clipboard-utility';
-import { CopyButton } from '../../../shared/copy-button/copy-button';
+import { ClipboardUtilityService } from '../../../core/utils/clipboard-utility.service';
+import { CopyButton } from '../../../shared/components/copy-button/copy-button';
 
 @Component({
   selector: 'app-blok-3',

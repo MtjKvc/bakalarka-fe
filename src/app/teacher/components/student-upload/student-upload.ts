@@ -1,14 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { TeacherContextService } from '../../../core/context/teacher-context';
+import { HttpClient } from '@angular/common/http';
+import { TeacherContextService } from '../../../core/context/teacher-context.service';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../core/logging/logger';
+import { LoggerService } from '../../../core/logging/logger.service';
+import { StudentDto, ApiResponse } from '../../../shared/models/interfaces';
 
-interface StudentDto {
-  aisId: number;
-  fullName: string;
-}
 
 interface UploadPayload {
   exerciseId: number;
@@ -22,16 +19,16 @@ interface UploadPayload {
   templateUrl: './student-upload.html',
 })
 export class StudentUploadComponent {
-  contextService = inject(TeacherContextService);
-  http = inject(HttpClient);
-  private logger = inject(LoggerService);
+  public readonly contextService = inject(TeacherContextService);
+ private readonly http = inject(HttpClient);
+  private readonly logger = inject(LoggerService);
 
-  parsedStudents = signal<StudentDto[]>([]);
-  isUploading = signal(false);
-  uploadStatus = signal<'idle' | 'success' | 'error'>('idle');
-  errorMessage = signal<string>('');
+  public readonly parsedStudents = signal<StudentDto[]>([]);
+  public readonly isUploading = signal(false);
+  public readonly uploadStatus = signal<'idle' | 'success' | 'error'>('idle');
+  public readonly  errorMessage = signal<string>('');
 
-  onFileSelected(event: Event) {
+  public onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
@@ -78,7 +75,7 @@ export class StudentUploadComponent {
     this.uploadStatus.set('idle');
   }
 
-  uploadData() {
+  public uploadData() {
     const currentExercise = this.contextService.selectedExercise();
     
     if (!currentExercise) {
@@ -99,13 +96,8 @@ export class StudentUploadComponent {
 
     this.logger.log('Initiating student upload', payload);
 
-    const token = localStorage.getItem('auth_token');
-    let headers = new HttpHeaders();
-    if (token) {
-      headers = headers.set('Authorization', `Bearer ${token}`);
-    }
 
-    this.http.post(`${environment.apiUrl}/api/v1/student`, payload, { headers })
+    this.http.post<ApiResponse<unknown>>(`${environment.apiUrl}/api/v1/student`, payload,)
       .subscribe({
         next: () => {
           this.logger.log('Student upload successful');

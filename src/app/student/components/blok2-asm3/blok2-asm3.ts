@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CopyButton } from '../../../shared/copy-button/copy-button';
+import { CopyButton } from '../../../shared/components/copy-button/copy-button';
 
 @Component({
   selector: 'app-blok2-asm3',
@@ -9,7 +9,7 @@ import { CopyButton } from '../../../shared/copy-button/copy-button';
 })
 export class Blok2Asm3 {
 
-  scrollTo(elementId: string): void {
+ protected scrollTo(elementId: string): void {
     const element = document.getElementById(elementId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });

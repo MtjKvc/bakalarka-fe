@@ -1,32 +1,15 @@
-import { Component, OnInit, inject, effect, ViewChildren, QueryList, ElementRef, AfterViewChecked, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject, effect, ViewChildren, QueryList, ElementRef, AfterViewChecked, ChangeDetectorRef, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { lastValueFrom, Subject, Subscription } from 'rxjs';
+import { lastValueFrom, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../core/context/teacher-context';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../core/context/teacher-context.service';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../core/logging/logger';
+import { LoggerService } from '../../../core/logging/logger.service';
+import { AssignmentHeader,StudentAssignmentDto,ApiResponse, StudentGradingRow  } from '../../../shared/models/interfaces';
 
-interface AssignmentHeader {
-  id: number;
-  name: string;
-  maxPoints: number;
-}
-
-interface StudentAssignmentDto {
-  studentAssignmentId: number;
-  assignmentId?: number;
-  earnedPoints: number;
-  note?: string;
-}
-
-interface StudentGradingRow {
-  studentId?: number;
-  studentFullName: string;
-  aisId: number;
-  studentAssignments: StudentAssignmentDto[];
-}
 
 interface BlockPointDto {
   blockId: number;
@@ -39,6 +22,13 @@ interface StudentBlockPointsDto {
   allBlockPoints: BlockPointDto[];
 }
 
+interface ExtendedBlock {
+  id: number;
+  name: string;
+  maxPoints?: number;
+  requiredPoints?: number;
+}
+
 @Component({
   selector: 'app-grading',
   standalone: true,
@@ -46,15 +36,18 @@ interface StudentBlockPointsDto {
   templateUrl: './grading.html',
   styleUrl: './grading.css'
 })
-export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class GradingComponent implements OnInit, AfterViewChecked {
 
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
-  public contextService = inject(TeacherContextService);
   private logger = inject(LoggerService);
+  private destroyRef = inject(DestroyRef);
+
+  public contextService = inject(TeacherContextService);
+
   private apiUrl = `${environment.apiUrl}/api/v1`;
 
-  @ViewChildren('pointInput') pointInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
+  @ViewChildren('pointInput') private pointInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
   private shouldFocusInput = false;
 
   public assignments: AssignmentHeader[] = [];
@@ -69,18 +62,17 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
   public error: string | null = null;
   public message: string | null = null;
 
-  editingRecordId: number | null = null;
-  editingValue: number | null = null;
+  public editingRecordId: number | null = null;
+  public editingValue: number | null = null;
 
-  isNoteModalOpen = false;
-  noteModalRecord: StudentAssignmentDto | null = null;
-  noteModalText: string = '';
+  public isNoteModalOpen = false;
+  public noteModalRecord: StudentAssignmentDto | null = null;
+  public noteModalText: string = '';
 
   public studentSearchQuery: string = '';
   private searchSubject = new Subject<string>();
-  private searchSubscription: Subscription | undefined;
-
-  tooltipData: { text: string, x: number, y: number } | null = null;
+  
+  public tooltipData: { text: string, x: number, y: number } | null = null;
 
   constructor() {
     effect(() => {
@@ -91,6 +83,7 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.loadGradingData(block.id);
       }
     });
+
     effect(() => {
       const exercise = this.contextService.selectedExercise();
       if (exercise && this.isSemesterMode) {
@@ -100,11 +93,15 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     }, { allowSignalWrites: true });
   }
 
-  ngOnInit() {
+  public ngOnInit(): void {
     this.logger.log('GradingComponent initialized');
-    this.contextService.loadBlocks().subscribe();
 
-    this.searchSubscription = this.searchSubject.pipe(
+    this.contextService.loadBlocks()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
+
+    this.searchSubject.pipe(
+      takeUntilDestroyed(this.destroyRef),
       debounceTime(400),
       distinctUntilChanged()
     ).subscribe((text) => {
@@ -113,28 +110,7 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  showTooltip(event: MouseEvent, text: string) {
-    const target = event.currentTarget as HTMLElement;
-    const rect = target.getBoundingClientRect();
-
-    this.tooltipData = {
-      text: text,
-      x: rect.left + (rect.width / 2),
-      y: rect.top
-    };
-  }
-
-  hideTooltip() {
-    this.tooltipData = null;
-  }
-
-  ngOnDestroy(): void {
-    if (this.searchSubscription) {
-      this.searchSubscription.unsubscribe();
-    }
-  }
-
-  ngAfterViewChecked(): void {
+  public ngAfterViewChecked(): void {
     if (this.shouldFocusInput && this.pointInputsRef && this.pointInputsRef.length > 0) {
       this.pointInputsRef.first.nativeElement.focus();
       this.pointInputsRef.first.nativeElement.select();
@@ -142,12 +118,33 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  onSearchInput(text: string) {
+  public showTooltip(event: MouseEvent, text: string): void {
+    const target = event.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    this.tooltipData = {
+      text: text,
+      x: rect.left + (rect.width / 2),
+      y: rect.top
+    };
+  }
+
+  public hideTooltip(): void {
+    this.tooltipData = null;
+  }
+
+  public onSearchInput(text: string): void {
     this.studentSearchQuery = text;
     this.searchSubject.next(text);
   }
 
-  performSearch() {
+  public async selectSemester(): Promise<void> {
+    this.logger.log('Switching to Semester Mode');
+    this.isSemesterMode = true;
+    this.contextService.selectBlock(null);
+    await this.loadSemesterData();
+  }
+
+  private performSearch(): void {
     if (this.isSemesterMode) {
       this.loadSemesterData();
     } else {
@@ -156,19 +153,12 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  clearFilter() {
+  public clearFilter(): void {
     this.studentSearchQuery = '';
     this.performSearch();
   }
 
-  async selectSemester() {
-    this.logger.log('Switching to Semester Mode');
-    this.isSemesterMode = true;
-    this.contextService.selectBlock(null as any);
-    await this.loadSemesterData();
-  }
-
-  async loadSemesterData() {
+  private async loadSemesterData(): Promise<void> {
     this.isLoading = true;
     this.error = null;
     this.assignments = [];
@@ -197,11 +187,11 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
         params = params.set('studentFullName', this.studentSearchQuery.trim());
       }
 
-      const response = await lastValueFrom(
+      const data = await lastValueFrom(
         this.http.get<StudentBlockPointsDto[]>(`${this.apiUrl}/student-assignment/block-points`, { params })
       );
 
-      this.studentRows = (response || []).map((dto, index) => {
+      this.studentRows = (data || []).map((dto, index) => {
         return {
           studentId: index,
           studentFullName: dto.studentFullName,
@@ -226,7 +216,7 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  async loadGradingData(blockId: number) {
+  private async loadGradingData(blockId: number): Promise<void> {
     const currentExercise = this.contextService.selectedExercise() as ContextExercise | null;
     const exerciseId = currentExercise?.exerciseId;
 
@@ -235,10 +225,11 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.studentRows = []; this.assignments = []; return;
     }
 
-    const currentBlock = this.contextService.blocks().find(b => b.id === blockId);
+    const currentBlock = this.contextService.blocks().find(b => b.id === blockId) as ExtendedBlock | undefined;
+    
     if (currentBlock) {
-      this.blockMaxPoints = (currentBlock as any).maxPoints || 0;
-      this.blockRequiredPoints = (currentBlock as any).requiredPoints || 0;
+      this.blockMaxPoints = currentBlock.maxPoints || 0;
+      this.blockRequiredPoints = currentBlock.requiredPoints || 0;
     }
 
     this.isLoading = true;
@@ -254,10 +245,14 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
         params = params.set('studentFullName', this.studentSearchQuery.trim());
       }
 
-      this.assignments = await lastValueFrom(this.http.get<AssignmentHeader[]>(`${this.apiUrl}/assignment?blockId=${blockId}`)) || [];
-      const rawData = await lastValueFrom(
+      const assignments = await lastValueFrom(this.http.get<AssignmentHeader[]>(`${this.apiUrl}/assignment?blockId=${blockId}`)) || [];
+      this.assignments = assignments || [];
+      
+      const gradingResponse = await lastValueFrom(
         this.http.get<StudentGradingRow[]>(`${this.apiUrl}/student-assignment/grading`, { params })
       );
+
+      const rawData = gradingResponse || [];
 
       this.studentRows = (rawData || []).map((row, index) => {
         if (row.studentAssignments) {
@@ -278,21 +273,21 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  calculateTotalPoints(student: StudentGradingRow): number {
+  public calculateTotalPoints(student: StudentGradingRow): number {
     if (!student.studentAssignments) return 0;
     const total = student.studentAssignments.reduce((sum, sa) => sum + (sa.earnedPoints || 0), 0);
     return Math.round(total * 100) / 100;
   }
 
-  getAssignmentRecord(student: StudentGradingRow, assignmentId: number): StudentAssignmentDto | undefined {
+  public getAssignmentRecord(student: StudentGradingRow, assignmentId: number): StudentAssignmentDto | undefined {
     return student.studentAssignments?.find(a => a.assignmentId === assignmentId);
   }
 
-  isEditing(record: StudentAssignmentDto | undefined): boolean {
+  public isEditing(record: StudentAssignmentDto | undefined): boolean {
     return !this.isSemesterMode && !!record && this.editingRecordId === record.studentAssignmentId;
   }
 
-  onCellClick(record: StudentAssignmentDto | undefined): void {
+  public onCellClick(record: StudentAssignmentDto | undefined): void {
     if (this.isSaving || !record || this.isSemesterMode) return;
     this.editingRecordId = record.studentAssignmentId;
     this.editingValue = record.earnedPoints;
@@ -300,7 +295,7 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  async onCellSave(record: StudentAssignmentDto): Promise<void> {
+  public async onCellSave(record: StudentAssignmentDto): Promise<void> {
     const numericValue = parseFloat(String(this.editingValue));
     if (this.editingValue === null || isNaN(numericValue) || numericValue === record.earnedPoints) {
       this.editingRecordId = null; return;
@@ -309,7 +304,7 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.editingRecordId = null;
   }
 
-  openNoteModal(record: StudentAssignmentDto, event: MouseEvent): void {
+  public openNoteModal(record: StudentAssignmentDto, event: MouseEvent): void {
     this.hideTooltip();
     event.stopPropagation();
     if (this.isSemesterMode) return;
@@ -318,12 +313,12 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.isNoteModalOpen = true;
   }
 
-  closeNoteModal(): void {
+  public closeNoteModal(): void {
     this.isNoteModalOpen = false;
     this.noteModalRecord = null;
   }
 
-  async saveNoteFromModal(): Promise<void> {
+  public async saveNoteFromModal(): Promise<void> {
     if (!this.noteModalRecord) return;
     await this.updateRecord(this.noteModalRecord, this.noteModalRecord.earnedPoints, this.noteModalText.trim());
     this.closeNoteModal();
@@ -333,18 +328,20 @@ export class GradingComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.isSaving = true;
     const oldPoints = record.earnedPoints;
     const oldNote = record.note;
+    
     record.earnedPoints = newPoints;
     record.note = newNote;
 
     try {
       this.logger.log(`Updating assignment ${record.studentAssignmentId}`, { newPoints, newNote });
-      await lastValueFrom(this.http.put(`${this.apiUrl}/student-assignment/${record.studentAssignmentId}`, { earnedPoints: newPoints, note: newNote }));
+      await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.apiUrl}/student-assignment/${record.studentAssignmentId}`, { earnedPoints: newPoints, note: newNote }));
       this.message = 'Uložené.';
       setTimeout(() => this.message = null, 2000);
     } catch (err) {
       this.logger.error('Update grading failed', err);
       this.error = 'Chyba ukladania.';
-      record.earnedPoints = oldPoints; record.note = oldNote;
+      record.earnedPoints = oldPoints; 
+      record.note = oldNote;
     } finally {
       this.isSaving = false;
     }

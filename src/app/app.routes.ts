@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth/auth-guard'; 
+import { authGuard } from './core/auth/auth-guard';
 
 export const routes: Routes = [
   {
@@ -131,7 +131,7 @@ export const routes: Routes = [
           import('./student/components/blok2-asm13/blok2-asm13').then(m => m.Blok2Asm13),
 
       },
-        {
+      {
         path: 'frontpage',
         loadComponent: () =>
           import('./student/components/frontpage/frontpage').then(m => m.Frontpage),

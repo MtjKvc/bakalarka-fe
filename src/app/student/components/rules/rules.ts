@@ -4,7 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-rules',
   imports: [],
   templateUrl: './rules.html',
-  styleUrl: './rules.css'
 })
 export class Rules {
 

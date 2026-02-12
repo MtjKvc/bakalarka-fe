@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { LongPressDirective } from '../../../shared/long-press/long-press';
+import { LongPressDirective } from '../../../shared/directives/long-press.directive';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../core/logging/logger';
-import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc';
+import { LoggerService } from '../../../core/logging/logger.service';
+import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc.directive';
+import { ApiResponse } from '../../../shared/models/interfaces';
 
 interface DayOption {
   label: string;
@@ -26,14 +27,13 @@ interface Exercise {
   standalone: true,
   imports: [CommonModule, FormsModule, LongPressDirective, CloseOnEscDirective],
   templateUrl: './exercises.html',
-  styleUrl: './exercises.css'
 })
 export class ExercisesComponent implements OnInit, AfterViewChecked {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
   private logger = inject(LoggerService);
 
-  @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
+  @ViewChildren('editInput') private editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
   private shouldFocus: boolean = false;
 
   private exercisesApiUrl = `${environment.apiUrl}/api/v1/exercise`;
@@ -55,20 +55,20 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
   public newExercise = { firstSessionDate: '', startTime: '', roomEnum: '' };
   public exerciseToDelete: Exercise | null = null;
   public deleteConfirmationInput: string = '';
-  readonly deleteConfirmText: string = 'CONFIRM';
+  public readonly deleteConfirmText: string = 'CONFIRM';
 
-  editingId: number | null = null;
-  editingField: 'startTime' | null = null;
-  editingValue: string = '';
+  public editingId: number | null = null;
+  public editingField: 'startTime' | null = null;
+  public editingValue: string = '';
 
   private dayNames = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota'];
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.logger.log('ExercisesComponent initialized');
     this.initialLoad();
   }
 
-  async initialLoad(): Promise<void> {
+  private async initialLoad(): Promise<void> {
     this.isLoading = true;
     this.error = null;
     try {
@@ -85,7 +85,7 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  async loadRooms(): Promise<void> {
+  private async loadRooms(): Promise<void> {
     try {
       const roomsData = await lastValueFrom(this.http.get<string[]>(this.roomsApiUrl));
       this.availableRooms = roomsData || [];
@@ -96,16 +96,17 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  async loadExercises(): Promise<void> {
-    this.isLoading = true; 
+  private async loadExercises(): Promise<void> {
+    this.isLoading = true;
     this.error = null;
-    
+
     try {
       const dateDir = this.directions['firstSessionDate'];
       const timeDir = this.directions['startTime'];
       const url = `${this.exercisesApiUrl}?sort=firstSessionDate,${dateDir}&sort=startTime,${timeDir}`;
 
-      const exercisesData = await lastValueFrom(this.http.get<Exercise[]>(url));
+      const response = await lastValueFrom(this.http.get<Exercise[]>(url));
+      const exercisesData = response || [];
 
       this.exercises = (exercisesData || []).map(e => {
         if (e.firstSessionDate?.includes('T')) {
@@ -125,7 +126,7 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  onSort(field: string): void {
+  public onSort(field: string): void {
     this.directions[field] = this.directions[field] === 'asc' ? 'desc' : 'asc';
     this.logger.log(`Sorting by ${field} ${this.directions[field]}`);
     this.loadExercises();
@@ -133,7 +134,7 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
 
 
 
-  calculateWorkDaysForWeek(currentDateStr: string): DayOption[] {
+  private calculateWorkDaysForWeek(currentDateStr: string): DayOption[] {
     if (!currentDateStr) return [];
     const date = new Date(currentDateStr);
     const day = date.getDay();
@@ -153,22 +154,22 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     return options;
   }
 
-  async onDateChange(ex: Exercise, newDate: string): Promise<void> {
+  public async onDateChange(ex: Exercise, newDate: string): Promise<void> {
     if (ex.firstSessionDate === newDate) return;
     await this.updateExercise(ex.id, { ...ex, firstSessionDate: newDate }, "Dátum zmenený.");
   }
 
-  async onRoomChange(ex: Exercise, newRoom: string): Promise<void> {
+  public async onRoomChange(ex: Exercise, newRoom: string): Promise<void> {
     if (ex.roomEnum === newRoom) return;
     await this.updateExercise(ex.id, { ...ex, roomEnum: newRoom }, "Miestnosť zmenená.");
   }
 
-  async updateExercise(id: number, payload: Exercise, msg: string) {
+  private async updateExercise(id: number, payload: Exercise, msg: string) {
     const { availableDays, ...dataToSend } = payload;
     this.isLoading = true;
     try {
       this.logger.log(`Updating exercise ID ${id}`, dataToSend);
-      await lastValueFrom(this.http.put(`${this.exercisesApiUrl}/${id}`, dataToSend));
+      await lastValueFrom(this.http.put<Exercise>(`${this.exercisesApiUrl}/${id}`, dataToSend));
       this.message = msg;
       setTimeout(() => this.message = null, 3000);
       await this.loadExercises();
@@ -179,20 +180,20 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     } finally { this.isLoading = false; }
   }
 
-  onCreateExerciseClick(): void {
+  public onCreateExerciseClick(): void {
     this.newExercise = { firstSessionDate: '', startTime: '', roomEnum: '' };
     this.isCreateModalOpen = true;
   }
 
-  onCloseModal(): void { this.isCreateModalOpen = false; }
+  public onCloseModal(): void { this.isCreateModalOpen = false; }
 
-  async onSubmitNewExercise(): Promise<void> {
+  public async onSubmitNewExercise(): Promise<void> {
     if (!this.newExercise.firstSessionDate || !this.newExercise.startTime || !this.newExercise.roomEnum) return;
     this.isLoading = true;
     const time = this.newExercise.startTime.length === 5 ? this.newExercise.startTime + ":00" : this.newExercise.startTime;
     const payload = { exercises: [{ ...this.newExercise, startTime: time }] };
     try {
-      await lastValueFrom(this.http.post(this.exercisesApiUrl, payload));
+      await lastValueFrom(this.http.post<Exercise[]>(this.exercisesApiUrl, payload));
       this.logger.log('New exercise created', payload);
       this.onCloseModal();
       await this.loadExercises();
@@ -202,23 +203,23 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     } finally { this.isLoading = false; }
   }
 
-  onDeleteExerciseClick(exercise: Exercise): void {
+  public onDeleteExerciseClick(exercise: Exercise): void {
     this.exerciseToDelete = exercise;
     this.deleteConfirmationInput = '';
     this.isDeleteConfirmModalOpen = true;
   }
 
-  onCloseDeleteConfirmModal(): void {
+  public onCloseDeleteConfirmModal(): void {
     this.isDeleteConfirmModalOpen = false;
     this.exerciseToDelete = null;
   }
 
-  async onConfirmDelete(): Promise<void> {
+  public async onConfirmDelete(): Promise<void> {
     if (this.deleteConfirmationInput !== this.deleteConfirmText) return;
     const id = this.exerciseToDelete?.id;
     this.isLoading = true;
     try {
-      await lastValueFrom(this.http.delete(`${this.exercisesApiUrl}/${id}`));
+      await lastValueFrom(this.http.delete<ApiResponse<unknown>>(`${this.exercisesApiUrl}/${id}`));
       this.logger.warn(`Exercise deleted: ID ${id}`);
       this.onCloseDeleteConfirmModal();
       await this.loadExercises();
@@ -228,9 +229,9 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     } finally { this.isLoading = false; }
   }
 
-  isEditing(id: number, field: string): boolean { return this.editingId === id && this.editingField === field; }
+  public isEditing(id: number, field: string): boolean { return this.editingId === id && this.editingField === field; }
 
-  onCellEdit(ex: Exercise, field: 'startTime'): void {
+  public onCellEdit(ex: Exercise, field: 'startTime'): void {
     this.editingId = ex.id;
     this.editingField = field;
     this.editingValue = ex.startTime.substring(0, 5);
@@ -238,7 +239,7 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     this.cdr.detectChanges();
   }
 
-  async onCellSave(ex: Exercise): Promise<void> {
+  public async onCellSave(ex: Exercise): Promise<void> {
     if (this.editingId === null) return;
     if (this.editingValue === ex.startTime.substring(0, 5)) { this.editingId = null; return; }
     const time = this.editingValue.length === 5 ? this.editingValue + ":00" : this.editingValue;
@@ -246,14 +247,14 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     this.editingId = null;
   }
 
-  ngAfterViewChecked(): void {
+  public ngAfterViewChecked(): void {
     if (this.shouldFocus && this.editInputsRef.first) {
       this.shouldFocus = false;
       setTimeout(() => this.editInputsRef.first.nativeElement.focus(), 10);
     }
   }
 
-  onBackdropClick(event: MouseEvent): void {
+  public onBackdropClick(event: MouseEvent): void {
     if (event.target === event.currentTarget) {
       this.onCloseModal();
       this.onCloseDeleteConfirmModal();

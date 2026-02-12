@@ -1,76 +1,70 @@
 import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http'; 
-import { lastValueFrom } from 'rxjs'; 
-import { FormsModule } from '@angular/forms'; 
-import { LongPressDirective } from '../../../shared/long-press/long-press';
+import { HttpClient } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { LongPressDirective } from '../../../shared/directives/long-press.directive';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../core/logging/logger';
-import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc';
-
-interface ApiResponse<T> {
-  status?: string;
-  message?: string;
-  data: T; 
-  timestamp?: string;
-}
+import { LoggerService } from '../../../core/logging/logger.service';
+import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc.directive';
+import { ApiResponse } from '../../../shared/models/interfaces';
 
 interface Block {
-    id: number; 
-    name: string;
-    lessons?: number; 
-    maxPoints: number;
-    requiredPoints: number;
+  id: number;
+  name: string;
+  lessons?: number;
+  maxPoints: number;
+  requiredPoints: number;
 }
 
 type NewBlock = Omit<Block, 'id'>;
 
 @Component({
   selector: 'app-blocks',
-  standalone: true, 
+  standalone: true,
   imports: [CommonModule, FormsModule, LongPressDirective, CloseOnEscDirective],
   templateUrl: './blocks.html',
   styleUrl: './blocks.css'
 })
-export class Blocks implements OnInit, AfterViewChecked { 
+export class Blocks implements OnInit, AfterViewChecked {
 
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
   private logger = inject(LoggerService);
-  
-  @ViewChildren('editInput') editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
-  private shouldFocus: boolean = false; 
+
+  @ViewChildren('editInput') private editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
+  private shouldFocus: boolean = false;
   private isSaving: boolean = false;
 
-  private blocksApiUrl = `${environment.apiUrl}/api/v1/block`; 
+  private blocksApiUrl = `${environment.apiUrl}/api/v1/block`;
 
   public blocks: Block[] = [];
   public isLoading: boolean = false;
   public error: string | null = null;
-  public message: string | null = null; 
-  
-  isCreateBlokModalOpen: boolean = false;
-  novyBlok: NewBlock = { name: '', maxPoints: 0, requiredPoints: 0 };
+  public message: string | null = null;
 
-  editingBlokId: number | null = null;
-  editingField: keyof Block | null = null;
-  editingValue: string | number | null = '';
+  public isCreateBlokModalOpen: boolean = false;
+  public novyBlok: NewBlock = { name: '', maxPoints: 0, requiredPoints: 0 };
 
-  isDeleteConfirmModalOpen: boolean = false;
-  blokToDelete: Block | null = null;
-  deleteConfirmationInput: string = '';
-  readonly deleteConfirmText: string = 'CONFIRM';
-  
-  ngOnInit(): void {
+  public editingBlokId: number | null = null;
+  public editingField: keyof Block | null = null;
+  public editingValue: string | number | null = '';
+
+  public isDeleteConfirmModalOpen: boolean = false;
+  public blokToDelete: Block | null = null;
+  public deleteConfirmationInput: string = '';
+  public readonly deleteConfirmText: string = 'CONFIRM';
+
+  public ngOnInit(): void {
     this.logger.log('Blocks initialized');
     this.fetchBloky();
   }
 
-  async fetchBloky(): Promise<void> {
+  private async fetchBloky(): Promise<void> {
     this.isLoading = true;
     this.error = null;
     const apiUrl = `${this.blocksApiUrl}?sort=id,asc`;
-    
+
     try {
       const data = await lastValueFrom(this.http.get<Block[]>(apiUrl));
       this.blocks = data || [];
@@ -85,27 +79,29 @@ export class Blocks implements OnInit, AfterViewChecked {
     }
   }
 
-  onCreateBlokClick(): void {
+  public onCreateBlokClick(): void {
     this.novyBlok = { name: '', maxPoints: 0, requiredPoints: 0 };
     this.error = null;
     this.message = null;
     this.isCreateBlokModalOpen = true;
   }
-  onCloseBlokModal(): void {
+
+  public onCloseBlokModal(): void {
     this.isCreateBlokModalOpen = false;
   }
-  onBackdropClick(event: MouseEvent): void {
+
+  public onBackdropClick(event: MouseEvent): void {
     if (event.target === event.currentTarget) {
       this.onCloseBlokModal();
-      this.onCloseDeleteConfirmModal(); 
+      this.onCloseDeleteConfirmModal();
     }
   }
 
-  async onSubmitNovyBlok(): Promise<void> {
+  public async onSubmitNovyBlok(): Promise<void> {
     this.isLoading = true;
     this.error = null;
     this.message = null;
-    
+
     const blokObj = {
       name: this.novyBlok.name.trim(),
       maxPoints: Number(this.novyBlok.maxPoints) || 0,
@@ -114,77 +110,87 @@ export class Blocks implements OnInit, AfterViewChecked {
     const dataToSend = { blocks: [blokObj] };
 
     try {
-      const response = await lastValueFrom(this.http.post<ApiResponse<Block[]>>(this.blocksApiUrl, dataToSend));
-      const createdBloky = response.data; 
-      if (createdBloky && createdBloky.length > 0) {
-        this.logger.log('New block created', createdBloky[0]);
-        this.message = `Blok '${createdBloky[0].name}' bol úspešne vytvorený.`;
+      const response = await lastValueFrom(this.http.post<Block[] | Block>(this.blocksApiUrl, dataToSend));
+      
+      let createdBlock: Block | undefined;
+
+      if (Array.isArray(response)) {
+        createdBlock = response.length > 0 ? response[0] : undefined;
+      } else {
+        createdBlock = response as Block;
+      }
+
+      if (createdBlock) {
+        this.logger.log('New block created', createdBlock);
+        this.message = `Blok bol úspešne vytvorený.`;
         this.onCloseBlokModal();
         await this.fetchBloky();
       } else {
         this.error = 'Vytvorenie bloku zlyhalo.';
       }
-    } catch (err: unknown) { 
+    } catch (err: unknown) {
       this.logger.error("Chyba: Nepodarilo sa vytvoriť blok.", err);
       this.error = "Chyba: Nepodarilo sa vytvoriť blok.";
     } finally {
       this.isLoading = false;
     }
   }
-  onDeleteBlokClick(blok: Block): void {
-      this.blokToDelete = blok;
-      this.deleteConfirmationInput = '';
-      this.error = null;
-      this.message = null;
-      this.isDeleteConfirmModalOpen = true;
+
+  public onDeleteBlokClick(blok: Block): void {
+    this.blokToDelete = blok;
+    this.deleteConfirmationInput = '';
+    this.error = null;
+    this.message = null;
+    this.isDeleteConfirmModalOpen = true;
   }
 
-  onCloseDeleteConfirmModal(): void {
-      this.isDeleteConfirmModalOpen = false;
-      this.blokToDelete = null;
-      this.deleteConfirmationInput = '';
-      this.error = null; 
+  public onCloseDeleteConfirmModal(): void {
+    this.isDeleteConfirmModalOpen = false;
+    this.blokToDelete = null;
+    this.deleteConfirmationInput = '';
+    this.error = null;
   }
 
-  async onConfirmDelete(): Promise<void> {
-      if (!this.blokToDelete) return;
-      if (this.deleteConfirmationInput.trim() !== this.deleteConfirmText) return;
-      
-      const blokId = this.blokToDelete.id;
-      this.isLoading = true;
-      this.error = null;
-      this.onCloseDeleteConfirmModal();
+  public async onConfirmDelete(): Promise<void> {
+    if (!this.blokToDelete) return;
+    if (this.deleteConfirmationInput.trim() !== this.deleteConfirmText) return;
 
-      try {
-        await lastValueFrom(this.http.delete<ApiResponse<unknown>>(`${this.blocksApiUrl}/${blokId}`));
-        this.logger.warn(`Block deleted: ID ${blokId}`);
-        this.blocks = this.blocks.filter(b => b.id !== blokId);
-        this.message = `Blok bol úspešne vymazaný.`;
-      } catch (err: unknown) {
-        this.logger.error(`Delete block ${blokId} failed`, err);
-        this.error = `Chyba: Nepodarilo sa vymazať blok.`;
-      } finally {
-        this.isLoading = false;
-      }
+    const blokId = this.blokToDelete.id;
+    this.isLoading = true;
+    this.error = null;
+    this.onCloseDeleteConfirmModal();
+
+    try {
+      await lastValueFrom(this.http.delete<ApiResponse<unknown>>(`${this.blocksApiUrl}/${blokId}`));
+      this.logger.warn(`Block deleted: ID ${blokId}`);
+      this.blocks = this.blocks.filter(b => b.id !== blokId);
+      this.message = `Blok bol úspešne vymazaný.`;
+    } catch (err: unknown) {
+      this.logger.error(`Delete block ${blokId} failed`, err);
+      this.error = `Chyba: Nepodarilo sa vymazať blok.`;
+    } finally {
+      this.isLoading = false;
+    }
   }
-  isEditing(id: number, field: string): boolean {
+
+  public isEditing(id: number, field: string): boolean {
     return this.editingBlokId === id && this.editingField === field;
   }
 
-  onCellEdit(blok: Block, field: keyof Block): void {
+  public onCellEdit(blok: Block, field: keyof Block): void {
     if (this.isSaving) return;
-    
+
     this.error = null;
     this.message = null;
     this.editingBlokId = blok.id;
     this.editingField = field;
     this.editingValue = blok[field] as string | number;
-    
-    this.shouldFocus = true; 
-    this.cdr.detectChanges(); 
+
+    this.shouldFocus = true;
+    this.cdr.detectChanges();
   }
 
-  async onCellSave(blok: Block): Promise<void> {
+  public async onCellSave(blok: Block): Promise<void> {
     this.shouldFocus = false;
     if (this.isSaving) return;
     if (this.editingBlokId === null || this.editingField === null) return;
@@ -201,83 +207,57 @@ export class Blocks implements OnInit, AfterViewChecked {
 
     let newValue: string | number = String(rawValue).trim();
     if (fieldToSave === 'maxPoints' || fieldToSave === 'requiredPoints') {
-        const num = parseFloat(newValue);
-        newValue = !isNaN(num) ? num : 0;
+      const num = parseFloat(newValue);
+      newValue = !isNaN(num) ? num : 0;
     }
-    
+
     const blokToUpdate = this.blocks.find(b => b.id === idToSave);
-    if (!blokToUpdate) return; 
-    
+    if (!blokToUpdate) return;
+
     const updatePayload = {
-        name: blokToUpdate.name, 
-        maxPoints: Number(blokToUpdate.maxPoints) || 0,
-        requiredPoints: Number(blokToUpdate.requiredPoints) || 0,
-        [fieldToSave]: newValue
+      name: blokToUpdate.name,
+      maxPoints: Number(blokToUpdate.maxPoints) || 0,
+      requiredPoints: Number(blokToUpdate.requiredPoints) || 0,
+      [fieldToSave]: newValue
     };
-    
+
     if (fieldToSave !== 'name') {
-        updatePayload.name = String(blokToUpdate.name).trim();
+      updatePayload.name = String(blokToUpdate.name).trim();
     }
-    
+
     this.isSaving = true;
 
-    
-    let pendingErrorMessage: string | null = null;
-
     try {
-      const response = await lastValueFrom(this.http.put<ApiResponse<Block>>(`${this.blocksApiUrl}/${idToSave}`, updatePayload));
-      const updatedBlok = response.data;
-
-      let success = true;
-      if (fieldToSave === 'maxPoints' || fieldToSave === 'requiredPoints') {
-          if (Number(updatedBlok[fieldToSave]) !== Number(updatePayload[fieldToSave])) success = false;
-      } else if (fieldToSave === 'name') {
-          if (updatedBlok.name !== updatePayload.name) success = false;
-      }
-
-      if (success) {
-          this.blocks = this.blocks.map(b => b.id === updatedBlok.id ? updatedBlok : b);
-          this.logger.log(`Block updated: ID ${updatedBlok.id}`, updatedBlok);
-          this.message = `Blok aktualizovaný.`;
-          this.error = null;
-      } else {
-          this.logger.warn('Update accepted but value mismatch', { sent: updatePayload, received: updatedBlok });
-          pendingErrorMessage = "Chyba: Aktualizácia zlyhala (hodnota nebola povolená).";
-      }
-
+      await lastValueFrom(this.http.put<Block>(`${this.blocksApiUrl}/${idToSave}`, updatePayload));
+      this.message = `Blok aktualizovaný.`;
+      this.error = null;
     } catch (err: unknown) {
       this.logger.error('Cell save failed', err);
-      pendingErrorMessage = `Chyba: Aktualizácia bloku zlyhala.`;
+      this.error = `Chyba: Aktualizácia bloku zlyhala.`;
+      this.message = null;
     } finally {
       this.editingBlokId = null;
       this.editingField = null;
-
       await this.fetchBloky();
-
-      if (pendingErrorMessage) {
-          this.error = pendingErrorMessage;
-          this.message = null;
-      }
-
       this.isLoading = false;
       this.isSaving = false;
     }
   }
 
-  ngAfterViewChecked(): void {
-      if (!this.shouldFocus || !this.editInputsRef || this.editInputsRef.length === 0) return;
-      
-      const inputElement = this.editInputsRef.first.nativeElement;
-      
-      if (inputElement) {
-          this.shouldFocus = false; 
-          let attempts = 0;
-          const intervalId = setInterval(() => {
-              attempts++;
-              inputElement.focus();
-              if (inputElement instanceof HTMLInputElement) inputElement.select();
-              if (document.activeElement === inputElement || attempts >= 20) clearInterval(intervalId);
-          }, 10);
-      }
+  public ngAfterViewChecked(): void {
+    if (!this.shouldFocus || !this.editInputsRef || this.editInputsRef.length === 0) return;
+
+    const inputElement = this.editInputsRef.first.nativeElement;
+
+    if (inputElement) {
+      this.shouldFocus = false;
+      let attempts = 0;
+      const intervalId = setInterval(() => {
+        attempts++;
+        inputElement.focus();
+        if (inputElement instanceof HTMLInputElement) inputElement.select();
+        if (document.activeElement === inputElement || attempts >= 20) clearInterval(intervalId);
+      }, 10);
+    }
   }
 }

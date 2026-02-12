@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { ClipboardUtilityService } from '../../core/utils/clipboard-utility';
+import { Component, inject, Input } from '@angular/core';
+import { ClipboardUtilityService } from '../../../core/utils/clipboard-utility.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -12,13 +12,13 @@ import { CommonModule } from '@angular/common';
   },
 })
 export class CopyButton {
-  @Input({ required: true }) sourceElement!: HTMLElement; 
+  @Input({ required: true }) public sourceElement!: HTMLElement; 
   
-  copied: boolean = false; 
+  public copied: boolean = false; 
 
-  constructor(private clipboardService: ClipboardUtilityService) { }
+  private clipboardService = inject(ClipboardUtilityService);
 
-  handleCopyClick() {
+ public  handleCopyClick() {
     if (this.copied) return; 
 
     const handleSuccess = () => {

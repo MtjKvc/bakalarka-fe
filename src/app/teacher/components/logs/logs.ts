@@ -5,14 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { lastValueFrom, Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { LoggerService } from '../../../core/logging/logger';
+import { LoggerService } from '../../../core/logging/logger.service';
+import { ApiResponse, UserDTO } from '../../../shared/models/interfaces';
 
-interface UserDTO {
-  id: number;
-  fullName: string;
-  email: string;
-  roleEnum: string;
-}
 
 interface BlockDTO {
   id: number;
@@ -68,7 +63,7 @@ export class Logs implements OnInit, OnDestroy {
   private searchSubject = new Subject<void>();
   private searchSubscription?: Subscription;
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.logger.log('Logs component initialized');
     this.searchSubscription = this.searchSubject.pipe(
       debounceTime(300)
@@ -79,15 +74,15 @@ export class Logs implements OnInit, OnDestroy {
     this.fetchLogs();
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     this.searchSubscription?.unsubscribe();
   }
 
-  onSearchInput(): void {
+  public onSearchInput(): void {
     this.searchSubject.next();
   }
 
-  async fetchLogs(): Promise<void> {
+ private async fetchLogs(): Promise<void> {
     this.isLoading = true;
     this.error = null;
 
@@ -118,7 +113,7 @@ export class Logs implements OnInit, OnDestroy {
     }
   }
 
-  toggleSort(field: string): void {
+  public toggleSort(field: string): void {
     if (this.sortField === field) {
       this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
     } else {
