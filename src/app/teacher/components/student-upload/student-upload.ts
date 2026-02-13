@@ -32,13 +32,28 @@ export class StudentUploadComponent {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
+    this.errorMessage.set('');
+    this.uploadStatus.set('idle');
+
     this.logger.log('File selected for processing');
     const file = input.files[0];
     const reader = new FileReader();
 
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      this.logger.warn('Invalid file format selected:', file.name);
+      this.errorMessage.set('Chyba: Povolený je iba formát .csv!');
+      this.uploadStatus.set('error');
+      input.value = ''; 
+      return;
+    }
+
     reader.onload = (e) => {
       const text = e.target?.result as string;
       this.parseCSV(text);
+    };
+    reader.onerror = () => {
+        this.errorMessage.set('Chyba pri čítaní súboru.');
+        this.uploadStatus.set('error');
     };
 
     reader.readAsText(file, 'windows-1250'); 
@@ -47,6 +62,8 @@ export class StudentUploadComponent {
   private parseCSV(csvText: string) {
     const lines = csvText.split('\n');
     const students: StudentDto[] = [];
+
+    this.parsedStudents.set([]);
 
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
@@ -69,6 +86,11 @@ export class StudentUploadComponent {
         }
       }
     }
+    if (students.length === 0) {
+        this.errorMessage.set('Súbor neobsahuje žiadnych platných študentov alebo má zlý formát.');
+        this.uploadStatus.set('error');
+        return;
+    }
 
     this.logger.log(`Parsed ${students.length} students from CSV`);
     this.parsedStudents.set(students);
@@ -87,7 +109,8 @@ export class StudentUploadComponent {
 
     if (this.parsedStudents().length === 0) return;
 
-    this.isUploading.set(true);
+   this.isUploading.set(true);
+    this.errorMessage.set('');
 
     const payload: UploadPayload = {
       exerciseId: currentExercise.exerciseId,

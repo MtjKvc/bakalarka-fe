@@ -21,6 +21,25 @@
       </div>
     }
   </div>
+  @if (uploadStatus() === 'success') {
+      <div class="mt-6 p-4 rounded-lg bg-green-50 border border-green-200 flex items-start">
+        <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div>
+            <h4 class="font-bold text-green-800">Úspešne uložené!</h4>
+            <p class="text-green-700 text-sm mt-1">Všetci študenti boli priradení k cvičeniu {{ contextService.selectedExercise()?.sessionDay }} {{ contextService.selectedExercise()?.startTime }}.</p>
+        </div>
+      </div>
+    }
+
+    @if (uploadStatus() === 'error') {
+      <div class="mt-6 p-4 rounded-lg bg-red-50 border border-red-200 flex items-start">
+        <svg class="w-6 h-6 text-red-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div>
+            <h4 class="font-bold text-red-800">Nastala chyba</h4>
+            <p class="text-red-700 text-sm mt-1">{{ errorMessage() }}</p>
+        </div>
+      </div>
+    }
 
   @if (contextService.selectedExercise()) {
     
@@ -82,25 +101,7 @@
       </div>
     }
 
-    @if (uploadStatus() === 'success') {
-      <div class="mt-6 p-4 rounded-lg bg-green-50 border border-green-200 flex items-start">
-        <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <div>
-            <h4 class="font-bold text-green-800">Úspešne uložené!</h4>
-            <p class="text-green-700 text-sm mt-1">Všetci študenti boli priradení k cvičeniu {{ contextService.selectedExercise()?.sessionDay }} {{ contextService.selectedExercise()?.startTime }}.</p>
-        </div>
-      </div>
-    }
-
-    @if (uploadStatus() === 'error') {
-      <div class="mt-6 p-4 rounded-lg bg-red-50 border border-red-200 flex items-start">
-        <svg class="w-6 h-6 text-red-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <div>
-            <h4 class="font-bold text-red-800">Nastala chyba</h4>
-            <p class="text-red-700 text-sm mt-1">{{ errorMessage() }}</p>
-        </div>
-      </div>
-    }
+    
 
   } @else {
       <div class="text-center py-12">
