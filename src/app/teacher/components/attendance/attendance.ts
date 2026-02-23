@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, effect } from '@angular/core';
+import { Component, OnInit, inject, effect, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
@@ -57,6 +57,17 @@ export class Attendance implements OnInit {
     'ABSENT': 'Neprítomný',
     'SUBSTITUTED': 'Nahradené'
   };
+
+  @ViewChild('errorContainer') set errorContent(content: ElementRef){
+  if (content) {
+      content.nativeElement.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center',
+        inline: 'nearest'
+      });
+      content.nativeElement.focus({ preventScroll: true });
+  }
+}
 
   constructor() {
     effect(() => {
@@ -150,17 +161,15 @@ export class Attendance implements OnInit {
 
             let columnLabel = '';
 
-            if (att.sessionDate) {
-              const formattedDate = this.formatDate(att.sessionDate);
-              columnLabel = `${formattedDate} (${syntheticSessionId}. týž.)`;
+            if (this.showFullHistory) {
+                columnLabel = `${syntheticSessionId}. týž.`;
             } else {
-              columnLabel = `${syntheticSessionId}. týž.`;
+              columnLabel = 'Aktuálny týždeň';
             }
 
             sessionsMap.set(syntheticSessionId, {
               id: syntheticSessionId,
               label: columnLabel,
-              date: att.sessionDate
             });
           }
 
@@ -181,21 +190,10 @@ export class Attendance implements OnInit {
     this.uniqueStudents = studentsTemp.sort((a, b) => (a.fullName || '').localeCompare(b.fullName || ''));
 
     this.uniqueSessions = Array.from(sessionsMap.values()).sort((a, b) => {
-      if (a.date && b.date) {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-      }
       return a.id - b.id;
     });
   }
 
-  private formatDate(dateStr: string): string {
-    try {
-      const d = new Date(dateStr);
-      return `${d.getDate()}.${d.getMonth() + 1}.`;
-    } catch {
-      return dateStr;
-    }
-  }
 
   private getMapKey(studentId: number | string, sessionId: number | string): string {
     return `${String(studentId)}_${String(sessionId)}`;
@@ -206,6 +204,7 @@ export class Attendance implements OnInit {
   }
 
   public async onCellClick(student: StudentBasic, session: SessionColumn): Promise<void> {
+    this.error = null;
     if (this.attendanceOptions.length === 0) return;
 
     const key = this.getMapKey(student.id, session.id);

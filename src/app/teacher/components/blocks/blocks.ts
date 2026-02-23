@@ -1,8 +1,8 @@
-import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/directives/long-press.directive';
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../core/logging/logger.service';
@@ -55,6 +55,19 @@ export class Blocks implements OnInit, AfterViewChecked {
   public deleteConfirmationInput: string = '';
   public readonly deleteConfirmText: string = 'CONFIRM';
 
+  @ViewChild('errorContainer') set errorContent(content: ElementRef) {
+    if (content) {
+      content.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
+      content.nativeElement.focus({ preventScroll: true });
+    }
+  }
+
+  @ViewChild('blokForm') blokForm!: NgForm;
+
   public ngOnInit(): void {
     this.logger.log('Blocks initialized');
     this.fetchBloky();
@@ -98,10 +111,13 @@ export class Blocks implements OnInit, AfterViewChecked {
   }
 
   public async onSubmitNovyBlok(): Promise<void> {
-    this.isLoading = true;
     this.error = null;
     this.message = null;
-
+    if (this.blokForm.invalid) {
+      this.blokForm.form.markAllAsTouched();
+      return;
+    }
+    this.isLoading = true;
     const blokObj = {
       name: this.novyBlok.name.trim(),
       maxPoints: Number(this.novyBlok.maxPoints) || 0,
@@ -111,7 +127,7 @@ export class Blocks implements OnInit, AfterViewChecked {
 
     try {
       const response = await lastValueFrom(this.http.post<Block[] | Block>(this.blocksApiUrl, dataToSend));
-      
+
       let createdBlock: Block | undefined;
 
       if (Array.isArray(response)) {
@@ -124,6 +140,7 @@ export class Blocks implements OnInit, AfterViewChecked {
         this.logger.log('New block created', createdBlock);
         this.message = `Blok bol úspešne vytvorený.`;
         this.onCloseBlokModal();
+        setTimeout(() => this.message = null, 2000);
         await this.fetchBloky();
       } else {
         this.error = 'Vytvorenie bloku zlyhalo.';
@@ -165,6 +182,7 @@ export class Blocks implements OnInit, AfterViewChecked {
       this.logger.warn(`Block deleted: ID ${blokId}`);
       this.blocks = this.blocks.filter(b => b.id !== blokId);
       this.message = `Blok bol úspešne vymazaný.`;
+      setTimeout(() => this.message = null, 2000);
     } catch (err: unknown) {
       this.logger.error(`Delete block ${blokId} failed`, err);
       this.error = `Chyba: Nepodarilo sa vymazať blok.`;
@@ -179,7 +197,6 @@ export class Blocks implements OnInit, AfterViewChecked {
 
   public onCellEdit(blok: Block, field: keyof Block): void {
     if (this.isSaving) return;
-
     this.error = null;
     this.message = null;
     this.editingBlokId = blok.id;
@@ -191,6 +208,7 @@ export class Blocks implements OnInit, AfterViewChecked {
   }
 
   public async onCellSave(blok: Block): Promise<void> {
+    this.error = null;
     this.shouldFocus = false;
     if (this.isSaving) return;
     if (this.editingBlokId === null || this.editingField === null) return;
@@ -207,8 +225,11 @@ export class Blocks implements OnInit, AfterViewChecked {
 
     let newValue: string | number = String(rawValue).trim();
     if (fieldToSave === 'maxPoints' || fieldToSave === 'requiredPoints') {
-      const num = parseFloat(newValue);
-      newValue = !isNaN(num) ? num : 0;
+      const num = Number(newValue);
+      if (isNaN(num) || num < 0) {
+        this.error = "Chyba: Body musia byť kladné číslo!";
+        return;
+      }
     }
 
     const blokToUpdate = this.blocks.find(b => b.id === idToSave);
@@ -216,8 +237,8 @@ export class Blocks implements OnInit, AfterViewChecked {
 
     const updatePayload = {
       name: blokToUpdate.name,
-      maxPoints: Number(blokToUpdate.maxPoints) || 0,
-      requiredPoints: Number(blokToUpdate.requiredPoints) || 0,
+      maxPoints: Number(blokToUpdate.maxPoints),
+      requiredPoints: Number(blokToUpdate.requiredPoints),
       [fieldToSave]: newValue
     };
 
@@ -231,6 +252,7 @@ export class Blocks implements OnInit, AfterViewChecked {
       await lastValueFrom(this.http.put<Block>(`${this.blocksApiUrl}/${idToSave}`, updatePayload));
       this.message = `Blok aktualizovaný.`;
       this.error = null;
+      setTimeout(() => this.message = null, 2000);
     } catch (err: unknown) {
       this.logger.error('Cell save failed', err);
       this.error = `Chyba: Aktualizácia bloku zlyhala.`;

@@ -1,22 +1,22 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common'; 
+import { CommonModule, NgIf } from '@angular/common';
 
 import { AuthService } from '../core/auth/auth.service';
 import { TeacherContextService } from '../core/context/teacher-context.service';
 import { LoggerService } from '../core/logging/logger.service';
 
-import { TeacherHeader, UserInfo } from './components/teacher-header/teacher-header'; 
+import { TeacherHeader, UserInfo } from './components/teacher-header/teacher-header';
 import { TeacherSidebarComponent } from './components/teacher-side-bar/teacher-side-bar';
 import { Blocks } from './components/blocks/blocks';
-import { AssignmentsComponent } from './components/assignments/assignments'; 
+import { AssignmentsComponent } from './components/assignments/assignments';
 import { ExercisesComponent } from './components/exercises/exercises';
 import { UsersComponent } from './components/users/users';
-import { Students } from './components/students/students'; 
-import { StudentUploadComponent } from './components/student-upload/student-upload'; 
+import { Students } from './components/students/students';
+import { StudentUploadComponent } from './components/student-upload/student-upload';
 import { Attendance } from './components/attendance/attendance';
 import { GradingComponent } from './components/grading/grading';
 import { SearchBarModalComponent } from './components/search-bar-modal/search-bar-modal';
-import { Logs } from './components/logs/logs'; 
+import { Logs } from './components/logs/logs';
 import { SidebarButton } from '../shared/models/interfaces';
 import { StudentBasic } from '../shared/models/interfaces';
 
@@ -25,9 +25,9 @@ import { StudentBasic } from '../shared/models/interfaces';
   standalone: true,
   imports: [
     CommonModule,
-    NgIf, 
+    NgIf,
     TeacherHeader,
-    Blocks, 
+    Blocks,
     TeacherSidebarComponent,
     AssignmentsComponent,
     ExercisesComponent,
@@ -39,33 +39,33 @@ import { StudentBasic } from '../shared/models/interfaces';
     Logs,
     SearchBarModalComponent
   ],
-  templateUrl: './teacher.html', 
+  templateUrl: './teacher.html',
 })
 export class Teacher implements OnInit {
   private logger = inject(LoggerService);
   private authService = inject(AuthService);
   public contextService = inject(TeacherContextService);
 
-  public currentUser: UserInfo & { id: number | null } = { 
+  public currentUser: UserInfo & { id: number | null } = {
     id: null,
     meno: 'Používateľ',
     rola: 'USER'
   }
-  
+
   public activeView: string = 'default';
-  public isSidebarOpen: boolean = false; 
+  public isSidebarOpen: boolean = false;
   public selectedStudent: StudentBasic | null = null;
 
   public sidebarButtons: SidebarButton[] = [
-    { label: 'nahrávanie', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false,},    
-    { label: 'dochádzka', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false,},     
-    { label: 'používatelia', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},   
-    { label: 'študenti', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},       
-    { label: 'cvičenia', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},       
-    { label: 'bloky', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},          
-    { label: 'zadania', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false,},        
-    { label: 'hodnotenie', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: true,},
-    { label: 'záznamy', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false,},  
+    { label: 'Dochádzka', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false, },
+    { label: 'Hodnotenie', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: true, },
+    { label: 'Záznamy', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false, },
+    { label: 'Nahrávanie', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false, },
+    { label: 'Používatelia', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false, },
+    { label: 'Študenti', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false, },
+    { label: 'Cvičenia', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false, },
+    { label: 'Bloky', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false, },
+    { label: 'Zadania', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false, },
   ];
 
   private searchBarConfig = {
@@ -85,7 +85,7 @@ export class Teacher implements OnInit {
     this.logger.log('Teacher component initialized');
 
     const user = this.authService.currentUserValue;
-    
+
     this.currentUser = {
       id: user.id,
       meno: user.meno,
@@ -104,19 +104,19 @@ export class Teacher implements OnInit {
   }
 
   public onToggleSidebar(): void {
-      this.isSidebarOpen = !this.isSidebarOpen;
+    this.isSidebarOpen = !this.isSidebarOpen;
   }
-  
+
   public onStudentFound(student: StudentBasic): void {
-      this.selectedStudent = student;
+    this.selectedStudent = student;
   }
 
   public onModalClose(): void {
-      this.selectedStudent = null;
+    this.selectedStudent = null;
   }
 
   public onSearchIconClick(): void {
-      this.logger.log('Mobile search icon clicked');
+    this.logger.log('Mobile search icon clicked');
   }
 
   public isAdmin(): boolean {
@@ -130,9 +130,9 @@ export class Teacher implements OnInit {
   public isHelper(): boolean {
     return this.authService.hasRole('HELPER');
   }
-  
+
   public onSidebarButtonClick(buttonLabel: string): void {
-    this.activeView = buttonLabel; 
-    this.isSidebarOpen = false; 
+    this.activeView = buttonLabel;
+    this.isSidebarOpen = false;
   }
 }

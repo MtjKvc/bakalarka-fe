@@ -1,8 +1,8 @@
-import { Component, OnInit, inject, ViewChildren, QueryList, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ViewChildren, QueryList, ElementRef, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/directives/long-press.directive';
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../core/logging/logger.service';
@@ -29,6 +29,8 @@ export class AssignmentsComponent implements OnInit {
     private logger = inject(LoggerService);
 
     @ViewChildren('editInput') private editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
+
+    @ViewChild('assignmentForm') assignmentForm!: NgForm;
 
     private isSaving: boolean = false;
     private assignmentsApiUrl = `${environment.apiUrl}/api/v1/assignment`;
@@ -133,6 +135,10 @@ export class AssignmentsComponent implements OnInit {
     public onCloseModal(): void { this.isCreateModalOpen = false; }
 
     public async onSubmitNewAssignment(): Promise<void> {
+        if (this.assignmentForm.invalid) {
+            this.assignmentForm.form.markAllAsTouched();
+            return;
+        }
         if (!this.newAssignment.blockId) return;
         this.isLoading = true; this.error = null; this.message = null;
 

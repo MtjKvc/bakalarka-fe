@@ -3,16 +3,22 @@
     @apply px-3 py-2 rounded-lg font-bold text-sm transition-all border border-transparent hover:border-emerald-300 shadow-sm hover:shadow-md;
 }
 .assignment-head{
-    @apply px-4 py-3 text-center text-xs font-extrabold text-gray-700 uppercase border-b border-gray-200 min-w-[120px];
+    @apply px-3 py-3 text-center text-xs font-extrabold text-gray-700 uppercase border-b border-gray-200 min-w-[120px];
 }
 .assignment-head-mp{
     @apply text-[10px] text-gray-400 font-normal bg-gray-200 px-1.5 py-0.5 rounded;
 }
 .assignment-head-added{
-    @apply sticky right-0 z-30 px-2 py-2 text-center text-xs font-extrabold text-gray-800 uppercase border-b border-l border-gray-300 bg-gray-200 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] min-w-[100px];
+    @apply  right-0 z-30 px-2 py-2 text-center text-xs font-extrabold text-gray-800 uppercase border-b border-l border-gray-300 bg-gray-200 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] min-w-[100px];
+}
+.student-collumn{
+    @apply sticky left-0 px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider bg-white z-30 shadow-sm max-w-[160px] md:max-w-none break-words;
+}
+.student-head{
+    @apply sticky left-0 px-6 py-3 text-left text-xs font-extrabold bg-gray-50 text-gray-700 uppercase tracking-wider shadow-sm max-w-[160px];
 }
 .assignment-data-added{
-    @apply sticky right-0 z-10 px-4 py-3 text-center font-black text-emerald-900 bg-emerald-50 border-l border-gray-300 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]; 
+    @apply right-0 z-10 px-4 py-3 text-center font-black text-emerald-900 bg-emerald-50 border-l border-gray-300 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]; 
 }
 .assignment-data{
     @apply px-1 py-1 text-center border-r border-gray-100 h-12 relative;

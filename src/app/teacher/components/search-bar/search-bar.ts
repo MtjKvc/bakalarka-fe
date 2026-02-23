@@ -78,6 +78,7 @@ export class SearchBar implements OnDestroy {
     this.logger.log('Student selected from dropdown', student);
     this.searchTerm = student.fullName; 
     this.showDropdown = false;
+    this.clearSearch();
     this.studentSelected.emit(student);
   }
 
@@ -88,12 +89,16 @@ export class SearchBar implements OnDestroy {
           this.showDropdown = false;
       }
     }
+    this.clearSearch();
   }
 
   public onFocus() {
       if (this.searchTerm.length >= 1) {
           this.showDropdown = true;
       }
+  }
+  public clearSearch(){
+    this.searchTerm= '';
   }
 
   public ngOnDestroy() {

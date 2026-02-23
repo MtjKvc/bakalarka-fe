@@ -24,7 +24,8 @@
     Načítavam...
   </div>
 
-  <div *ngIf="error && !isDeleteConfirmModalOpen && !isCreateStudentModalOpen" class="error-message">{{ error }}</div>
+  <div #errorContainer *ngIf="error && !isDeleteConfirmModalOpen && !isCreateStudentModalOpen" class="error-message">{{
+    error }}</div>
   <div *ngIf="message" class="message">
     <span>{{ message }}</span>
   </div>
@@ -134,37 +135,60 @@
   </div>
 </div>
 
-<div *ngIf="isCreateStudentModalOpen" (click)="onBackdropClick($event)"
-  class="teacher-modal-bg">
-  <div class="teacher-modal"
-    (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseStudentModal()">
+<div *ngIf="isCreateStudentModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">
+  <div class="teacher-modal" (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseStudentModal()">
     <div class="p-8">
       <h3 class="modal-title">Pridať študenta</h3>
-      <form (ngSubmit)="onSubmitNovyStudent()">
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+      <div *ngIf="isLoading" class="teacher-loading">
+        <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Spracúvam požiadavku, prosím počkajte...
+      </div>
+      <form #studentForm="ngForm" (ngSubmit)="onSubmitNovyStudent()">
         <div class="space-y-4">
           <div>
             <label class="modal-label">Celé meno</label>
-            <input name="fullName" type="text" [(ngModel)]="novyStudent.fullName" required class="modal-input"
-              placeholder="napr. Jozef Mrkvička" autocomplete="off">
+            <input name="fullName" type="text" [(ngModel)]="novyStudent.fullName" required #fullNameInput="ngModel"
+              class="modal-input" placeholder="napr. Jozef Mrkvička" autocomplete="off"
+              [class.modal-input-wrong]="fullNameInput.invalid && (fullNameInput.dirty || fullNameInput.touched)">
+            <div *ngIf="fullNameInput.invalid && (fullNameInput.dirty || fullNameInput.touched)"
+              class="modal-input-wrong-text">
+              <span *ngIf="fullNameInput.errors?.['required']">Meno je povinné.</span>
+            </div>
           </div>
           <div>
             <label class="modal-label">AIS ID</label>
-            <input name="aisId" type="number" [(ngModel)]="novyStudent.aisId" required class="modal-input"
-              placeholder="123456" autocomplete="off">
+            <input name="aisId" type="number" [(ngModel)]="novyStudent.aisId" required min="0" #aisIdInput="ngModel"
+              class="modal-input" placeholder="123456" autocomplete="off"
+              [class.modal-input-wrong]="aisIdInput.invalid && (aisIdInput.dirty || aisIdInput.touched)">
+            <div *ngIf="aisIdInput.invalid && (aisIdInput.dirty || aisIdInput.touched)"
+              class="modal-input-wrong-text">
+              <span *ngIf="aisIdInput.errors?.['required']">AIS ID je povinné.</span>
+              <span *ngIf="aisIdInput.errors?.['min']">AIS ID musí byť kladné číslo.</span>
+            </div>
           </div>
           <div>
             <label class="modal-label">Priradiť cvičenie</label>
-            <select name="exerciseId" [(ngModel)]="selectedExerciseId" required class="select-drop-down">
+            <select name="exerciseId" [(ngModel)]="selectedExerciseId" required #exerciseInput="ngModel"
+              class="select-drop-down"
+              [class.modal-input-wrong]="exerciseInput.invalid && (exerciseInput.dirty || exerciseInput.touched)">
               <option [ngValue]="null" disabled>Vyberte cvičenie...</option>
               <option *ngFor="let ex of exercises" [ngValue]="ex.id">
                 {{ ex.roomEnum }} | {{ ex.firstSessionDate | date:'EEEE' }} {{ ex.startTime | slice:0:5 }}
               </option>
             </select>
+            <div *ngIf="exerciseInput.invalid && (exerciseInput.dirty || exerciseInput.touched)"
+              class="modal-input-wrong-text">
+              Musíte vybrať cvičenie.
+            </div>
           </div>
         </div>
         <div class="modal-button-layout">
           <button type="button" (click)="onCloseStudentModal()" class="close-button">Zrušiť</button>
-          <button type="submit" [disabled]="isLoading || !novyStudent.fullName || !selectedExerciseId"
+          <button type="submit" [disabled]="isLoading"
             class="green-button">Uložiť</button>
         </div>
       </form>
@@ -188,8 +212,6 @@
     </div>
   </div>
 </div>
-<app-search-bar-modal
-  *ngIf="isDetailModalOpen && selectedStudentForDetail"
-  [student]="selectedStudentForDetail"
+<app-search-bar-modal *ngIf="isDetailModalOpen && selectedStudentForDetail" [student]="selectedStudentForDetail"
   (close)="onCloseDetailModal()">
 </app-search-bar-modal>

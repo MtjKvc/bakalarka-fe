@@ -133,29 +133,43 @@
     <div class="p-8">
       <h3 class="modal-title">Vytvoriť nové zadanie</h3>
       <div *ngIf="error" class="error-message">{{ error }}</div>
-      <form (ngSubmit)="onSubmitNewAssignment()">
+      <form #assignmentForm="ngForm" (ngSubmit)="onSubmitNewAssignment()">
         <div class="space-y-4">
           <div>
             <label class="modal-label">Priradiť k bloku</label>
-            <select name="blockId" [(ngModel)]="newAssignment.blockId" required class="select-drop-down">
+            <select name="blockId" [(ngModel)]="newAssignment.blockId" required #blockInput="ngModel"
+              class="select-drop-down"
+              [class.modal-input-wrong]="blockInput.invalid && (blockInput.dirty || blockInput.touched)">
               <option [ngValue]="null" disabled>Vyberte blok...</option>
               <option *ngFor="let blok of availableBlocks" [ngValue]="blok.id">{{ blok.name }}</option>
             </select>
+            <div *ngIf="blockInput.invalid && (blockInput.dirty || blockInput.touched)" class="modal-input-wrong-text">
+              Musíte vybrať blok.
+            </div>
           </div>
           <div>
             <label class="modal-label">Názov zadania</label>
-            <input name="name" type="text" [(ngModel)]="newAssignment.name" required class="modal-input"
-              placeholder="Názov..." autocomplete="off">
+            <input name="name" type="text" [(ngModel)]="newAssignment.name" required #nameInput="ngModel"
+              class="modal-input" placeholder="Názov..." autocomplete="off"
+              [class.modal-input-wrong]="nameInput.invalid && (nameInput.dirty || nameInput.touched)">
+            <div *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)" class="modal-input-wrong-text">
+              <span *ngIf="nameInput.errors?.['required']">Názov zadania je povinný.</span>
+            </div>
           </div>
           <div>
             <label class="modal-label">Max. bodov</label>
             <input name="maxPoints" type="number" step="0.1" [(ngModel)]="newAssignment.maxPoints" required
-              class="modal-input">
+              #pointsInput="ngModel" class="modal-input"
+              [class.modal-input-wrong]="pointsInput.invalid && (pointsInput.dirty || pointsInput.touched)">
+              <div *ngIf="pointsInput.invalid && (pointsInput.dirty || pointsInput.touched)" 
+           class="modal-input-wrong-text">
+        <span *ngIf="pointsInput.errors?.['required']">Zadajte maximálny počet bodov.</span>
+      </div>
           </div>
         </div>
         <div class="modal-button-layout">
           <button type="button" (click)="onCloseModal()" class="close-button">Zrušiť</button>
-          <button type="submit" [disabled]="isLoading || !newAssignment.name || !newAssignment.blockId"
+          <button type="submit" [disabled]="isLoading"
             class="green-button">Uložiť</button>
         </div>
       </form>

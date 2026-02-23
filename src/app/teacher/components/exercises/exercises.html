@@ -24,7 +24,8 @@
     Spracúvam požiadavku, prosím počkajte...
   </div>
 
-  <div *ngIf="error && !isCreateModalOpen && !isDeleteConfirmModalOpen" class="error-message">{{ error }}</div>
+  <div #errorContainer *ngIf="error && !isCreateModalOpen && !isDeleteConfirmModalOpen" class="error-message">{{ error
+    }}</div>
 
   <div *ngIf="message" class="message">
     <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,35 +115,48 @@
       <h3 class="modal-title">Vytvoriť nové cvičenie</h3>
       <div *ngIf="error" class="error-message">{{ error }}</div>
 
-      <form (ngSubmit)="onSubmitNewExercise()">
+      <form #exerciseForm="ngForm" (ngSubmit)="onSubmitNewExercise()">
         <div class="space-y-4">
           <div>
             <label class="modal-label">Deň</label>
             <input name="firstSessionDate" type="date" [(ngModel)]="newExercise.firstSessionDate" required
-              class="modal-input">
+              #dateInput="ngModel" class="modal-input"
+              [class.modal-input-wrong]="dateInput.invalid && (dateInput.dirty || dateInput.touched)">
+            <div *ngIf="dateInput.invalid && (dateInput.dirty || dateInput.touched)" class="modal-input-wrong-text">
+              <span *ngIf="dateInput.errors?.['required']">Dátum je povinný.</span>
+            </div>
           </div>
           <div>
             <label class="modal-label">Čas</label>
             <input name="startTime" type="time" step="900" [(ngModel)]="newExercise.startTime" required
-              class="modal-input">
-          </div>
-          <div>
-            <label class="modal-label">Miestnosť</label>
-            <select name="roomEnum" [(ngModel)]="newExercise.roomEnum" required class="select-drop-down">
-              <option value="" disabled selected>Vyberte...</option>
-              <option *ngFor="let room of availableRooms" [value]="room">{{ room }}</option>
-            </select>
+              #timeInput="ngModel" class="modal-input"
+              [class.modal-input-wrong]="timeInput.invalid && (timeInput.dirty || timeInput.touched)">
+            <div *ngIf="timeInput.invalid && (timeInput.dirty || timeInput.touched)" class="modal-input-wrong-text">
+              <span *ngIf="timeInput.errors?.['required']">Čas je povinný.</span>
+            </div>
           </div>
         </div>
-        <div class="modal-button-layout">
-          <button type="button" (click)="onCloseModal()" class="close-button">Zrušiť</button>
-          <button type="submit"
-            [disabled]="isLoading || !newExercise.firstSessionDate || !newExercise.startTime || !newExercise.roomEnum"
-            class="green-button">Vytvoriť</button>
+        <div>
+          <label class="modal-label">Miestnosť</label>
+          <select name="roomEnum" [(ngModel)]="newExercise.roomEnum" required #roomInput="ngModel"
+            class="select-drop-down"
+            [class.modal-input-wrong]="roomInput.invalid && (roomInput.dirty || roomInput.touched)">
+            <option value="" disabled selected>Vyberte...</option>
+            <option *ngFor="let room of availableRooms" [value]="room">{{ room }}</option>
+          </select>
+          <div *ngIf="roomInput.invalid && (roomInput.dirty || roomInput.touched)" class="modal-input-wrong-text">
+            Musíte vybrať miestnosť.
         </div>
-      </form>
     </div>
+    <div class="modal-button-layout">
+      <button type="button" (click)="onCloseModal()" class="close-button">Zrušiť</button>
+      <button type="submit"
+        [disabled]="isLoading"
+        class="green-button">Vytvoriť</button>
+    </div>
+    </form>
   </div>
+</div>
 </div>
 
 <div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">

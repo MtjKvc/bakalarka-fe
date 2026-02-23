@@ -1,8 +1,8 @@
-import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/directives/long-press.directive';
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../core/logging/logger.service';
@@ -12,7 +12,7 @@ import { ApiResponse, Exercise, UserDTO } from '../../../shared/models/interface
 
 interface UserForm {
     fullName: string;
-    email: string; 
+    email: string;
     roleEnum: string;
 }
 
@@ -38,6 +38,8 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     private logger = inject(LoggerService);
 
     @ViewChildren('editInput') private editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
+
+    @ViewChild('userForm') userForm!: NgForm;
     private shouldFocus: boolean = false;
     private isSaving: boolean = false;
 
@@ -77,6 +79,17 @@ export class UsersComponent implements OnInit, AfterViewChecked {
 
     public isRemoveExerciseConfirmOpen: boolean = false;
     public assignmentToRemove: UserExerciseAssignment | null = null;
+
+    @ViewChild('errorContainer') set errorContent(content: ElementRef) {
+        if (content) {
+            content.nativeElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'nearest'
+            });
+            content.nativeElement.focus({ preventScroll: true });
+        }
+    }
 
     public ngOnInit(): void {
         this.logger.log('UsersComponent initialized');
@@ -216,6 +229,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
             await this.onOpenExerciseModal(this.selectedUserForExercises);
 
             this.message = "Cvičenie bolo úspešne odobraté.";
+            setTimeout(() => this.message = null, 2000);
 
         } catch (err: unknown) {
             this.logger.error('Error removing exercise assignment', err);
@@ -235,6 +249,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
             this.logger.log('Requesting password reset for user', user.id);
             await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.passwordApiUrl}/${user.id}`, {}));
             this.message = `Požiadavka na reset hesla pre ${user.email} bola úspešne odoslaná.`;
+            setTimeout(() => this.message = null, 2000);
         } catch (err: unknown) {
             this.logger.error('Error resetting password', err);
             this.error = "Chyba pri resetovaní hesla.";
@@ -263,6 +278,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
             await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.usersApiUrl}/${id}`, payload));
             onSuccess();
             this.message = successMsg;
+            setTimeout(() => this.message = null, 2000);
         } catch (err: unknown) {
             this.logger.error('Error updating user', err);
             this.error = "Chyba pri aktualizácii používateľa.";
@@ -279,6 +295,11 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     public onCloseModal(): void { this.isCreateModalOpen = false; }
 
     public async onSubmitNewUser(): Promise<void> {
+        this.error = null;
+        if (this.userForm.invalid) {
+            this.userForm.form.markAllAsTouched();
+            return;
+        }
         if (!this.newUser.fullName || !this.newUser.email || !this.newUser.roleEnum) return;
         this.isLoading = true;
 
@@ -295,6 +316,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
             await lastValueFrom(this.http.post<ApiResponse<unknown>>(this.usersApiUrl, payload));
             this.message = `Používateľ vytvorený.`;
             this.onCloseModal();
+            setTimeout(() => this.message = null, 2000);
             await this.loadData();
         } catch (err: unknown) {
             this.logger.error('Error creating user', err);
@@ -326,6 +348,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
             await lastValueFrom(this.http.delete<ApiResponse<unknown>>(`${this.usersApiUrl}/${idToDelete}`));
             this.users = this.users.filter(u => u.id !== idToDelete);
             this.message = `Používateľ vymazaný.`;
+            setTimeout(() => this.message = null, 2000);
         } catch (err: unknown) {
             this.logger.error('Error deleting user', err);
             this.error = "Chyba: Nepodarilo sa vymazať používateľa.";
@@ -337,6 +360,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     public isEditing(id: number, field: string): boolean { return this.editingId === id && this.editingField === field; }
 
     public onCellEdit(user: UserDTO, field: EditableField): void {
+        this.error = null;
         if (this.isSaving) return;
         this.editingId = user.id;
         this.editingField = field;
@@ -346,6 +370,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     }
 
     public async onCellSave(user: UserDTO): Promise<void> {
+        this.error = null;
         this.shouldFocus = false;
         if (this.isSaving || this.editingId === null || this.editingField === null) return;
 
@@ -374,6 +399,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
             if (this.editingField === 'fullName') user.fullName = newValue;
             if (this.editingField === 'email') user.email = newValue;
             this.message = `Údaje aktualizované.`;
+            setTimeout(() => this.message = null, 2000);
         } catch (err: unknown) {
             this.logger.error('Error saving cell edit', err);
             this.error = "Chyba pri aktualizácii.";

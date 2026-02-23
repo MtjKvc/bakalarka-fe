@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, effect, ViewChildren, QueryList, ElementRef, AfterViewChecked, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, effect, ViewChildren, QueryList, ElementRef, AfterViewChecked, ChangeDetectorRef, DestroyRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -73,6 +73,17 @@ export class GradingComponent implements OnInit, AfterViewChecked {
   private searchSubject = new Subject<string>();
   
   public tooltipData: { text: string, x: number, y: number } | null = null;
+
+    @ViewChild('errorContainer') set errorContent(content: ElementRef){
+  if (content) {
+      content.nativeElement.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center',
+        inline: 'nearest'
+      });
+      content.nativeElement.focus({ preventScroll: true });
+  }
+}
 
   constructor() {
     effect(() => {
@@ -288,6 +299,7 @@ export class GradingComponent implements OnInit, AfterViewChecked {
   }
 
   public onCellClick(record: StudentAssignmentDto | undefined): void {
+    this.error = null;
     if (this.isSaving || !record || this.isSemesterMode) return;
     this.editingRecordId = record.studentAssignmentId;
     this.editingValue = record.earnedPoints;

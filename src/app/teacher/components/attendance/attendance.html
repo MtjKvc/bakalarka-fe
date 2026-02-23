@@ -23,9 +23,8 @@
         </button>
   </div>
 
-  <div *ngIf="error" class="error-message">
+  <div #errorContainer tabindex="-1" *ngIf="error" class="error-message">
     <span>{{ error }}</span>
-    <button (click)="error = null">&times;</button>
   </div>
 
   <div *ngIf="isLoading" class="flex justify-center items-center py-10">
@@ -44,7 +43,7 @@
         <table *ngIf="uniqueStudents.length > 0; else emptyState" class="teacher-table">
         <thead class="table-header">
             <tr>
-            <th class="table-head min-w-[180px]">Študent</th>
+            <th class="student-head">Študent</th>
             <th *ngFor="let session of uniqueSessions" class="attendance-week-th">
                 <div class="flex flex-col items-center">
                 <span class="table-head">
@@ -56,7 +55,7 @@
         </thead>
         <tbody class="table-body">
             <tr *ngFor="let student of uniqueStudents" class="table-hover">
-            <td class="table-data">
+            <td class="student-collumn">
                 <div class="flex flex-col">
                 <span>{{ getStudentFullName(student) }}</span>
                 <span class="text-[10px] text-gray-400 font-normal" *ngIf="student.aisId != null">AIS: {{ student.aisId }}</span>

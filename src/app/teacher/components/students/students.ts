@@ -1,9 +1,9 @@
-import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { lastValueFrom, Subject, Subscription } from 'rxjs';
 import { debounceTime, switchMap, tap, catchError, map } from 'rxjs/operators';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/directives/long-press.directive';
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../core/logging/logger.service';
@@ -50,6 +50,18 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   private logger = inject(LoggerService);
 
   @ViewChildren('editInput') private editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
+
+  @ViewChild('errorContainer') set errorContent(content: ElementRef){
+  if (content) {
+      content.nativeElement.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center',
+        inline: 'nearest'
+      });
+      content.nativeElement.focus({ preventScroll: true });
+  }
+}
+@ViewChild('studentForm') studentForm!: NgForm;
 
   private shouldFocus: boolean = false;
   public isSaving: boolean = false;
@@ -203,6 +215,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   private async loadExercises(): Promise<void> {
+    this.error=null;
     try {
       const response = await lastValueFrom(this.http.get<Exercise[]>(this.exercisesApiUrl));
       
@@ -219,6 +232,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public async onExerciseChange(student: Student, newExerciseId: string | number): Promise<void> {
+    this.error=null;
     const newId = Number(newExerciseId);
     if (student.exerciseId === newId) return;
     this.isLoading = true;
@@ -239,6 +253,11 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public async onSubmitNovyStudent(): Promise<void> {
+    this.error=null;
+    if (this.studentForm.invalid) {
+      this.studentForm.form.markAllAsTouched();
+      return;
+    }
     if (this.selectedExerciseId === null) return;
     this.isLoading = true;
     try {
@@ -271,7 +290,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
     finally { this.isLoading = false; }
   }
 
-  public onCreateStudentClick(): void { this.novyStudent = { aisId: 0, fullName: '' }; this.selectedExerciseId = this.exercises[0]?.id || null; this.isCreateStudentModalOpen = true; }
+  public onCreateStudentClick(): void { this.novyStudent = { aisId: 0, fullName: '' }; this.selectedExerciseId = null; this.isCreateStudentModalOpen = true; }
   public onCloseStudentModal(): void { this.isCreateStudentModalOpen = false; }
   public onDeleteStudentClick(student: Student): void { this.studentToDelete = student; this.deleteConfirmationInput = ''; this.isDeleteConfirmModalOpen = true; }
   public onCloseDeleteConfirmModal(): void { this.isDeleteConfirmModalOpen = false; }
@@ -279,6 +298,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
 
   public isEditing(id: number, field: string): boolean { return this.editingStudentId === id && this.editingField === field; }
   public onCellEdit(student: Student, field: keyof Student): void {
+    this.error=null;
     if (this.isSaving) return;
     this.editingStudentId = student.id;
     this.editingField = field;
@@ -288,6 +308,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public async onCellSave(student: Student): Promise<void> {
+    this.error=null;
     this.shouldFocus = false;
     if (this.isSaving || this.editingStudentId === null || this.editingField === null) return;
 
@@ -334,6 +355,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
       student.aisId = payloadAisId;
       student.fullName = payloadFullName;
       this.message = "Údaje uložené.";
+      setTimeout(() => this.message = null, 2000);
     } catch (err) {
       this.logger.error('Update failed', err);
       this.error = "Uloženie zlyhalo. Skontrolujte formát.";

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { jwtDecode } from 'jwt-decode';
 
 export interface LoginRequest {
     email: string;
@@ -61,13 +62,7 @@ export class AuthService {
 
     private decodeAndSaveUser(token: string) {
         try {
-            const payloadBase64 = token.split('.')[1];
-            let correctedPayload = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
-            while (correctedPayload.length % 4) {
-                correctedPayload += '=';
-            }
-            const payload = JSON.parse(atob(correctedPayload)) as JwtPayload;
-
+            const payload = jwtDecode<JwtPayload>(token);
             if (payload) {
                 localStorage.setItem('user_role', payload.role);
                 localStorage.setItem('user_id', String(payload.id));

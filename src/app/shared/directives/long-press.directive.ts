@@ -1,4 +1,4 @@
-import { Directive, EventEmitter, HostListener, Output, Input } from '@angular/core';
+import { Directive, EventEmitter, HostListener, Output, Input, HostBinding } from '@angular/core';
 
 const LONG_PRESS_THRESHOLD = 500;
 
@@ -9,6 +9,10 @@ const LONG_PRESS_THRESHOLD = 500;
 export class LongPressDirective {
   @Output() public longPress = new EventEmitter<MouseEvent | TouchEvent>();
   @Input() public preventDefaultOnLongPress: boolean = true;
+
+  @HostBinding('style.user-select') userSelect = 'none';
+  @HostBinding('style.-webkit-user-select') webkitUserSelect = 'none';
+  @HostBinding('style.-webkit-touch-callout') webkitTouchCallout = 'none';
 
   private touchTimeout: ReturnType<typeof setTimeout> | null = null;
   private longPressActive: boolean = false;
@@ -24,7 +28,7 @@ export class LongPressDirective {
       clearTimeout(this.touchTimeout);
     }
 
-    if (event instanceof MouseEvent && event.button === 2) return;
+    if (event instanceof MouseEvent) return;
 
     if (event instanceof TouchEvent) {
       this.startX = event.touches[0].clientX;

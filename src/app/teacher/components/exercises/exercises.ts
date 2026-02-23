@@ -1,8 +1,8 @@
-import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/directives/long-press.directive';
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../core/logging/logger.service';
@@ -34,6 +34,20 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
   private logger = inject(LoggerService);
 
   @ViewChildren('editInput') private editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
+
+  @ViewChild('errorContainer') set errorContent(content: ElementRef) {
+    if (content) {
+      content.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
+      content.nativeElement.focus({ preventScroll: true });
+    }
+  }
+
+  @ViewChild('exerciseForm') exerciseForm!: NgForm;
+
   private shouldFocus: boolean = false;
 
   private exercisesApiUrl = `${environment.apiUrl}/api/v1/exercise`;
@@ -188,7 +202,12 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
   public onCloseModal(): void { this.isCreateModalOpen = false; }
 
   public async onSubmitNewExercise(): Promise<void> {
-    if (!this.newExercise.firstSessionDate || !this.newExercise.startTime || !this.newExercise.roomEnum) return;
+    this.error=null;
+    this.message=null;
+    if (this.exerciseForm.invalid) {
+      this.exerciseForm.form.markAllAsTouched();
+      return;
+    }
     this.isLoading = true;
     const time = this.newExercise.startTime.length === 5 ? this.newExercise.startTime + ":00" : this.newExercise.startTime;
     const payload = { exercises: [{ ...this.newExercise, startTime: time }] };
