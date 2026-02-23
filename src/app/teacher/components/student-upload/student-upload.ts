@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { TeacherContextService } from '../../../core/context/teacher-context.service';
@@ -27,6 +27,14 @@ export class StudentUploadComponent {
   public readonly isUploading = signal(false);
   public readonly uploadStatus = signal<'idle' | 'success' | 'error'>('idle');
   public readonly  errorMessage = signal<string>('');
+
+  constructor() {
+    effect(() => {
+      const currentExercise = this.contextService.selectedExercise();
+      this.errorMessage.set('');
+      this.uploadStatus.set('idle');
+    }, { allowSignalWrites: true });
+  }
 
   public onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;

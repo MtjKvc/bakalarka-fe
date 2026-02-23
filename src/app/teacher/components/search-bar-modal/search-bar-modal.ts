@@ -204,7 +204,14 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
         this.editingAssignmentId = null; return;
     }
 
-    const newValue = (this.editingValue === '' || this.editingValue === null) ? 0 : parseFloat(String(this.editingValue));
+    const newValue = parseFloat(String(this.editingValue));
+
+    if (isNaN(newValue)) {
+        this.error = "Zadaná hodnota bodov musí byť číslo!";
+        this.editingAssignmentId = null;
+        setTimeout(() => this.error = null, 3000);
+        return;
+    }
     
     if (record.earnedPoints === newValue) {
         this.editingAssignmentId = null; return;

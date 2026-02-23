@@ -196,14 +196,12 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
 
   public onCreateExerciseClick(): void {
     this.newExercise = { firstSessionDate: '', startTime: '', roomEnum: '' };
+    this.error = null; this.message = null;
     this.isCreateModalOpen = true;
   }
 
   public onCloseModal(): void { this.isCreateModalOpen = false; }
-
   public async onSubmitNewExercise(): Promise<void> {
-    this.error=null;
-    this.message=null;
     if (this.exerciseForm.invalid) {
       this.exerciseForm.form.markAllAsTouched();
       return;
@@ -214,7 +212,9 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
     try {
       await lastValueFrom(this.http.post<Exercise[]>(this.exercisesApiUrl, payload));
       this.logger.log('New exercise created', payload);
+      this.message = `Cvičenie vytvorené.`;
       this.onCloseModal();
+      setTimeout(() => this.message = null, 2000);
       await this.loadExercises();
     } catch (err) {
       this.logger.error('Create failed', err);
@@ -225,18 +225,21 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
   public onDeleteExerciseClick(exercise: Exercise): void {
     this.exerciseToDelete = exercise;
     this.deleteConfirmationInput = '';
+    this.error = null;
     this.isDeleteConfirmModalOpen = true;
   }
 
   public onCloseDeleteConfirmModal(): void {
     this.isDeleteConfirmModalOpen = false;
     this.exerciseToDelete = null;
+    this.error = null;
   }
 
   public async onConfirmDelete(): Promise<void> {
     if (this.deleteConfirmationInput !== this.deleteConfirmText) return;
     const id = this.exerciseToDelete?.id;
     this.isLoading = true;
+    this.error = null;
     try {
       await lastValueFrom(this.http.delete<ApiResponse<unknown>>(`${this.exercisesApiUrl}/${id}`));
       this.logger.warn(`Exercise deleted: ID ${id}`);
@@ -274,6 +277,8 @@ export class ExercisesComponent implements OnInit, AfterViewChecked {
   }
 
   public onBackdropClick(event: MouseEvent): void {
+    this.error = null;
+    this.message = null;
     if (event.target === event.currentTarget) {
       this.onCloseModal();
       this.onCloseDeleteConfirmModal();

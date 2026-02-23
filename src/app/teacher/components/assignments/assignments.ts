@@ -68,7 +68,6 @@ export class AssignmentsComponent implements OnInit {
 
     public async loadData(): Promise<void> {
         this.isLoading = true;
-        this.error = null;
         try {
             const blocksData = await lastValueFrom(this.http.get<BlockSimple[]>(this.blocksApiUrl));
             this.availableBlocks = blocksData || [];
@@ -154,6 +153,7 @@ export class AssignmentsComponent implements OnInit {
             await lastValueFrom(this.http.post<ApiResponse<unknown>>(this.assignmentsApiUrl, payload));
             this.logger.log('New assignment created', payload);
             this.message = `Zadanie vytvorené.`;
+            setTimeout(() => this.message = null, 2000);
             this.onCloseModal();
             await this.loadData();
         } catch (err: unknown) {
@@ -190,6 +190,7 @@ export class AssignmentsComponent implements OnInit {
             this.logger.warn(`Assignment deleted: ID ${id}`);
             this.assignments = this.assignments.filter(a => a.id !== id);
             this.message = `Zadanie vymazané.`;
+            setTimeout(() => this.message = null, 2000);
         } catch (err: unknown) {
             this.handleError(err, 'Chyba: Nepodarilo sa vymazať zadanie.');
         } finally {
@@ -211,6 +212,7 @@ export class AssignmentsComponent implements OnInit {
 
             this.updateLocalAssignment(assign.id, updatedAssign);
             this.message = `Blok zmenený.`;
+            setTimeout(() => this.message = null, 2000);
             this.sortData();
         } catch (err: unknown) {
             this.handleError(err, 'Chyba: Nepodarilo sa zmeniť blok.');
@@ -284,6 +286,7 @@ export class AssignmentsComponent implements OnInit {
             this.updateLocalAssignment(assign.id, updatedAssign);
             this.logger.log(`Cell '${field}' updated for ID ${assign.id}`, payload);
             this.message = `Zadanie aktualizované.`;
+            setTimeout(() => this.message = null, 2000);
             this.sortData();
 
         } catch (err: unknown) {
@@ -311,7 +314,7 @@ export class AssignmentsComponent implements OnInit {
     private handleError(err: unknown, defaultMsg: string) {
         this.logger.error(defaultMsg, err);
         if (err instanceof HttpErrorResponse) {
-            this.error = `${defaultMsg} (${err.status} ${err.statusText})`;
+            this.error = `${defaultMsg}`;
         } else {
             this.error = defaultMsg;
         }

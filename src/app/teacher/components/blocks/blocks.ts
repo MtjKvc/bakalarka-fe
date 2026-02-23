@@ -75,7 +75,7 @@ export class Blocks implements OnInit, AfterViewChecked {
 
   private async fetchBloky(): Promise<void> {
     this.isLoading = true;
-    this.error = null;
+
     const apiUrl = `${this.blocksApiUrl}?sort=id,asc`;
 
     try {
@@ -104,6 +104,8 @@ export class Blocks implements OnInit, AfterViewChecked {
   }
 
   public onBackdropClick(event: MouseEvent): void {
+    this.error = null;
+    this.message = null;
     if (event.target === event.currentTarget) {
       this.onCloseBlokModal();
       this.onCloseDeleteConfirmModal();
