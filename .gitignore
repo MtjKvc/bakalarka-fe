@@ -36,7 +36,19 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+__screenshots__/
 
 # System files
 .DS_Store
 Thumbs.db
+
+#mine
+.claude
+.cursor
+.gemini
+.junie
+package-lock.json
+.github
+bakalarka-fe
+.windsurf
+

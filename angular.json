@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "bakalarka-fe": {
+    "ap-portal": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -56,10 +56,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "bakalarka-fe:build:production"
+              "buildTarget": "ap-portal:build:production"
             },
             "development": {
-              "buildTarget": "bakalarka-fe:build:development"
+              "buildTarget": "ap-portal:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -88,5 +88,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "14dd5b85-62a4-4b05-a856-cd9ea10711d8"
   }
 }

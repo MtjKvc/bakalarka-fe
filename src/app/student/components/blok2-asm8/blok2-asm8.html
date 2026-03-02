@@ -1,0 +1,64 @@
+<main class="main-student">
+    <article
+        class="assignment">
+        <h1 class="student-page-h1-title">
+            Podpora pre Linux
+        </h1>
+        Na Linuxe môžete použiť knižnicu Libsdl.<br>
+        1. stiahnutie a instalacia kniznic:<br>
+        <div
+            class="copy-code">
+            <pre #linux1>
+sudo apt-get install libsdl2-dev libsdl2-mixer-dev
+            </pre>
+            <app-copy-button [sourceElement]="linux1"></app-copy-button>
+        </div>
+        2. komplovanie a linkovanie:<br>
+        <div
+            class="copy-code">
+            <pre #linux2>
+gcc main.c -o main -lSDL2main -lSDL2 -lSDL2_mixer
+            </pre>
+            <app-copy-button [sourceElement]="linux2"></app-copy-button>
+        </div>
+        Ukážkový program:<br>
+           <div
+            class="copy-code">
+            <pre #linux3>
+
+#include &lg;SDL2/SDL.h&gt;
+#include &lg;SDL2/SDL_mixer.h&gt;
+
+int main(int argc, char* argv[])
+&#123;
+    SDL_Init(SDL_INIT_AUDIO);
+    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
+    Mix_Music *music = Mix_LoadMUS(“audio.mp3”);
+    Mix_PlayMusic(music, 1);
+
+    SDL_Delay(10000); // Pauza na 10s
+
+    Mix_FreeMusic(music);
+    Mix_CloseAudio();
+    SDL_Quit();
+    return 0;
+&#125;
+            </pre>
+            <app-copy-button [sourceElement]="linux3"></app-copy-button>
+        </div>
+        Ďalšie príkazy:<br>
+                   <div
+            class="copy-code">
+            <pre #linux4>
+
+Mix_PlayMusic(music, -1); // Play infinitely
+ 
+Mix_PauseMusic();
+ 
+Mix_ResumeMusic();
+
+            </pre>
+            <app-copy-button [sourceElement]="linux4"></app-copy-button>
+        </div>
+    </article>
+</main>

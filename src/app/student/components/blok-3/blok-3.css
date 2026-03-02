@@ -1,0 +1,4 @@
+@import "tailwindcss";
+.list{
+    @apply list-decimal list-inside text-white space-y-2 ;
+}

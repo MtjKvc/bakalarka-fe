@@ -1,0 +1,50 @@
+<div class="login-bg">
+  <div class="login-div">
+    
+    <h2 class="login-title">
+      Prihlásenie pre učiteľa
+    </h2>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" autocomplete="off">
+      
+      @if (errorMessage) {
+        <div class="login-message">
+          {{ errorMessage }}
+        </div>
+      }
+      
+      <div class="mb-4">
+        <label for="email" class="input-title">
+          Email
+        </label>
+        <input 
+          type="text" 
+          id="email"
+          formControlName="email"
+          name="email"
+          class="login-focus"
+        >
+      </div>
+      <div class="mb-6">
+        <label for="password" class="input-title">
+          Heslo
+        </label>
+        <input 
+          type="password"
+          formControlName="password"
+          id="password" 
+          name="password"
+          class="login-focus"
+        >
+      </div>
+
+      <button
+        type="submit" 
+        class="login-button"
+        [disabled]="loginForm.invalid" >
+        Prihlásiť sa
+      </button>
+
+    </form>
+  </div>
+</div>

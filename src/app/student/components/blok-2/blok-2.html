@@ -1,0 +1,679 @@
+<main class="main-student">
+    <h1
+        class="student-page-h1-title">
+        Blok 2
+    </h1>>
+    <article
+        class="student-info-block">
+        <section>
+            <h3 class="student-page-h3-title">POUŽÍVAJTE MS VISUAL STUDIO COMMUNITY:</h3>
+
+            V druhom bloku cvičení už budete používať vývojové prostredie (IDE). Na súkromných počítačoch odporúčame
+            používať MS Visual Studio Community, ktoré si môžete stiahnuť <a rel="noopener noreferrer"
+                class="student-link"
+                href="https://visualstudio.microsoft.com/vs/community/">tu.
+            </a>
+
+
+        </section>
+        <section>
+            <h3 class="student-page-h3-title">ÚLOHA PRE KAŽDÉHO</h3>
+
+            Počas tohto bloku sa musíte naučiť krokovať, resp. “debuggovať”. Ide o spôsob kontroly kódu (hľadania chýb -
+            “bugov”).Váš kód si v tomto režime viete prechádzať krok za krokom a pozerať sa, aké sú hodnoty premenných,
+            čo
+            sa deje v pamäti, vnárať sa do funkcií a pod. Na úvod si pozrite tento <a rel="noopener noreferrer"
+                class="student-link"
+                href="https://learn.microsoft.com/en-us/visualstudio/debugger/debugger-feature-tour?view=vs-2022">návod.
+            </a><br>
+
+            Aby ste nestratili body, musíte počas druhého alebo na začiatku tretieho bloku predviesť cvičiacemu, že
+            viete
+            program krokovať. Konkrétne:<br>
+
+            1, Stanovenie breakpointov.<br>
+            2, Krokovanie (F10).<br>
+            3, Pridanie premennej do zoznamu “pozorovaných” premenných (pravý klik myšou a z menu vybrať Add watch)<br>
+            4, Vnorenie sa do funkcie (F11).<br>
+            5, Ukázanie adresy aspoň jednej premennej/poľa.<br>
+        </section>
+        <section>
+            Druhý blok cvičení je navrhnutý tak, aby ste sa v jednotlivých úlohách postupne “dotkli” jednotllivých
+            komponentov počítača. Keďže počítač sa skladá z mnohých podsystémov, aj úloh je relatívne veľa.<strong> Tak
+                isto ako
+                v
+                prvom bloku, všetky úlohy musíte mať naprogramované ako samostatné funkcie v jednom .c súbore, ktorý
+                odovzdáte
+                na konci bloku do AIS. Nemusíte riešiť všetky, vyberte si tie, ktoré vás zaujmú tak, aby ste získali
+                potrebný
+                počet 16 bodov. Celkove je tu 12 úloh za 27 bodov. Viac ako 16 nemôžete získať. </strong>Úlohy
+            odovzdávajte priebežne
+            (primerne jednu-dve úlohy za cvičenie), najneskôr však v deviatomom týždni semestra.
+        </section>
+        <section>
+            <h3 class="student-page-h3-title">Poznámka</h3>
+
+
+            Úlohy na cvičeniach prednášky dopĺňajú a rozširujú - predmet nefunguje takým spôsobom, že prednáška je
+            “návod” a
+            cvičenia priestor pre realizáciu. Vedomosti získavate tam aj tam.
+
+        </section>
+    </article>
+    <section
+        class="section-title">
+
+        <h2 class="student-page-h2-title">PROCESOR - CPU</h2>
+
+        <p class="italic text-green-400">
+            Programovaním viete „prinútiť“ procesor robiť to, čo chcete Vy, aby robil aj na tej najnižšej úrovni!
+        </p>
+        <div class="img-spacing">
+            <img class="student-img" src="images/cpu1.jpg" alt="obrázok procesora">
+            <img class="student-img" src="images/cpu2.jpg" alt="obrázok procesora spredu aj zozadu">
+        </div>
+    </section>
+
+
+    <article
+        class="assignment">
+        <div class="assignment-div">
+            <h3 class="student-page-h2-title">Úloha 2.1.1 - procesor</h3><span
+                class="student-assignment-point">1b</span>
+        </div>
+        <section>
+
+            Vložte do C-programu kúsok assemblerovského kódu, ktorým vypočítate súčet dvoch premenných.
+        </section>
+        <section>
+            <span class="important-icon">💡 Tip: </span>
+            <span class="important-text">Ako základ môžete použiť  <a rel="noopener noreferrer"
+                class="student-link"
+                routerLink="../blok2-asm1">tento program
+            </a>, ktorý inkrementuje
+                premennú. Stačí doplniť druhú premennú a vymeniť
+                inštrukciu INC za ADD.
+                Ak vám vzorový program nejde skompilovať v MS Visual Studio, zmeňte cieľovú architektúru z x64 na x86 v
+                combo
+                box-e na hlavnej lište.</span>
+        </section>
+        <section class="space-y-4">
+            Zdroj:<br>
+            <a rel="noopener noreferrer"
+                class="student-link"
+                routerLink="../blok2-asm2">.., Assem… Čo? Aký assembler?
+            </a><br>
+            <a rel="noopener noreferrer"
+                class="student-link"
+                routerLink="../blok2-asm3">Výber strojových inštrukcií s popisom.
+            </a>
+        </section>
+    </article>
+    <article
+        class="assignment">
+        <div class="assignment-div">
+            <h3 class="student-page-h2-title">Úloha 2.1.2 - procesor</h3><span
+                class="student-assignment-point">1b</span>
+        </div>
+        <section>
+            Napíšte pomocou vloženého (embedded) asembleru C-program v ktorom použijete vlastnú funkciu na násobenie
+            dvomi
+            bez použitia súčinu.
+        </section>
+        <section>
+            <span class="important-icon">💡 Tip: </span>
+            <span class="important-text">Stačí ak si spomeniete, že násobenie dvoma v binárnej
+                sústave znamená posunúť číslo o jedno miesto doľava.
+                Ako základ môžete použiť opäť <a rel="noopener noreferrer"
+                    class="student-link"
+                  routerLink="../blok2-asm1">vzorový program
+                </a> z predošlej úlohy, ktorý inkrementuje premennú. Stačí
+                vymeniť
+                inštrukciu INC za SHL.</span>
+        </section>
+    </article>
+    <article
+        class="assignment">
+        <div class="assignment-div">
+            <h3 class="student-page-h2-title">Úloha 2.1.3 - procesor</h3><span
+                class="student-assignment-point">3b</span>
+        </div>
+
+        Napíšte pomocou vloženého (embedded) asembleru C-program s funkciou na prevod číslice (0 - 15) na príslušný
+        ASCII znak predstavujúci hodnotu v hexadecimálnej sústave. Pre čísla 0 - 9 bude výstupom znak '0' - '9', pre
+        čísla 10 - 15 znaky 'A' - 'F'. Celé jadro programu musí byť napísané v jazyku symbolických inštrukcií, nesmietie
+        použiť polia. Jazyk C smiete použiť len na výpis výsledku.<br>
+        <section>
+            <span class="important-icon">💡 Tip: </span>
+            <span class="important-text">Tento kus programu v C urobí to isté:</span>
+        </section>
+        <section>
+            znak = cislo &lt; 10 ? cislo + '0' : cislo + 55;</section>
+        <section> Ako základ môžete použiť znova <a rel="noopener noreferrer"
+                    class="student-link"
+routerLink="../blok2-asm1">tento program
+                </a>, ktorý
+            inkrementuje
+            premennú. Stačí vymeniť inštrukciu INC za ADD a doplniť test (CMP) s nejakým podmieneným skokom. <strong>Pri
+            odovzdávaní zadania musíte preukázať znalosť <a rel="noopener noreferrer"
+                    class="student-link"
+                  href="https://sk.wikipedia.org/wiki/ASCII">ASCII tabuľky
+                </a>.</strong>
+        </section>
+    </article>
+    <article
+        class="assignment">
+        <div class="assignment-div">
+            <h3 class="student-page-h2-title">Úloha 2.1.4 - procesor</h3><span
+                class="student-assignment-point">2b</span>
+        </div>
+        <section>
+            Napíšte pomocou inline asembleru a inštrukcie cpuid program, ktorý zistí, aký typ procesora máte v
+            počítači (Intel, AMD, Cyrix,…). Výstup musí byť uložený v poli.
+        </section>
+        <section>
+            <span class="important-icon">💡 Tip: </span>
+            <span class="important-text">Inštrukcia cpuid očakáva v registri EAX číslo funkcie, v našom
+                prípade 0. Výsledkom sú tri
+                registre, ktoré treba uložiť do poľa a vypísať ako reťazec.</span>
+        </section>
+        <section>
+            <strong>Pri odovzdávaní zadania musíte vedieť vysvetliť, prečo tam tú nulu dávate.</strong>
+        </section>
+        <section class="space-y-4">
+            Zdroj:<br>
+            <a rel="noopener noreferrer"
+                class="student-link"
+                routerLink="../blok2-asm4">viac o inštrukcii CPUID
+            </a><br>
+            <a rel="noopener noreferrer"
+                class="student-link"
+                routerLink="../blok2-asm5">error C2443: operand size conflict
+            </a><br>
+            <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://www.paradicesoftware.com/specs/cpuid/index.htm">Ešte viac o inštrukcii cpuid
+            </a><br>
+        </section>
+    </article>
+    <section
+        class="assignment">
+
+        <h2 class="student-page-h2-title">PAMÄŤ - RAM</h2>
+
+        <p class="italic text-green-400">
+            Pri práci s pamäťou zapisujete jednotky a nuly na konkrétne miesta (adresy) v pamäťových moduloch!
+        </p>
+        <div class="img-spacing">
+            <img class="student-img" src="images/ram1.jpg" alt="obrázok RAM pamätí">
+            <img class="student-img" src="images/ram2.jpg  "
+                alt="obrázok RAM pamätí v matičnej doske">
+        </div>
+    </section>
+    <article
+        class="assignment">
+        <div class="assignment-div">
+            <h3 class="student-page-h2-title">Úloha 2.2 - pamäť</h3><span
+                class="student-assignment-point">3b</span>
+        </div>
+        <section>
+            Viete už pracovať so smerníkmi (pointre). Viete ale, čo je naozaj v pointri uložené? Samozrejme, reálna
+            adresa.<br>
+
+            1. Deklarujte pole znakov, priraďte doň hodnoty (napr. “architektura_pocitacov_je_super_predmet”) a
+            vypíšte výsledok na obrazovku.<br>
+
+            2. Ďalej deklarujte smerník na toto pole a vypíšte na obrazovku skutočnú adresu na ktorú ukazuje (napr.
+            printf(“%p”,pointer); ).<br>
+
+            3. Potom zmeňte hodnotu adresy (pripočítajte jednotku). Zapíšte nejakú hodnotu na túto adresu a opäť
+            vypíšte reťazec na obrazovku. Čo sa stalo?<br>
+
+            4. Nakoniec zmeňte hodnotu adresy na veľmi vysokú hodnotu (v miliónoch) a opäť sa pokúste na ňu niečo
+            zapísať. Čo sa stane? Program by mal spadnúť. Porozmýšľajte prečo.<br>
+
+            5. Zakomentujte riadok z bodu 4 a doprogramujte body 1-3 aj pre pole dátového typu int. Pri odovzdávaní
+            musíte vedieť vysvetliť, čo sú to smerníky/pointre a na čo slúžia.<br>
+        </section>
+        <section class="space-y-4">
+            Zdroj:<br>
+            Horovčák, P. a Podlubný, I.: Úvod do programovania v jazyku C — kapitola Smerníky. 1998. Učebnica
+            prístupná on-line:
+            <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://www.tuke.sk/podlubny/C/Kap9.htm">http: //www.tuke.sk/podlubny/C/
+            </a>
+        </section>
+    </article>
+    <section
+        class="assignment">
+
+        <h2 class="student-page-h2-title">DISK - HDD</h2>
+
+        <p class="italic text-green-400">
+            Znalosť programovacieho jazyka Vám umožňuje zapísať Vami vytvorený súbor fyzicky na disk!
+        </p>
+        <div class="img-spacing">
+            <img class="student-img" src="images/hdd1.jpg" alt="obrázok HDD pripojené k PC">
+            <img class="student-img" src="images/hdd2.jpg" alt="HDD">
+        </div>
+    </section>
+    <article
+        class="assignment">
+        <div class="assignment-div">
+            <h3 class="student-page-h2-title">Úloha 2.3.1 - disky</h3><span
+                class="student-assignment-point">2b</span> <!--tu-->
+        </div>
+        So súbormi ste už pracovali. Stiahnite a uložte si do súboru <a rel="noopener noreferrer"
+            class="student-link"
+            href="http://ap.urk.fei.stuba.sk/wp-content/uploads/2019/03/poviedka.html">tento text
+        </a>poviedky. Je napísaný v kódovaní
+        ISO-8859-2, ale aby ste ho vo Windows mohli poriadne prečítať, musí byť v kódovaní CP-1250. Našťastie sa
+        tieto dve kódovania líšia len v niekoľkch znakoch. Napíšte program, ktorý text prevedie do správneho
+        kódovania. Čo to je kódovanie máte vysvetlené v kontrolných otázkach. Pre plný počet bodov zo zadania
+        musíte tento termín vedieť vysvetliť.<br>
+        <section>
+            <span class="important-icon">💡 Tip: </span>
+            <span class="important-text">Ako stiahnuť a uložiť súbor s poviedkou?
+                Kliknite pravým tlačidlom, zvoľte 'Uložiť ako' (Save as…) a uložte si súbor na disk aj s príponou .html.
+                Výstupný súbor bude tiež mať príponu .html, takže text ľahko skontrolujete v internetovom
+                prehliadači.</span>
+        </section>
+        <section>
+            <span class="important-icon">💡 Tip: </span>
+            <span class="important-text">Tu nájdete kompletnú tabuľku kódovania <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://www.jakpsatweb.cz/cestina-tabulky.html">ISO-8859-2, Win-1250
+            </a> ale
+                zrejme vystačíte s tabuľkou, kde
+                je len tých<a rel="noopener noreferrer"
+                class="student-link"
+                routerLink="../blok2-asm6">8 rozdielnych znakov
+            </a>.</span>
+        </section>
+        <section>
+            <span class="important-icon">💡 Tip: </span>
+            <span class="important-text">V prípade práce s dátovým typom signed char budete musieť čísla
+                väčšie ako 127 pretypovať:<br>
+
+                if (c == (char)165) c = (char)188;.</span>
+        </section>
+        <section class="space-y-4">
+            Zdroj:<br>
+            Práca so súbormi - Horovčák, P. a Podlubný, I.: Úvod do programovania v jazyku C — kapitola Súbory.
+            1998. Učebnica prístupná on-line:<br>
+            <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://www.tuke.sk/podlubny/C/Kap9.htm">http: //www.tuke.sk/podlubny/C/
+            </a><br>
+              <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://www.cestina.cz/kodovani/">Prehľad kódovaní češtiny
+            </a>
+            Prehľad kódovaní češtiny (platí aj pre slovenčinu)
+        </section>
+    </article>
+    <article
+        class="assignment">
+        <div class="assignment-div">
+            <h3 class="student-page-h2-title">Úloha 2.3.2 - disky</h3><span
+                class="student-assignment-point">1b</span>
+        </div>
+        <section>
+
+            Zaujíma vás, ako to dopadlo v príbehu z úlohy 2.3? Pokračovanie si môžete stiahnuť  <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://ap.urk.fei.stuba.sk/wp-content/koniec_poviedky.html">odtiaľto.
+            </a> Aha, že sa
+            nedá prečítať? Musíte ho rozšifrovať. Našťastie je použitá veľmi jednoduchá šifra. Na každý znak je
+            aplikovaná operácia logický XOR s číslom 27. Napíšte program, ktorý prečíta text zo súboru a každý znak
+            pred výpisom dešifruje.<br>
+            <section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">Šifrovanie pomocou exkluzívneho súčtu (Exclusive OR, XOR) sa používa hlavne preto, lebo ak platí
+            Kod = Znak XOR Cislo, potom Znak = Kod XOR Cislo. Čiže Znak = (Znak XOR Cislo) XOR Cislo.</span>
+            </section>
+            <section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">Ako stiahnuť a uložiť súbor s poviedkou?
+                    Kliknite pravým tlačidlom, zvoľte 'Uložiť ako' (Save as…) a uložte si súbor na disk aj s príponou
+                    .html.
+                    Výstupný súbor bude tiež mať príponu .html, takže text ľahko skontrolujete v internetovom
+                    prehliadači.</span>
+            </section>
+            <section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">
+                    Keďže v zašifrovanom súbore sa môžu vyskytnúť všelijaké znaky, odporúčame takýto súbor otvoriť nie
+                    v textovom (“r”), ale binárnom (“rb”) režime. Pre istotu ešte pripomeňme, že operátor XOR v jazyku C
+                    je
+                    ^.</span>   
+            </section>
+
+        </section>
+
+    </article>
+    <article
+        class="assignment">
+        <div class="assignment-div">
+            <h3 class="student-page-h2-title">Úloha 2.3.3 - RAID</h3><span
+                class="student-assignment-point">3b</span>
+        </div>
+<section>    Na diskovom poli bol uložený text o škodlivosti alkoholu. Žiaľ, v dôsledku poruchy jedného z diskov sa
+        text poškodil. Našťastie to bolo RAIDové pole, takže text je možné zrekonštruovať. Z diskov sa podarilo
+        prečítať bloky, ktoré patrili súboru s textom. Bloky sú štyri, je medzi nimi aj ten pokazený. Všetko, čo
+        sa podarilo zachrániť je k dispozícii zabalené <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://ap.urk.fei.stuba.sk/wp-content/liehoviny.zip">tu.
+            </a>  Zrekonštruujte chýbajúci text.<br>
+
+        <strong>Aby ste získali plný počet bodov, musíte vedieť opísať jednotlivé typy RAID-ov - aj ktorý typ je v
+        zadaní použitý. POZOR - zadanie v súčasnej forme funguje len pod OS Windows a súbory je nutné čítať v
+        textovom režime.</strong></section>
+<section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">
+                    Prečítajte si čo je to vlastne <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://sk.wikipedia.org/wiki/RAID">RAID
+            </a> </span>
+            </section>
+            <section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">
+                   Nie je tu síce uvedené, aká RAID štruktúra bola v poli použitá, ale skúste na to prísť sami. Pre
+        istotu ešte pripomeňme, že operátor XOR v jazyku C je ^.</span>
+            </section>
+        </article>
+    <section
+        class="assignment">
+
+        <h2 class="student-page-h2-title">ZVUK A VIDEO</h2>
+
+        <p class="italic text-green-400">
+            Použitím vhodných knižníc viete vytvoriť zdrojový kód schopný manipulovať videom či zvukom!
+        </p>
+        <div class="img-spacing">
+            <img class="student-img" src="images/zav1.jpg" alt="obrázok zvuku">
+            <img class="student-img" src="images/zav2.png" alt="obrázok filmového štábu">
+        </div>
+    </section>
+
+    <article
+        class="assignment">
+        <div class="assignment-div">
+            <h3 class="student-page-h2-title">Úloha 2.4 - multimédiá</h3><span
+                class="student-assignment-point">4b</span>
+        </div>
+        <section>
+        Napíšte program v jazyku C, ktorý dokáže prehrať <a class="student-link"
+                href="http://ap.urk.fei.stuba.sk/wp-content/audio.mp3">pesničku
+            </a>, alebo <a class="student-link"
+                href="http://ap.urk.fei.stuba.sk/wp-content/video.mpg">video
+            </a> (vy si môžete vybrať).<br>
+
+        Najprv si prečítajte, <a class="student-link"
+                routerLink="../blok2-asm7">ako sa pracuje s multimédiami vo Windows API
+            </a>. Potom si vyskúšajte niektoré príkazy
+        v interaktívnom programe <a class="student-link"
+                href="http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe">TestMCI.exe
+            </a> (do okienka zadáte príkaz, ten sa hneď vykoná). Potom napíšte
+        program na prehrávanie v jazyku C. Program musí mať možnosť zadať meno prehrávaného súboru, spustiť,
+        pozastaviť a ukončiť prehrávanie.<br>
+
+        Úvodná obrazovka programu musí mať v rámci možností pekný dizajn s vysvetlením jednotlivých funkcií.
+        POUŽITE ASCII ZNAKY na vytvorenie grafického ohraničenia. Po ukončení prehrávania sa obrazovka vyčistí a
+        opäť sa zobrazí úvodná obrazovka.<br>
+        </section>
+          <section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">Ak vám už v <a class="student-link"
+                href="http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe">TestMCI.exe
+            </a> všetko funguje, prepíšte to do programu v jazyku C. Práca s
+        multimediálnymi zariadeniami sa robí pomocou funkcie mciSendString() (treba #include ). Jednoducho
+        vložte reťazce, ktoré ste zadávali v <a class="student-link"
+                href="http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe">TestMCI.exe
+            </a> ako argumenty do funkcie mciSendString().</span>
+            </section>
+            <section>
+                <span class="important-icon">⚠️ Pozor: </span>
+                <span class="important-text">Musíte si prilinkovať knižničný súbor winmm.lib (vo Visual C++: Project >> Settings >> Link >>
+        Object/library modules, dopíšte na koniec riadku winmm.lib). (Pre Dev-C++: Project >> Project Options >>
+        Parameters >> Add Lib >> libwinmm.a)</span>
+            </section>
+<section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">Aby ste sa nemuseli prehrabávať v hlbinách menu, môžete knižnicu pripojiť aj príkazom pre
+        kompilátor priamo do záhlavia vášho zdrojového kódu:
+        #pragma comment( lib, “winmm.lib” )</span>
+            </section>
+
+<section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">Aby program nemusel pracovať s UNICODE, nastavte si projekt pre prácu v znakovom režime
+        MultiByte: (<a class="student-link"
+                href="https://senzor.robotika.sk/ap/images/SetMultiByte.png">viď. obrázok
+            </a>)</span>
+            </section>
+<section class="space-y-4">
+            Zdroj:<br>
+            <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd757161%28v=vs.85%29.aspx">mciSendString() - popis funkcie [msdn]
+            </a><br>
+              <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd743458%28v=vs.85%29.aspx">Zoznam mci príkazov [msdn]
+            </a>
+        </section>
+ <a rel="noopener noreferrer"
+                class="student-link"
+                routerLink="../blok2-asm8">PRIDALI SME PODPORU PRE LINUX (click on me)
+            </a>
+    </article>
+    <section
+        class="assignment">
+
+        <h2 class="student-page-h2-title">PIXEL - PICTURE ELEMENT</h2>
+
+        <p class="italic text-green-400">
+            Aj keď programujete zdanlivo bežnú vec akou je zmena farby písma, v konečnom dôsledku viete prinútiť
+            monitor zmeniť farbu stoviek pixelov na presne takú, akú chcete, v zlomku sekundy!
+        </p>
+        <div class="img-spacing">
+            <img class="student-img" src="images/pixel1.jpg" alt="obrázok pixelov v monitory">
+        </div>
+    </section>
+    <article
+        class="assignment">
+        <div class="assignment-div">
+            <h3 class="student-page-h2-title">Úloha 2.5.1 grafika - farby</h3><span
+                class="student-assignment-point">1b</span>
+        </div>
+
+        Napíšte program, ktorý bude postupne vypisovať čísla od 0 po 50, pričom v závislosti od veľkosti čísla
+        sa bude meniť jeho farba, napríklad pre čísla od 0 po 10 bude zelená, 11 až 22 červená a 23 až 35 modrá,
+        atď. Rýchlosť výpisu na obrazovku obmedzte na cca 1 znak/sekundu.<br>
+
+        Výpis musí byť v cykle a vo formáte 001 002 ako je na obrázku.
+        <img class="student-img" src="images/uloha2.5.1.png" alt="správny Výstup  v konzole">
+<section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">V konzolovom režime je možné meniť aj farbu vypisovaného textu pomocou funkcie
+        SetConsoleTextAttribute(hConsole, k); Pričom hConsole je handle konzoly, k je atribút farieb od 0 po
+        255.</span>
+            </section>
+
+        Aby ste mohli meniť farby, musíte najprv pomocou funkcie GetStdHandle získať handle na konzolu, je to
+        podobné, ako keď pred prácou so súborom najprv získate smerník na súbor. Robí sa to napr. takto:<br>
+<section>
+        <strong class="text-green-400">HANDLE hConsole;<br>
+        hConsole = GetStdHandle(STD_OUTPUT_HANDLE);</strong>
+</section>
+        Horeuvedené funkcie sú definované vo windows.h<br>
+
+        <section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">Napíšte si pomocný program, ktorým zistíte farby prislúchajúce všetkým kombináciam k od 0 do 255.</span>
+            </section>
+<section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">     <a rel="noopener noreferrer"
+                class="student-link"
+                routerLink="../blok2-asm11">Návod
+            </a> a      <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx">vzorový program
+            </a> na prácu s časom.</span>
+            </section>
+<section class="space-y-4">
+            Zdroj:<br>
+            <a rel="noopener noreferrer"
+                class="student-link"
+                routerLink="../blok2-asm9">Čo je to handle?
+            </a><br>
+              <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms686047%28v=vs.85%29.aspx">SetConsoleTextAttribute() [msdn]
+            </a><br>
+             <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682073%28v=vs.85%29.aspx"> Console functions [msdn]
+            </a><br>
+             <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms686971%28v=vs.85%29.aspx">Using the console [msdn]
+            </a><br>    
+             <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682088%28v=vs.85%29.aspx">Colors and text attributes [msdn]
+            </a>
+        </section>
+    </article>
+    <article
+        class="assignment">
+        <div class="assignment-div">
+            <h3 class="student-page-h2-title">Úloha 2.5.2 - semigrafika</h3><span
+                class="student-assignment-point">3b</span>
+        </div>
+<section> Napíšte program, ktorý na miesto v okne zadané pri spustení súradnicami [x,y] vypíše tabuľku s
+        informáciami o Vašej osobe. Parametre uvedené na obrázku sú ilustračné, ale musia byť zadané v
+        premenných, nemôže byť celý výpis “natvrdo” naprogramovaný. Parametrom zobrazenia teda bude pozícia v
+        okne a premenné s hodnotami vypisovaných údajov. Pri zmene niektorého údaja (napr. meno) sa musí rámik
+        prispôsobiť textu, nie naopak.</section>
+        <img class="student-img" src="images/uloha2.5.2.png" alt="približný výstup v konzole">
+<section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">Farby viete meniť z úlohy 2.6. Ako sa text vypíše na konkrétnu pozíciu sa naučte z tohoto <a rel="noopener noreferrer"
+                    class="student-link"
+                    href="http://ap.urk.fei.stuba.sk/wp-content/uloha27.htm">vzorového
+        programu
+                </a>. Rámik vytvorte zo znakov s ASCII kódom > 127. Na zistenie, ktoré znaky potrebujete využite
+        upravený program z úlohy 1.1, ktorým si vypíšete celú tabuľku ASCII znakov.</span>
+            </section>
+            <section class="space-y-4">
+            Zdroj:<br>
+            <a rel="noopener noreferrer"
+                class="student-link"
+                routerLink="../blok2-asm10">vysvetlivky k vzorovému programu
+            </a><br>
+              <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx">SetConsoleCursorPosition() [msdn]
+            </a>
+        </section>
+    </article>
+    <section
+        class="assignment">
+
+        <h2 class="student-page-h2-title">KLÁVESNICA</h2>
+        <div class="img-spacing">
+            <img class="student-img" src="images/keyboard1.png" alt="obrázok klavesnice">
+        </div>
+    </section>
+    <article
+        class="assignment">
+        <div class="assignment-div">
+            <h3 class="student-page-h2-title">Úloha 2.6 - klávesnica a myš </h3><span
+                class="student-assignment-point">4b</span>
+        </div>
+<section>
+        Napíšte program, ktorý po stlačení klávesy F1 vypíše návod na použitie, F2 spustí meranie a program
+        skončí F10 alebo ESC. Meranie bude spočívať v tom, že program vygeneruje náhodný znak (stačí písmená),
+        zobrazí ho do stredu okna a spustí meranie času. Meranie sa zastaví v okamihu, keď užívateľ stlačí
+        rovnakú klávesu. Ak užívateľ stlačí niečo iné, program to bude ignorovať. Napokon program vypíše zmeraný
+        čas, ktorý uplynie od vypísania po stlačenie rovnakej klávesy. Po prvom meraní ide ďalšie meranie a po
+        ňom ďalšie, až kým používateľ program neukončí (použite cyklus). Návod na použitie musí mať pekný
+        dizajn, použite nejaké ASCII znaky na vytvorenie ohraničenia návodu.<br>
+
+        Príklad:<br>
+
+        Stlač: X …. 1,25 s stlačené X<br>
+
+        Stlač: Z ….. 33,12 s stlačené postupne ABCDEF…Z<br>
+
+        Koniec stlačené F10
+</section>
+<section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text"><a rel="noopener noreferrer"
+                class="student-link"
+                routerLink="../blok2-asm12">Návod
+            </a> a <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://ap.urk.fei.stuba.sk/blok-2-asm10">vzorový program
+            </a> na prácu s časom a knižnicou time.h</span>
+            </section>
+
+<section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text"><a rel="noopener noreferrer"
+                class="student-link"
+                routerLink="../blok2-asm13">Návod
+            </a> a <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://ap.urk.fei.stuba.sk/wp-content/uloha29conio.c.html">vzorový program
+            </a> na prácu s klávesnicou a knižnicou conio.h</span>
+            </section>
+<section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">Namiesto knižnice conio.h môžete použiť aj iné, napríklad curses.h, prípadne ncurses, používané v
+        Unixovom svete.</span>
+            </section>
+<section>
+                <span class="important-icon">💡 Tip: </span>
+                <span class="important-text">Win32 <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://ap.urk.fei.stuba.sk/wp-content/uloha29.htm">Vzorový program
+            </a> na detekciu kláves Alt, Ctrl a Shift vrátane rozpoznávania pohybu
+        myši.Pozn.: treba kompilovať ako C++ projekt, nestačí obyčajné C. Používa štandartné funkcie WinApi. Na
+        rozdiel od predošlého vie pracovať aj s myšou.</span>
+            </section>
+<section>
+                <span class="important-icon">💡 Tip pre macOS/Linux systémy: </span>
+                <span class="important-text">Vďaka vášmu iniciatívnemu kolegovi pridávame experimentálny support pre
+        macOS/Linux k Tipu2. Môžete použiť <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://ap.urk.fei.stuba.sk/wp-content/kbhit.c">túto
+            </a> implementáciu funkcie kbhit(). Klávesy F1,F2 atď. vám však
+        nebudú fungovať, použite preto iné.</span>
+            </section>
+     <section class="space-y-4">
+            Zdroj:<br>
+            Snáď postačí tento
+            <a rel="noopener noreferrer"
+                class="student-link"
+                ruoterLink="../blok2-asm10">Vzorový program
+            </a>a popis funkcie 
+              <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx">GetAsyncKeyState() [msdn]
+            </a>. Kódy 
+             <a rel="noopener noreferrer"
+                class="student-link"
+                href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx">Virtual Key
+        [msdn].
+            </a>
+        </section>
+    </article>
+</main>

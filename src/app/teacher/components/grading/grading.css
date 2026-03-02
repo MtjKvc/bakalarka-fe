@@ -1,0 +1,43 @@
+@import "tailwindcss";
+.blok-select{
+    @apply px-3 py-2 rounded-lg font-bold text-sm transition-all border border-transparent hover:border-emerald-300 shadow-sm hover:shadow-md;
+}
+.assignment-head{
+    @apply px-3 py-3 text-center text-xs font-extrabold text-gray-700 uppercase border-b border-gray-200 min-w-[120px];
+}
+.assignment-head-mp{
+    @apply text-[10px] text-gray-400 font-normal bg-gray-200 px-1.5 py-0.5 rounded;
+}
+.assignment-head-added{
+    @apply  right-0 z-30 px-2 py-2 text-center text-xs font-extrabold text-gray-800 uppercase border-b border-l border-gray-300 bg-gray-200 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] min-w-[100px];
+}
+.student-collumn{
+    @apply sticky left-0 px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider bg-white z-30 shadow-sm max-w-[160px] md:max-w-none break-words;
+}
+.student-head{
+    @apply sticky left-0 px-6 py-3 text-left text-xs font-extrabold bg-gray-50 text-gray-700 uppercase tracking-wider shadow-sm max-w-[160px];
+}
+.assignment-data-added{
+    @apply right-0 z-10 px-4 py-3 text-center font-black text-emerald-900 bg-emerald-50 border-l border-gray-300 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]; 
+}
+.assignment-data{
+    @apply px-1 py-1 text-center border-r border-gray-100 h-12 relative;
+}
+.assignment-note{
+    @apply hidden group-hover:block absolute right-0 top-full mt-2 w-48 p-3 bg-gray-200 text-xs rounded-lg shadow-xl z-50 whitespace-normal break-words pointer-events-none duration-200;
+}
+.assignment-note-write-text{
+    @apply w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none text-gray-700;
+}
+.grading-button-layout{
+    @apply flex overflow-x-auto gap-4 w-full;
+}
+.grading-table-data{
+    @apply w-full h-full flex items-center justify-center transition-colors;
+}
+.empty-note-button{
+    @apply absolute right-1 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500 group-hover/cell:opacity-100 transition-opacity p-1 z-10;
+}
+.note-button{
+    @apply w-4 h-4 text-emerald-400 hover:text-emerald-500 transition-colors cursor-help;
+}

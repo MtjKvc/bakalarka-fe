@@ -1,0 +1,65 @@
+<main class="main-student">
+    <article
+        class="assignment">
+        <h1 class="student-page-h1-title">
+            Základná práca s časom
+        </h1>
+        <section>
+            Všetko, čo potrebujeme pre prácu s časom je pripravené v knižnici time.h<br>
+
+            Na zmeranie času, ktorý procesor spotreboval na nejaký proces s výhodou použijeme funkciu <strong
+                class="text-green-400">clock();</strong>,
+            deklarovanú v <strong class="text-green-400">time.h</strong>. Funkcia vráti uplynutý čas procesora. Typické
+            použitie tejto funkcie ilustruje
+            nasledujúci príklad. Funkciu zavoláme na začiatku a na konci intervalu, ktorého dĺžku chceme merať a obe
+            hodnoty odčítame. Tým zistíme, koľko hodinových tikov procesor za daný interval spravil. Lenže nie na každom
+            systéme je počet tikov za sekundu rovnaký. Preto je zadefinovaná konštanta <strong
+                class="text-green-400">CLOCKS_PER_SEC</strong>, ktorou musíme
+            vypočítaný rozdiel vydeliť. Tým dostaneme priamo čas v sekundách.
+        </section>
+        <div
+            class="copy-code">
+            <pre #time>
+
+
+#include &lg;time.h&gt;
+clock_t Start, Koniec;      // premenne typu clock_t
+float Trvanie;              // tu bude vysledok merania
+
+Start = clock();
+/* tuto nieco robime, co treba zmerat */
+Koniec = clock();
+
+// Vypocet dlzky trvania
+
+Trvanie = (float)(Koniec - Start) / CLOCKS_PER_SEC; 
+
+            </pre>
+            <app-copy-button [sourceElement]="time"></app-copy-button>
+        </div>
+        <section class="space-y-4">
+            Rôzne počítače a rôzne operačné systémy sa podstatne líšia v sledovaní procesorového času. Rozlíšenie býva
+            obvykle medzi stotinami až milióntinami sekundy. Aj implementácia premenných býva rôzna, preto je
+            zadefinovaný špeciálny typ clock_t, ktorý je na niektorých počítačoch ekvivalentný s typom <strong class="text-green-400">long int</strong> a
+            konštanta <strong class="text-green-400">CLOCKS_PER_SEC</strong> je tiež celočíselná. Na iných systémoch
+            môžu byť obe typu <strong class="text-green-400">float</strong>.<br>
+
+
+
+            Makro: <strong class="text-green-400">int CLOCKS_PER_SEC</strong><br>
+
+            Hodnota tejto konštanty predstavuje počet hodinových tikov za sekundu meraných funkciou clock.<br>
+            Datový typ: <strong class="text-green-400">clock_t</strong><br>
+
+            Toto je typ hodnoty, ktorú vracia funkcia <strong class="text-green-400">clock</strong> Hodnoty premenných
+            typu <strong class="text-green-400">clock_t</strong> sa udávajú v počte tikov
+            hodín.<br>
+            Funkcia:<strong class="text-green-400">clock_t clock (void)</strong> <br>
+
+            Táto funkcia vracia uplynutý čas procesora.<br>
+
+            Pozor: najprv sa snažte program pochopiť, potom si naštudujte ako dané funkcie fungujú v msdn a až potom ich
+            použite vo vlastnom programe.<br>
+        </section>
+    </article>
+</main>

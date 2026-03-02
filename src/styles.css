@@ -1,1 +1,185 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+body {
+    background-color: black;
+}
+@layer components {
+.main-student {
+    @apply px-4 sm:px-6 lg:px-12 py-8 space-y-16;
+}
+
+.student-info-block {
+    @apply bg-gray-700/10 text-white text-base sm:text-lg p-4 sm:p-6 backdrop-blur-xs rounded-md border border-gray-500 leading-relaxed space-y-4 max-w-5xl mx-auto;
+}
+
+.student-page-h1-title {
+    @apply text-green-500 text-3xl sm:text-4xl md:text-5xl font-bold text-center mx-auto drop-shadow-[0_0_1px_#00ff00] max-w-full;
+}
+
+.student-page-h2-title{
+    @apply text-green-500 text-2xl font-semibold;
+}
+.student-assignment-point{
+    @apply text-green-500 text-2xl font-semibold;
+}
+
+.student-page-h3-title {
+    @apply text-green-500 text-lg font-semibold;
+}
+.student-link{
+    @apply inline-block text-center text-white font-semibold bg-green-600 hover:bg-green-500 active:bg-green-800 px-1 py-1 rounded-md shadow-md transition duration-200;
+}
+.student-img{
+    @apply max-w-full h-auto mx-auto rounded-md;
+}
+.important-div{
+    @apply bg-[#111111] border-l-4 border-[#00ff00] p-4 rounded space-y-2;
+}
+.important-icon{
+    @apply font-bold text-[#00ef00] drop-shadow-[0_0_3px_#00ff00];
+}
+.important-text{
+    @apply drop-shadow-[0_0_1px_#00ff00];
+}
+.assignment{
+    @apply bg-green-600/10 text-white text-base sm:text-lg p-4 backdrop-blur-xs rounded-md border border-green-500 max-w-5xl mx-auto shadow-[0_0_5px_#00ff00] space-y-4;
+}
+.assignment-div{
+   @apply flex flex-wrap justify-between items-center mb-2;
+}
+.copy-text{
+   @apply bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whitespace-nowrap rounded-md border border-green-500;
+}
+.copy-text-spacing{
+    @apply flex items-center justify-between px-2 py-1 w-full;
+}
+.video-div
+{
+    @apply mx-auto w-full max-w-4xl aspect-video;
+}
+.video{
+    @apply w-full h-full rounded-xl shadow-lg;
+}
+.copy-code{
+    @apply bg-gray-900/20 text-white text-sm font-mono p-2 overflow-x-auto whitespace-nowrap rounded-md border border-green-500 flex items-center justify-between px-2 py-1;
+}
+.teacher-div{
+    @apply p-2 rounded-xl bg-white border border-gray-100 shadow-md font-sans h-full flex flex-col;
+}
+.teacher-div-line{
+    @apply flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-200 pb-3;
+}
+.teacher-bigger-title{
+    @apply text-3xl font-extrabold text-gray-800 mb-4 md:mb-0 flex items-center;
+}
+.teacher-icon{
+    @apply w-8 h-8 mr-3 text-emerald-600;
+}
+.teacher-icon-smaller{
+    @apply w-4 h-4 mr-2;
+}
+.teacher-no-data-row{
+ @apply px-6 py-4 text-center text-sm font-semibold text-gray-500 bg-gray-50;
+}
+.teacher-create-text{
+    @apply text-emerald-500 cursor-pointer hover:underline;
+}
+.green-button{
+    @apply flex items-center px-2 py-2.5 bg-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:bg-emerald-700 transition duration-150 transform hover:scale-[1.02];
+}
+.red-button{
+    @apply text-red-500 items-center hover:text-red-700 p-2 rounded-full hover:bg-red-50;
+}
+.close-button{
+    @apply px-6 py-3 text-sm font-semibold bg-gray-100 rounded-lg hover:bg-gray-200;
+}
+.teacher-button-icon{
+    @apply w-5 h-5 mr-2;
+}
+.teacher-asc-desc-icon{
+    @apply ml-1 text-base font-bold text-emerald-600;
+}
+.teacher-loading{
+    @apply flex items-center justify-center p-3 bg-amber-50 border border-amber-300 text-amber-700 rounded-lg text-sm font-medium mb-4 animate-pulse
+}
+.search-bar{
+    @apply block w-full pl-10 text-black pr-10 py-2 placeholder-gray-500 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors;
+}
+.delete-input{
+    @apply block w-full px-4 py-3 placeholder-gray-500 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-lg font-mono tracking-wider bg-white
+}
+.error-message{
+    @apply p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold mb-4 text-sm;
+}
+.message{
+    @apply p-3 bg-emerald-50 border border-emerald-400 text-emerald-700 rounded-lg font-medium mb-4 text-sm flex items-center
+}
+.table-div{
+    @apply overflow-x-auto bg-white rounded-lg shadow-xl mt-4 border border-gray-100;
+}
+.teacher-table{
+    @apply min-w-full divide-y divide-gray-200;
+}
+.table-head{
+    @apply px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider;
+}
+.table-head-center-text{
+    @apply px-6 py-3 text-center text-xs font-extrabold text-gray-700 uppercase tracking-wider;
+}
+.table-body{
+    @apply bg-white divide-y divide-gray-100;
+}
+.table-hover{
+    @apply hover:bg-emerald-50/50 transition duration-150;
+}
+.table-header{
+    @apply bg-gray-50 sticky top-0 z-20 shadow-sm;
+}
+.table-filter{
+    @apply px-6 py-2 text-xs text-gray-700 italic font-medium;
+}
+.table-data{
+    @apply px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-700 cursor-pointer relative;
+    
+}
+.table-data-right{
+    @apply px-6 py-3 whitespace-nowrap text-sm text-right font-medium text-gray-700 cursor-pointer relative;
+}
+.select-drop-down{
+    @apply w-full min-w-[160px] p-2 text-xs border border-gray-200 rounded outline-none shadow-sm bg-white cursor-pointer;
+}
+.editing-table-data{
+    @apply w-full p-2 border-2 border-emerald-500 rounded outline-none;
+}
+.teacher-modal-bg{
+    @apply fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm;
+}
+.teacher-modal{
+    @apply bg-white rounded-2xl shadow-2xl w-full max-w-xl border-t-8 border-emerald-600;
+}
+.modal-title{
+    @apply text-3xl font-bold mb-6 border-b pb-2;
+}
+.modal-label{
+    @apply block text-sm font-semibold text-gray-700 mb-1;
+}
+.modal-input{
+    @apply block w-full px-4 py-3 placeholder-gray-500 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white ;
+}
+.modal-input-wrong{
+    @apply ring-red-500 ring-2 border-red-500 bg-white ;
+}
+.modal-input-wrong-text{
+    @apply text-red-500 text-sm mt-1;
+}
+.delete-modal-title{
+    @apply text-2xl font-bold text-red-700 mb-4;
+}
+.delete-modal{
+    @apply bg-white rounded-2xl shadow-2xl w-full max-w-lg border-t-8 border-red-700;
+}
+.modal-button-layout{
+    @apply flex justify-end space-x-3 pt-8;
+}
+
+}

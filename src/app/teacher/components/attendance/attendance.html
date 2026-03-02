@@ -1,0 +1,97 @@
+<div class="teacher-div">
+  
+  <div class="teacher-div-line">
+    <div class="attendance-layout">
+        <h1 class="teacher-bigger-title">
+        <svg class="teacher-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+        Prehľad Dochádzky
+        </h1>
+        
+        <div *ngIf="contextService.selectedExercise() as ex" 
+             class="selected-exercise">
+            {{ ex.sessionDay }} {{ ex.startTime }}
+        </div>
+    </div>    
+        <button (click)="toggleHistory()" 
+                class="show-button"
+                [ngClass]="showFullHistory ? 'show-whole-semester-button' : 'show-actual-week'">
+            
+            <svg *ngIf="!showFullHistory" class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <svg *ngIf="showFullHistory" class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+
+            {{ showFullHistory ? 'Zobraziť aktuálny týždeň' : 'Zobraziť celý semester' }}
+        </button>
+  </div>
+
+  <div #errorContainer tabindex="-1" *ngIf="error" class="error-message">
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="isLoading" class="flex justify-center items-center py-10">
+      <div class="flex flex-col items-center space-y-2">
+          <svg class="animate-spin h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span class="text-emerald-600 text-sm font-medium">Načítavam dáta...</span>
+      </div>
+  </div>
+
+  <ng-container *ngIf="contextService.selectedExercise(); else noSelection">
+    <div class="table-div" *ngIf="!isLoading">
+        
+        <table *ngIf="uniqueStudents.length > 0; else emptyState" class="teacher-table">
+        <thead class="table-header">
+            <tr>
+            <th class="student-head">Študent</th>
+            <th *ngFor="let session of uniqueSessions" class="attendance-week-th">
+                <div class="flex flex-col items-center">
+                <span class="table-head">
+                    {{ session.label }}
+                </span>
+                </div>
+            </th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+            <tr *ngFor="let student of uniqueStudents" class="table-hover">
+            <td class="student-collumn">
+                <div class="flex flex-col">
+                <span>{{ getStudentFullName(student) }}</span>
+                <span class="text-[10px] text-gray-400 font-normal" *ngIf="student.aisId != null">AIS: {{ student.aisId }}</span>
+                </div>
+            </td>
+            <td *ngFor="let session of uniqueSessions" 
+                (click)="onCellClick(student, session)"
+                class="attendance-week-data group">
+                
+                <ng-container *ngIf="getRecord(student.id, session.id) as record; else emptyCell">
+                <span class="attendance-week-data-bubbles"
+                        [ngClass]="getStatusColor(record.attendanceEnum)">
+                    {{ getTranslation(record.attendanceEnum) }}
+                </span>
+                </ng-container>
+                <ng-template #emptyCell>
+                <div class="h-6 w-full mx-auto max-w-[60px] rounded hover:bg-emerald-200/30 flex items-center justify-center text-gray-300">-</div>
+                </ng-template>
+            </td>
+            </tr>
+        </tbody>
+        </table>
+        <ng-template #emptyState>
+            <div class="flex flex-col items-center justify-center h-64 text-gray-500">
+                <svg class="w-12 h-12 mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                <p>Pre tento výber zatiaľ neexistujú žiadne záznamy.</p>
+            </div>
+        </ng-template>
+    </div>
+  </ng-container>
+
+  <ng-template #noSelection>
+    <div class="flex flex-col items-center justify-center flex-grow bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 min-h-[300px]">
+        <svg class="w-16 h-16 mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        <h4 class="text-xl font-bold text-gray-700">Žiadne cvičenie nie je vybraté</h4>
+        <p class="mt-2 text-sm">Prosím, kliknite na cvičenie v hornej lište pre zobrazenie dochádzky.</p>
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,56 @@
+<main class="main-student">
+    <article
+        class="assignment">
+        <h1 class="student-page-h1-title">
+            Handle
+        </h1>
+        <section>Handle sa vo Windows používa často. Je to číslo (obvykle 32-bitové), ktoré odkazuje na nejaký objekt.
+            Stretnete sa s handle ikony, handle kurzoru myši, alebo handle konzoly. Program získa handle volaním nejakej
+            funkcie Windows. Potom túto handle používa v ďalších funkciách, ak chce s daným objektom pracovať. Skutočná
+            hodnota handle je pre programátora v programe nevýznamná.</section>
+        <section>
+            Rozhranie grafického zariadenia — GDI (Graphical device interface) Funkcie tohoto rozhrania sa používajú na
+            kreslenie v klientskej oblasti okna.
+        </section>
+        <section>
+            Handle kontextu zariadenia (hdc) Je to akoby vstupenka okna pre prístup k funkciám GDI. Prakticky každá
+            funkcia vyžaduje ako jeden z parametrov hdc. Je to nejaká štruktúra, ktorú GDI interne udržiava. Niektoré z
+            hodnôt tejto štruktúry sú vlastne grafické “atribúty” (farba textu, pozadia,…).
+        </section>
+        <section>
+            Keď program potrebuje niečo vykresliť do klientskej oblasti, najprv musí získať handle kontextu zariadenia.
+            Windows vyplní internú štruktúru hdc prednastavenými hodnotami atribútov (čierny text, biele pozadie, atď.)
+            Istými funkciami je samozrejme možné tieto atribúty zmeniť. Pomocou inej funkcie vykreslíme čo potrebujeme a
+            potom by sme mali hdc zasa uvoľniť.
+        </section>
+        <h1 class="student-page-h1-title">
+            Maďarská notácia
+        </h1>
+        <section>
+            Niekedy sa názvy premenných tvoria tak, že názov začína malým písmenom (alebo písmenami), ktoré špecifikujú,
+            o aký typ premennej ide. Napríklad cZnak je premenná typu char, iNumber je typu integer, hInstance je
+            handle. Maďarská notácia má názov na počesť legendárneho programátora Microsoftu maďarského pôvodu Charlesa
+            Symonyiho.
+        </section>
+        <div
+            class="copy-code">
+            <pre #handle>
+c   char
+n   short
+i   int
+w   WORD (unsigned short)
+dw  DWORD (unsigned long)
+by  BYTE
+b   BOOL (int)
+f   BOOL (int)
+fp  float
+s   reťazec (char *)
+sz  reťazec ukončený nulou
+h   handle
+p   smerník (pointer)
+fn  funkcia
+            </pre>
+            <app-copy-button [sourceElement]="handle"></app-copy-button>
+        </div>
+    </article>
+</main>

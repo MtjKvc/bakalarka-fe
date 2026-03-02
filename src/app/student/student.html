@@ -1,0 +1,78 @@
+
+<canvas #canvasDigitalRain class="bg-digital-rain"></canvas>
+
+<div class="header">
+
+  <div class="title-div" >
+   <a routerLink="frontpage" class="title">Architektúra počítačov</a>
+  </div>
+
+  <button (click)="toggleMenu()" class="mobile-nav-hamburger-button">
+    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path *ngIf="!menuOpen" d="M4 6h16M4 12h16M4 18h16" />
+      <path *ngIf="menuOpen" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+
+  <nav class="pc-nav">
+    <ul class="flex space-x-6">
+            <li><a routerLink="first-exercise" routerLinkActive="pc-nav-link-active"
+             class="pc-nav-link">Úvodné cvičenie</a></li>
+      <li><a routerLink="blok-1" routerLinkActive="pc-nav-link-active"
+             class="pc-nav-link">Blok 1</a></li>
+      <li><a routerLink="blok-2" routerLinkActive="pc-nav-link-active"
+             class="pc-nav-link">Blok 2</a></li>
+      <li><a routerLink="blok-3" routerLinkActive="pc-nav-link-active"
+             class="pc-nav-link">Blok 3</a></li>
+      <li><a routerLink="questions" routerLinkActive="pc-nav-link-active"
+             class="pc-nav-link">Kontrolné otázky</a></li>
+      <li><a routerLink="manuals" routerLinkActive="pc-nav-link-active"
+             class="pc-nav-link">Návody</a></li>
+      <li><a routerLink="rules" routerLinkActive="pc-nav-link-active"
+             class="pc-nav-link">Pravidlá</a></li>
+      <li><a routerLink="contacts" routerLinkActive="pc-nav-link-active"
+             class="pc-nav-link">Kontakty</a></li>
+    </ul>
+  </nav>
+</div>
+
+<div
+  *ngIf="menuOpen"
+  (click)="toggleMenu()"
+  class="mobile-nav-site-blur">
+</div>
+
+<div
+  class="mobile-nav"
+  [ngClass]="{ 'translate-x-0': menuOpen, 'translate-x-full': !menuOpen }">
+
+  <div class="mobile-nav-button-div">
+    <button (click)="toggleMenu()" class="mobile-nav-close-button">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+           viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+
+     <a routerLink="first-exercise" (click)="toggleMenu()"
+       class="mobile-nav-link">Úvodné cvičenie</a>
+    <a routerLink="blok-1" (click)="toggleMenu()"
+       class="mobile-nav-link">Blok 1</a>
+    <a routerLink="blok-2" (click)="toggleMenu()"
+       class="mobile-nav-link">Blok 2</a>
+    <a routerLink="blok-3" (click)="toggleMenu()"
+       class="mobile-nav-link">Blok 3</a>
+    <a routerLink="questions" (click)="toggleMenu()"
+       class="mobile-nav-link">Kontrolné otázky</a>
+    <a routerLink="manuals" (click)="toggleMenu()"
+       class="mobile-nav-link">Návody</a>
+    <a routerLink="rules" (click)="toggleMenu()"
+       class="mobile-nav-link">Pravidlá</a>
+    <a routerLink="contacts" (click)="toggleMenu()"
+       class="mobile-nav-link">Kontakty</a>
+  </div>
+</div>
+
+<div>
+  <router-outlet></router-outlet>
+</div>

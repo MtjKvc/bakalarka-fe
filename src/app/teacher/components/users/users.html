@@ -1,0 +1,360 @@
+<div class="teacher-div">
+
+  <div class="teacher-div-line">
+    <h1 class="teacher-bigger-title">
+      <svg class="teacher-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+        </path>
+      </svg>
+      Správa Používateľov
+    </h1>
+    <button class="green-button" (click)="onCreateUserClick()">
+      <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+      </svg>
+      Pridať Používateľa
+    </button>
+  </div>
+
+  <div
+    *ngIf="isLoading && !isCreateModalOpen && !isDeleteConfirmModalOpen && !isExerciseModalOpen && !isRemoveExerciseConfirmOpen"
+    class="teacher-loading">
+    <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    Spracúvam požiadavku, prosím počkajte...
+  </div>
+
+  <div #errorContainer
+    *ngIf="error && !isCreateModalOpen && !isDeleteConfirmModalOpen && !isExerciseModalOpen && !isRemoveExerciseConfirmOpen"
+    class="error-message">{{ error }}</div>
+
+  <div
+    *ngIf="message && !isCreateModalOpen && !isDeleteConfirmModalOpen && !isExerciseModalOpen && !isRemoveExerciseConfirmOpen"
+    class="message">
+    <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    <span>{{ message }}</span>
+  </div>
+
+  <div class="table-div">
+    <table class="teacher-table">
+      <thead class="table-header">
+        <tr>
+          <th class="table-head">Meno a Priezvisko</th>
+          <th class="table-head">Email</th>
+          <th class="table-head">Rola</th>
+          <th class="table-head-center-text">Akcie</th>
+        </tr>
+      </thead>
+      <tbody class="table-body">
+
+        <tr *ngFor="let user of users" class="table-hover">
+
+          <td class="table-data" [ngClass]="{'z-10': isEditing(user.id, 'fullName')}"
+            (dblclick)="onCellEdit(user, 'fullName')" longPress (longPress)="onCellEdit(user, 'fullName')">
+            <ng-container *ngIf="isEditing(user.id, 'fullName'); else viewName">
+              <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(user)" (keydown.enter)="onCellSave(user)"
+                type="text" class="editing-table-data" />
+            </ng-container>
+            <ng-template #viewName>{{ user.fullName }}</ng-template>
+          </td>
+
+          <td class="table-data" [ngClass]="{'z-10': isEditing(user.id, 'email')}"
+            (dblclick)="onCellEdit(user, 'email')" longPress (longPress)="onCellEdit(user, 'email')">
+            <ng-container *ngIf="isEditing(user.id, 'email'); else viewEmail">
+              <input #editInput [(ngModel)]="editingValue" (blur)="onCellSave(user)" (keydown.enter)="onCellSave(user)"
+                type="email" class="editing-table-data" />
+            </ng-container>
+            <ng-template #viewEmail>{{ user.email }}</ng-template>
+          </td>
+
+          <td class="table-data">
+            <select [ngModel]="user.roleEnum" (ngModelChange)="onRoleChange(user, $event)" class="select-drop-down">
+              <option *ngFor="let role of availableRoles" [value]="role">{{ role }}</option>
+            </select>
+          </td>
+
+          <td class="table-data-right">
+
+            <button (click)="onOpenExerciseModal(user)" title="Spravovať cvičenia" class="exercise-button">
+              <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+              </svg>
+            </button>
+
+            <button (click)="onResetPassword(user)" title="Resetovať heslo a poslať email"
+              class="reset-password-button">
+              <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z">
+                </path>
+              </svg>
+            </button>
+
+            <button (click)="onDeleteUserClick(user)" title="Vymazať používateľa" class="red-button">
+              <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                </path>
+              </svg>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="users.length === 0 && !isLoading && !error">
+          <td colspan="4" class="teacher-no-data-row ">
+            Žiadni používatelia. <span (click)="onCreateUserClick()" class="teacher-create-text">Vytvoriť nového.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div *ngIf="isExerciseModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">
+  <div class="teacher-modal" (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseExerciseModal()">
+    <div class="p-6 sm:p-8 overflow-y-auto">
+
+      <div class="flex justify-between items-center mb-6 border-b pb-2 border-emerald-300">
+        <div>
+          <h3 class="text-2xl sm:text-3xl font-bold text-gray-800">Cvičenia používateľa</h3>
+          <p class="text-emerald-600 font-semibold text-base sm:text-lg mt-1">{{ selectedUserForExercises?.fullName }}
+          </p>
+        </div>
+      </div>
+
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+      <div *ngIf="isLoading" class="teacher-loading">
+        <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Spracúvam požiadavku, prosím počkajte...
+      </div>
+
+      <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6">
+        <label class="block text-sm font-bold text-gray-700 mb-2">Pridať nové cvičenie</label>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <select [(ngModel)]="selectedExerciseIdToAdd" class="select-drop-down">
+            <option [ngValue]="null" disabled selected>Vyberte cvičenie zo zoznamu...</option>
+            <option *ngFor="let ex of availableExercises" [ngValue]="ex.id">
+              {{ getDayName(ex.firstSessionDate) }} - {{ ex.startTime | slice:0:5 }} ({{ ex.roomEnum }})
+            </option>
+          </select>
+          <button (click)="onAssignExercise()" [disabled]="!selectedExerciseIdToAdd || isLoading" class="green-button">
+            <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Pridať
+          </button>
+        </div>
+      </div>
+
+      <div class="table-div">
+        <table class="teacher-table">
+          <thead class="table-header">
+            <tr>
+              <th class="table-head">Deň</th>
+              <th class="table-head">Čas</th>
+              <th class="table-head">Miestnosť</th>
+              <th class="table-head-center-text"></th>
+            </tr>
+          </thead>
+          <tbody class="table-body">
+            <tr *ngFor="let assign of userAssignments" class="table-hover">
+              <td class="table-data">{{ getDayName(assign.exercise.firstSessionDate) }}</td>
+              <td class="table-data">{{ assign.exercise.startTime | slice:0:5 }}</td>
+              <td class="table-data">{{ assign.exercise.roomEnum }}</td>
+              <td class="table-data-right">
+                <button (click)="onOpenRemoveConfirm(assign)" [disabled]="isLoading" class="red-button"
+                  title="Odobrať cvičenie">
+                  <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-6 flex justify-end">
+        <button (click)="onCloseExerciseModal()" class="close-button">Zavrieť</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div *ngIf="isCreateModalOpen" (click)="onBackdropClick($event)"
+  class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl border-t-8 border-emerald-600"
+    (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseModal()">
+    <div class="p-8">
+      <h3 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2 border-emerald-300">Vytvoriť používateľa</h3>
+      <div *ngIf="error"
+        class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg font-bold shadow-sm text-sm whitespace-pre-wrap">
+        {{ error }}</div>
+      <div *ngIf="isLoading" class="teacher-loading">
+        <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Spracúvam požiadavku, prosím počkajte...
+      </div>
+
+      <form #userForm="ngForm" (ngSubmit)="onSubmitNewUser()">
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Meno a Priezvisko</label>
+          <input name="fullName" type="text" [(ngModel)]="newUser.fullName" required #nameInput="ngModel"
+            placeholder="Janko Hraško" class="modal-input"
+            [class.modal-input-wrong]="nameInput.invalid && (nameInput.dirty || nameInput.touched)">
+          <div *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)" class="modal-input-wrong-text">
+            <span *ngIf="nameInput.errors?.['required']">Meno je povinné.</span>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+          <input name="email" type="email" [(ngModel)]="newUser.email" required email #emailInput="ngModel"
+            placeholder="janko@example.com" class="modal-input"
+            [class.modal-input-wrong]="emailInput.invalid && (emailInput.dirty || emailInput.touched)">
+          <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="modal-input-wrong-text">
+            <span *ngIf="emailInput.errors?.['required']">Email je povinný.</span>
+            <span *ngIf="emailInput.errors?.['email']">Zadajte platný email.</span>
+          </div>
+        </div>
+        <div class="mb-6">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Rola</label>
+          <select name="roleEnum" [(ngModel)]="newUser.roleEnum" required #roleInput="ngModel" class="select-drop-down"
+            [class.modal-input-wrong]="roleInput.invalid && (roleInput.dirty || roleInput.touched)">
+            <option value="" disabled selected>Vyberte rolu...</option>
+            <option *ngFor="let role of availableRoles" [value]="role">{{ role }}</option>
+          </select>
+          <div *ngIf="roleInput.invalid && (roleInput.dirty || roleInput.touched)" class="text-red-500 text-sm mt-1">
+            Musíte vybrať rolu.
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" (click)="onCloseModal()" class="close-button">Zrušiť</button>
+          <button type="submit" [disabled]="isLoading" class="green-button">Vytvoriť</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isDeleteConfirmModalOpen" (click)="onBackdropClick($event)" class="teacher-modal-bg">
+  <div class="delete-modal" (click)="$event.stopPropagation()" (appCloseOnEsc)="onCloseDeleteConfirmModal()">
+    <div class="p-8">
+
+      <div class="flex items-center space-x-4 mb-6">
+        <svg class="w-8 h-8 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z">
+          </path>
+        </svg>
+        <h3 class="delete-modal-title">Potvrďte trvalé vymazanie</h3>
+      </div>
+
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+
+      <p class="text-gray-700 mb-4">
+        Naozaj chcete **natrvalo vymazať** používateľa:
+        <span class="font-bold text-red-600 block my-1">"{{ userToDelete?.fullName }}"</span>
+        <span class="text-sm text-gray-500 block">({{ userToDelete?.email }})</span>
+      </p>
+
+      <p class="text-sm text-gray-600 mb-4">
+        **Táto akcia je nezvratná.** Pre potvrdenie prosím napíšte presne slovo <span
+          class="font-mono bg-gray-200 px-2 py-0.5 rounded text-red-700 font-semibold">{{ deleteConfirmText }}</span> do
+        poľa nižšie:
+      </p>
+
+      <form (ngSubmit)="onConfirmDelete()">
+        <div class="mb-6">
+          <input type="text" [(ngModel)]="deleteConfirmationInput" name="deleteConfirm"
+            placeholder="Sem napíšte CONFIRM" class="delete-input">
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" (click)="onCloseDeleteConfirmModal()" class="close-button">
+            Zrušiť
+          </button>
+          <button type="submit" [disabled]="isLoading || deleteConfirmationInput.trim() !== deleteConfirmText"
+            class="red-button">
+            {{ isLoading ? 'Mažem...' : 'Vymazať natrvalo' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isRemoveExerciseConfirmOpen"
+  class="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+  <div
+    class="bg-white rounded-xl shadow-2xl w-full max-w-sm border-t-4 border-red-500 transform scale-100 transition-all"
+    (click)="$event.stopPropagation()">
+    <div class="p-6">
+
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="bg-red-100 p-2 rounded-full">
+          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.332 16c-.77 1.333.192 3 1.732 3z">
+            </path>
+          </svg>
+        </div>
+        <h3 class="delete-modal-title">Odobrať cvičenie?</h3>
+      </div>
+
+      <p class="text-sm text-gray-600 mb-4">
+        Naozaj chcete používateľovi odobrať toto cvičenie?
+      </p>
+
+      <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 mb-6 text-sm">
+        <div class="flex justify-between mb-1">
+          <span class="text-gray-500">Deň:</span>
+          <span class="font-bold text-gray-800">{{ getDayName(assignmentToRemove?.exercise?.firstSessionDate || '')
+            }}</span>
+        </div>
+        <div class="flex justify-between mb-1">
+          <span class="text-gray-500">Čas:</span>
+          <span class="font-bold text-gray-800 font-mono">{{ assignmentToRemove?.exercise?.startTime | slice:0:5
+            }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-500">Miestnosť:</span>
+          <span class="font-bold text-gray-800">{{ assignmentToRemove?.exercise?.roomEnum }}</span>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button (click)="onCloseRemoveConfirm()" class="close-button">
+          Zrušiť
+        </button>
+
+        <button (click)="onConfirmRemoveExercise()" [disabled]="isLoading" class="red-button">
+          <span *ngIf="isLoading" class="mr-2">
+            <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+          </span>
+          Áno, odobrať
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

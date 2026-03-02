@@ -1,0 +1,368 @@
+<main class="main-student">
+    <h1 class="student-page-h1-title">
+        Blok 1
+    </h1>
+    <article class="student-info-block">
+        <section>
+            Z nasledovných úloh neriešte všetky. Získať z nich môžete maximálne 10 bodov, čiže si vyberte takú
+            kombináciu,
+            aby ste dokopy získali aspoň 10.<br>
+            <strong>Úlohy prvého bloku kompilujete pomocou kompilátora v príkazovom riadku. Tak, ako v prípade úvodného
+                cvičenia.</strong><br>
+            Ak chcete použiť kompilátor na vlastnom počítači, stiahnit si gcc <a rel="noopener noreferrer"
+                class="student-link"
+                href="https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-12.0.0-ucrt-r3/winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64ucrt-12.0.0-r3.zip">tu.
+            </a> Súbor gcc.exe sa nachádza v adresári
+            mingw64\bin. Ideálne je pridať si adresár mingw64\bin do PATH a potom môžete gcc.exe používať odkiaľkoľvek.
+            Podrobnejší návod je v sekcii Návody.<br>
+            <strong>Všetky úlohy musia byť vypracované ako samostatné funkcie v jednom súbore.</strong> Na konci bloku
+            teda odovzdávate
+            len
+            jeden súbor podľa tohto vzoru:
+
+            <img src="images/uvod-blok1.png" alt="obrázok správneho odovzdania" width="938" height="403"
+                class="student-img">
+            Zadania je treba cvičiacim odovzdávať priebežne, po štvrtom týždni semestra už úlohy z tohto bloku
+            odovzdávať
+            nebude možné. V prípade čiastočného splnenia úlohy získate za danú úlohu menej bodov.<br>
+
+            <strong>Na získanie zápočtu potrebujete minimálne polovicu bodov z každého bloku.</strong>
+        </section>
+        <section class="important-div">
+            <span class="important-icon">⚠️ Dôležité: </span>
+            <span class="important-text"> Je kľúčové uvedomiť si, že Visual Studio Vám v zásade umožňuje
+                to isté, čo kompilátor gcc (úvodné cvičenie),
+                ale ponúka aj iné nástroje. V zásade sa však pri kompilácii deje vždy to isté - z Vášho zdrojového
+                súboru sa
+                vytvára súbor spustiteľný a vykonateľný počítačom.
+
+                Počítač vie pracovať len s jednotkami a nulami. Z „jeho pohľadu“ je všetko len postupnosť jednotiek a
+                núl,
+                napríklad 10101111000011000100. Preto aj keď z Vášho pohľadu pracujete s číslami alebo písmenami,
+                počítač
+                vždy „vidí“ len jednotky a nuly. Preto je úplne kľúčové, aby ste vedeli pracovať s <a
+                    rel="noopener noreferrer" class="student-link"
+                    href="https://sk.wikipedia.org/wiki/Dvojkov%C3%A1_%C4%8D%C3%ADseln%C3%A1_s%C3%BAstava">dvojkovou
+                    sústavou.
+                </a> </span>
+        </section>
+    </article>
+    <article class="assignment">
+        <div class="assignment-div">
+            <h2 class="student-page-h2-title">Úloha 1.1</h2><span class="student-assignment-point">2b</span>
+        </div>
+        <section>Napíšte program, ktorý zobrazí nasledovné dva vstupy:<br>
+            číslo 33777<br>
+            ASCII kód znaku 'X'<br>
+            v <strong>dvojkovej, desiatkovej a šestnástkovej sústave.</strong> Program musí fungovať tak, aby bolo
+            vstupy možné
+            meniť
+            (stačí
+            v zdrojovom súbore).</section>
+
+        <section>
+            <span class="important-icon">💡 Tip: </span>
+            <span class="important-text">Použite čo najmenší počet premenných; využite možnosti,
+                ktoré poskytuje funkcia <a rel="noopener noreferrer" class="student-link"
+                    href="https://alvinalexander.com/programming/printf-format-cheat-sheet/">printf
+                </a>, prevod do
+                dvojkovej
+                sústavy však budete musieť naprogramovať.</span>
+        </section>
+    </article>
+    <article class="assignment">
+        <div class="assignment-div">
+            <h2 class="student-page-h2-title">Úloha 1.2</h2><span class="student-assignment-point">2b</span>
+        </div>
+        <section>
+            Napíšte program, ktorý vykoná rotačný posun bitov doprava pre celé kladné číslo. Používateľ zadá číslo,
+            počet
+            bitov na posun (a ak chcete, smer posunu, ale stačí doprava).<br>
+
+            Príklad:<br>
+            Číslo 9 (v binárnej forme 1001) pri rotačnom posune doprava o 1 bit sa stane 1100.<br>
+        </section>
+        <section><br>
+            <span class="important-icon">💡 Tip: </span>
+            <span class="important-text">Rotačný posun bitov (tiež známy ako cyklický posun) je operácia,
+                pri ktorej sa bity v binárnom čísle
+                posúvajú o určitý počet miest doprava alebo doľava, pričom bity, ktoré “vypadnú” na jednom konci, sa
+                vrátia na
+                opačný koniec. Začnite teda operáciou bitového posunu. Pred programovaním si pár príkladov napíšte na
+                papier.
+            </span><br>
+            <span class="important-icon">💡 Tip: </span>
+            <span class="important-text">Ako použiť bitové operácie v jazyku C sa dozviete <a rel="noopener noreferrer"
+                    class="student-link" href="https://uim.fei.stuba.sk/wp-content/uploads/2020/04/p11.pdf">tu.
+                </a> Zaujímavé
+                video na túto tému je <a rel="noopener noreferrer" class="student-link"
+                    href="https://www.youtube.com/watch?v=igIjGxF2J-w">tu.
+                </a></span><br>
+            <span class="important-icon">💡 Tip: </span>
+            <span class="important-text">Použite dátový typ unsigned int (celé číslo bez
+                znamienka).</span>
+            <img src="images/uloha1.2.png" alt="int bit_count = sizeof(unsigned int) * 8;" class="student-img"
+                width="328" height="25">
+        </section>
+    </article>
+    <article class="assignment">
+        <div class="assignment-div">
+            <h2 class="student-page-h2-title">Úloha 1.3</h2><span class="student-assignment-point">2b</span>
+        </div>
+        Napíšte program, ktorý spočíta počet jednotiek (nastavených bitov) v binárnej reprezentácii zadaného čísla.<br>
+
+        Príklad:<br>
+        Vstup: 13 (binárne 1101)<br>
+        Výstup: 3 jednotky<br>
+
+        <span class="important-icon">💡 Tip: </span>
+        <span class="important-text">Využite bitový AND a bitový posun. Ako použiť bitové operácie v
+            jazyku C sa dozviete <a rel="noopener noreferrer" class="student-link"
+                href="https://uim.fei.stuba.sk/wp-content/uploads/2020/04/p11.pdf">tu.
+            </a> Zaujímavé video
+            na túto tému je <a rel="noopener noreferrer" class="student-link"
+                href="https://www.youtube.com/watch?v=igIjGxF2J-w">tu.
+            </a></span>
+    </article>
+    <article class="assignment">
+        <div class="assignment-div">
+            <h2 class="student-page-h2-title">Úloha 1.4</h2><span class="student-assignment-point">3b</span>
+        </div>
+        Napíšte program, ktorý zistí a vypíše na obrazovku strojové epsilon pre dátové typy float a double. Zároveň
+        vypíšte aj hodnoty __FLT_EPSILON__ a __DBL_EPSILON__ zadefinované vo float.h. Pripomenutie - slovné spojenie
+        dátový typ hovorí o tom, ako kompilátor „rozumie“ jednotkám a nulám, s ktorými pracujete. Identifikujete tak, či
+        pracujete s celými číslami, písmenami, reálnymi číslami a podobne.<br>
+
+        <strong>Na získanie plného počtu bodov musíte cvičiacemu vedieť vysvetliť, čo je to strojové epsilon a tiež
+            akúkoľvek
+            časť Vášho kódu.</strong>
+
+        <h3>Definícia:</h3>
+        Strojové epsilon je najmenšie také číslo, ktoré po pripočítaní k jednotke dá niečo iné ako jednotku.
+        Zjednodušene povedané, pomocou obmedzeného počtu jednotiek a núl viete vyjadriť veľmi veľmi veľa čísel, ale
+        stále je ich konečný počet. Preto sa zákonite stane, že „vedľa“ čísla jeden existuje aj také reálne číslo, ktoré
+        Váš počítač vyjadriť nevie.<br>
+
+        <h3>Iná definícia:</h3>
+        Strojové epsilon je „vzdialenosť“ medzi číslom 1 a jeho bezprostredným pravým susedom.<br>
+
+        Pracujeme v dvojkovej sústave (desiatková je v zátvorke):<br>
+
+        1 + 0,1 = 1,1 (1 + 1/2 = 1,5)<br>
+
+        1 + 0,01 = 1,01 (1 + 1/4 = 1,25)<br>
+
+        1 + 0,001 = 1,001 (1 + 1/8 = 1,125)<br>
+
+        potom kvôli obmedzenej presnosti počítača pri istom počte desatinných miest nastane situácia, že 1 + 0,0…001 = 1
+        (namiesto správneho 1,0…001). Potom to predošlé číslo 0,0…01 sa nazýva strojové epsilon. Je zrejmé, že na
+        rôznych počítačoch môže byť jeho hodnota rôzna. Strojové epsilon však nie je najmenšie číslo v danej
+        reprezentácii.<br>
+        <span class="important-icon">💡 Tip: </span>
+        <span class="important-text">Strojové epsilon hľadáte tak, že začnete deliť číslo jeden. Nedelíte však
+            desiatimi, ale dvomi, pretože
+            pracujeme v dvojkovej sústave!</span><br>
+        <span class="important-icon">💡 Tip: </span>
+        <span class="important-text">Porovnajte si výsledok s konštantami FLT_EPSILON a DBL_EPSILON, (alebo
+            __FLT_EPSILON__ a __DBL_EPSILON__)
+            zadefinovanými vo float.h.
+            Ak vám vypočítané hodnoty nesedia, skúste vypnúť všetky optimalizácie. Ak máte možnosť, vyskúšajte program
+            aj na
+            inej platforme ako Win32/Intel.</span><br>
+        <span class="important-icon">💡 Tip: </span>
+        <span class="important-text">Ak vám to stále nevychádza, možno nájdete vysvetlenie <a rel="noopener noreferrer"
+                class="student-link" routerLink="../blok1-epsilon">tu.
+            </a></span>
+    </article>
+    <article class="assignment">
+        <div class="assignment-div">
+            <h2 class="student-page-h2-title">Úloha 1.5</h2><span class="student-assignment-point">4b</span>
+        </div>
+        Napíšte program na výpočet funkcie sin(x) alebo cos(x) pomocou rozvoja do Taylorovho radu v okolí bodu 0. Inými
+        slovami, budete programovať funkciu sínus alebo kosínus sami, bez toho, aby ste použili iné existujúce riešenie.
+        Uhly môžete zadávať v stupňoch alebo v radiánoch.<strong> Program musí fungovať pre akékoľvek vstupy, napr.
+            -4500° alebo
+            +8649°.</strong> Funkcia bude mať dva argumenty:<br>
+        float sinus(float radians, float epsilon);<br>
+
+        Na Vašu vlastnú implementáciu použite jeden z nasledovných vzťahov (stačí programovať buď sínus alebo kosínus,
+        netreba obe):<br>
+        <img src="images/uloha1.5-1.png" alt="Rád sin(x) a cos(x)" class="student-img" width="1024" height="284">
+        <strong>Aby ste získali plný počet bodov, funkcia musí fungovať správne pre akýkoľvek vstupný uhol (pozri tretí
+            Tip.).
+            Správnosť Vašich výsledkov si viete skontrolovať porovnaním s výsledkami, čo Vám dá bežná
+            kalkulačka.</strong><br>
+        <span class="important-icon">💡 Tip: </span>
+        <span class="important-text">Samozrejme, že nemôžete počítať súčet nekonečného radu donekonečna. Vidíte (ak nie,
+            tak si pozrite v
+            programe), že členy sa stále zmenšujú, takže isto raz nastane taká situácia, že keď pripočítate ďalší člen,
+            výsledok to už nijako nezmení (viď úloha 1.3 - strojové epsilon). Výpočet však môžete skončiť ešte skôr -
+            keď sa
+            výsledok v dvoch po sebe idúcich iteráciách zmení o menej ako epsilon (vopred zadané, dostatočne malé číslo,
+            napr. 0.000001).</span><br>
+        <span class="important-icon">💡 Tip: </span>
+        <span class="important-text">Je dôležité uvedomiť si, že epsilon nevyjadruje presnosť vypočítanej
+            aproximácie.</span><br>
+        <span class="important-icon">💡 Tip: </span>
+        <span class="important-text">Uvedomte si, že uvedené rady aproximujú dobre len v okolí nuly, čo znamená, že pre
+            väčšie vstupné uhly
+            Vám to „prestane fungovať“ (viď. obrázok nižšie - čím väčší stupeň polynómu, tým lepšia
+            aproximácia).</span><br>
+        <img src="images/uloha1.5-2.png" alt="graf funkcií" class="student-img" width="290" height="291">
+        Pre ostatné argumenty využite periodicitu funkcie sínus, resp. kosínus.
+    </article>
+    <article class="assignment">
+        <div class="assignment-div">
+            <h2 class="student-page-h2-title">Úloha 1.6</h2><span class="student-assignment-point">4b</span>
+        </div>
+        Napíšte program na výpočet kontrolnej sumy (checksum) pre zadaný riadok tzv. IntelHex súboru.<br>
+
+        <strong>Na získanie plného počtu bodov musíte cvičiacemu vedieť vysvetliť aj jednotlivé časti IntelHex riadka
+            (viď.
+            dolu), a tiež akúkoľvek časť Vášho kódu.</strong><br>
+
+        <h3>Definícia:</h3><br>
+        Kontrolný súčet sa vypočíta ako dvojkový doplnok súčtu jednotlivých bajtov od začiatku riadku až po kontrolný
+        súčet.<br>
+
+        Príklad:<br>
+        Ak zadáte tento reťazec:<br>
+        <div class="copy-text">
+            <div class="copy-text-spacing">
+                <span #text1>:10010000214601360121470136007EFE09D21901XX</span>
+                <app-copy-button [sourceElement]="text1"></app-copy-button>
+            </div>
+        </div>
+
+        Musí vám vyjsť namiesto XX kontrolný súčet 40.<br>
+
+        Splnenie úlohy demonštrujte výpočtom kontrolných súm napr. pre tieto reťazce:<br>
+
+        <div class="copy-text">
+            <div class="copy-text-spacing">
+                <span #text2>:100010000C9445000C9445000C9445000C944500xx</span>
+                <app-copy-button [sourceElement]="text2"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text3>:100020000C9445000C9445000C9445000C944500xx</span>
+                <app-copy-button [sourceElement]="text3"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text4>:100030000C9445000C9445000C9445000C944500xx</span>
+                <app-copy-button [sourceElement]="text4"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text5>:100040000C9445000C9445000C9445000C944500xx</span>
+                <app-copy-button [sourceElement]="text5"></app-copy-button>
+            </div>
+        </div>
+        <section>
+            Čo je to Intel HEX formát?<br>
+
+            Intel HEX formát je bežný ASCII textový súbor, ktorého riadky tvoria tzv. záznamy, ktoré sú tvorené
+            hexadecimálnymi číslami (ak náhodou stále netušíte, čo je to ASCII, tak si to veľmi rýchlo vygooglite a
+            vstrebajte ;). Tie reprezentujú dáta v pamäti, či už konštanty, alebo strojový kód. Tento formát sa používa
+            na
+            prenos skompilovaných programov alebo dát do pamätí typu EPROM, FLASH, EEPROM a pod. Väčšina programovacích
+            zariadení tento formát podporuje.<br>
+        </section>
+        <section>
+            Každý riadok IntelHex súboru predstavuje jeden záznam a skladá sa zo šiestich častí:<br>
+
+            <strong class="text-green-400">:LLAAAATT[DD…]CC</strong><br>
+
+            <strong class="text-green-400">:</strong> Znak začiatku (start), jeden bajt, jeden ASCII znak dvojbodka
+            ':'.<br>
+            <strong class="text-green-400">LL </strong>Počet bajtov, dve hexa číslice. Predstavuje počet bajtov (párov
+            hexa znakov) v jednom zázname. Obvyklá
+            hodnota je 16 (0x10).<br>
+            <strong class="text-green-400">AAAA</strong> Adresa, štyri hexa znaky, predstavujú 16-bitovú adresu od
+            ktorej sa majú nasledujúce data ukladať do
+            pamäti. Adresa je v tvare big endian.<br>
+            <strong class="text-green-400">TT</strong> Typ záznamu, dva bajty - znaky od 00 do 05, určujú význam
+            nasledujúcich dát. Typ 00 sú čisté data, typ 01 je
+            koniec záznamu, posledný riadok. Ostatné sú špeciálne typy.<br>
+            <strong class="text-green-400">DD</strong> Dáta, postupnosť n bajtov samotných dát.<br>
+            <strong class="text-green-400">CC</strong> Kontrolný súčet (checksum), dva hexa znaky - je to dvojkový
+            doplnok súčtu hodnôt celého záznamu okrem polí 1
+            a 6 (: a kontrolný súčet).<br>
+        </section>
+        Príklad:<br>
+        <img src="images/uloha1.6-1.png" alt="obrázok Intel HEX formátu" class="student-img" width="300" height="97">
+        Takýto riadok (záznam) má nasledovný význam:<br>
+
+        <strong class="text-green-400">10</strong> (t.j. 16 dekadicky) je počet datových bajtov v zázname.<br>
+        <strong class="text-green-400">0100</strong> je adresa, na ktorú sa tieto dáta majú začať zapisovať.<br>
+        <strong class="text-green-400">00</strong> znamená záznam typu 00 (t.j. sú to čisté dáta).<br>
+        <strong class="text-green-400">2146</strong> … toto sú tie dáta.<br>
+        <strong class="text-green-400">40</strong> je kontrolný súčet celého záznamu.<br>
+
+        Výpočet kontrolného súčtu:<br>
+
+        10 + 01 + 00 + 00 + 21 + 46 + 01 + 36 + 01 + 21 + 47 + 01 + 36 + 00 + 7E + FE + 09 + D2 + 19 + 01 = 3C0<br>
+
+        Súčet mod 256: <strong class="text-green-400">C0</strong><br>
+        Komplement: <strong class="text-green-400">3F</strong><br>
+        Kontrolný súčet: <strong class="text-green-400">40</strong> (dvojkový doplnok je komplement + 1), čiže FF - C0 +
+        1, vyskúšajte si to na programátorskej
+        kalkulačke<br>
+
+        Príklad:<br>
+
+        Jednoduchý program pre mikropočítač Atmel AVR a jeho výsledný preklad v IntelHEX formáte:<br>
+        <img src="images/uloha1.6-2.png" alt="jednoduchý program pre mikropočítač" class="student-img" width="379"
+            height="516">
+        <div
+            class="copy-text">
+            <div class="copy-text-spacing w-full">
+                <span #text6>:100000000C942A000C9445000C9445000C94450077</span>
+                <app-copy-button [sourceElement]="text6"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text7>:100010000C9445000C9445000C9445000C9445004C</span>
+                <app-copy-button [sourceElement]="text7"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text8>:100020000C9445000C9445000C9445000C9445003C</span>
+                <app-copy-button [sourceElement]="text8"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text9>:100030000C9445000C9445000C9445000C9445002C</span>
+                <app-copy-button [sourceElement]="text9"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text10>:100040000C9445000C9445000C9445000C9445001C</span>
+                <app-copy-button [sourceElement]="text10"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text11>:100050000C94450011241FBECFE5D4E0DEBFCDBF18</span>
+                <app-copy-button [sourceElement]="text11"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text12>:1000600010E0A0E6B0E0EEEAF0E002C005900D92EC</span>
+                <app-copy-button [sourceElement]="text12"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text13>:10008000A036B107D9F710E0A0E6B0E001C01D92AC</span>
+                <app-copy-button [sourceElement]="text13"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text14>:10008000A036B107E1F80C9448000C940000CFE5CF</span>
+                <app-copy-button [sourceElement]="text14"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text15>:10009000D4E0DEBFCDBF80EF8ABB8FEF8BBB17BA3A</span>
+                <app-copy-button [sourceElement]="text15"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text16>:10009000D4E0DEBFCDBF80EF8ABB8FEF8BBB17BA3A</span>
+                <app-copy-button [sourceElement]="text16"></app-copy-button>
+            </div>
+            <div class="copy-text-spacing">
+                <span #text17>:00000001FF</span>
+                <app-copy-button [sourceElement]="text17"></app-copy-button>
+            </div>
+        </div>
+
+    </article>
+</main>

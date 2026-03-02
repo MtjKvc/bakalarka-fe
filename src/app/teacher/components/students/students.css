@@ -1,0 +1,4 @@
+@import "tailwindcss";
+.info-button{
+    @apply text-emerald-600 hover:text-emerald-800 p-2 rounded-full hover:bg-emerald-50 transition-colors;
+}

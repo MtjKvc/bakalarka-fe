@@ -1,0 +1,55 @@
+<main class="main-student">
+    <h1
+        class="student-page-h1-title">
+        Návody
+    </h1>
+    <article
+        class="student-info-block">
+        <section>
+            Ak chcete použiť kompilátor na súkromnom počítači, stiahnite si gcc <a rel="noopener noreferrer"
+                class="student-link"
+                href="https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-12.0.0-ucrt-r3/winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64ucrt-12.0.0-r3.zip">tu.
+            </a> Súbor gcc.exe sa nachádza v adresári
+            mingw64\bin. Ideálne je pridať si adresár mingw64\bin do PATH a potom môžete gcc.exe používať odkiaľkoľvek.
+            To spravíte takto:
+        </section>
+        <section>
+            <ol class="list">
+                <li> Otvorte “Nastavenia systému”:
+                    <ul class="list">
+                        <li> Kliknite pravým tlačidlom myši na Tento počítač alebo Počítač (alebo stlačte klávesy Windows +
+                    Pause/Break) a vyberte Vlastnosti.</li>
+                        <li>Alebo stlačte Windows + I, prejdite na Systém → O aplikácii → Systémové informácie → Rozšírené
+                    nastavenia systému.</li>
+                    </ul>
+                    </li>
+                <li>Kliknite na Rozšírené nastavenia systému.</li>
+                <li>V časti Rozšírené kliknite na tlačidlo Premenné prostredia.</li>
+                <li>Nájdite systémovú premennú Path:
+                    <ul class="list">
+                        <li>V časti Systémové premenné vyberte premennú Path a kliknite na Upraviť.</li>
+                    </ul>
+                   </li>
+                <li> Pridajte nový adresár:
+                    <ul class="list">
+                        <li>Kliknite na Nový a vložte cestu k adresáru, ktorý chcete pridať.</li>
+                        <li>Napríklad: C:\mingw64\bin.</li>
+                    </ul>
+                </li>
+                <li>Kliknite na OK, aby sa zmeny uložili.</li>
+                <li>Reštartujte terminál (príkazový riadok/PowerShell), aby sa zmeny prejavili.</li>
+            </ol>
+        </section>
+        <section>
+<h2 class="student-page-h2-title">Založenie projektu v MS Visual Studio</h2>
+        Kliknie na File/New/Project
+        <img class="student-img" src="images/manual1.png" alt="postup je 1." width="768" height="400">
+        2. Kliknite vľavo na Visual C++ a potom na Windows Console Application. Zvoľte si názov projektu a uložte si ho
+        do adresára Documents.
+        <img class="student-img" src="images/manual2.png" alt="postup je 2." width="768" height="439">
+        3. Aby ste mohli v MS Visual Studio bez problémov používať funkciu scanf je potrebné napísať riadok z obrázka
+        dolu presne na dané miesto.
+        <img class="student-img" src="images/manual3.png" alt="postup je 3." width="765" height="351">
+        </section>
+    </article>
+</main>

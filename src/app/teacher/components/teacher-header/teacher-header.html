@@ -1,0 +1,52 @@
+<header class="bg-white text-gray-800 h-[72px] w-full flex-none">
+  
+  <div class="flex items-center justify-between h-full px-2 md:px-4 w-full">
+    
+    <div class="flex items-center shrink-0 mr-2">
+      <button 
+        (click)="onToggleSidebar()" 
+        class="text-gray-500 hover:text-emerald-600 md:hidden p-2 rounded-full transition"
+      >
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+
+      <div class="hidden md:block text-2xl font-extrabold text-gray-900 tracking-tight ml-2">
+        Architektúra Počítačov
+      </div>
+      <div class="md:hidden text-lg font-bold text-gray-900 ml-1">
+        AP
+      </div>
+    </div>
+
+    <div class="flex-1 w-0 flex items-center justify-center md:justify-start mx-2 h-full">
+      <div class="flex items-center overflow-x-auto scrollbar-hide w-full h-full space-x-2 px-1">
+        
+        @for (ex of exercises; track ex.exerciseId) {
+          <button 
+            (click)="onExerciseClick(ex)"
+            class="flex flex-col items-center justify-center px-3 py-1 rounded-lg border transition-all duration-200 shrink-0 min-w-[60px]"
+            [ngClass]="{
+              'bg-emerald-600 text-white border-emerald-600 shadow-md': activeExerciseId === ex.exerciseId,
+              'bg-white text-gray-600 border-gray-200 hover:bg-gray-50': activeExerciseId !== ex.exerciseId
+            }"
+          >
+            <span class="text-[10px] uppercase font-bold opacity-80 leading-none mb-0.5">
+              {{ ex.sessionDay }}
+            </span>
+            <span class="text-xs font-bold leading-none">
+              {{ ex.startTime }}
+            </span>
+          </button>
+        }
+
+      </div>
+    </div>
+
+    <div class="flex items-center shrink-0 ml-1 gap-2">
+      <div class="hidden md:block w-64 lg:w-72">
+          <app-search-bar (studentSelected)="onStudentSelected($event)" *ngIf="showSearch"></app-search-bar>
+      </div>
+    </div>
+
+  </div>
+</header>

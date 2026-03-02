@@ -1,0 +1,5 @@
+@import "tailwindcss";
+.logs-search-bar-layout{
+    @apply flex flex-col gap-3 w-full items-center;
+    @apply lg:flex-row w-auto;
+}

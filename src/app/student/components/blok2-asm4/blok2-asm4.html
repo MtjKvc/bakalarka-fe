@@ -1,0 +1,35 @@
+<main class="main-student">
+    <article
+        class="assignment">
+        <h1 class="student-page-h1-title">
+            CPUID
+        </h1>
+        <section class="space-y-4">
+            Firma Intel po uvedení MMX inštrukcií zaviedla aj jednu novú inštrukciu (cpuid), ktorá umožnila rozpoznať
+            svoje nové procesory a využívať tak inštrukcie pre ne. Tým sa umožnila optimalizácia kódu.<br>
+
+            Táto jednoduchá asemblerovská inštrukcia umožňuje programátorovi získať mnoho informácií: výrobcu CPU (napr.
+            Intel, AMD, Cyrix,…), aké “extra” vlastnosti podporuje (napr. MMX, FPU, 3DNow,…) a ďalšie.<br>
+
+            Inštrukcia je k dispozícii od procesorov Pentium vyššie.<br>
+
+            Inštrukcia nemá žiadne parametre, pred volaním sa nastaví požadovaná funkcia zapísaním vhodného čísla do
+            EAX. Slovom “funkcia” sa tu myslí zjednodušene - čo chcete, aby pre Vás inštrukcia CPUID “urobila”. Vie
+            “robiť” viacero vecí; Vy si vopred volíte, čo od nej “chcete”.<br>
+
+            Funkcia 0 vracia Vendor String, reťazec 12 znakov identifikujúci výrobcu procesora. Prvé štyri znaky sú v
+            EBX, ďalšie v EDX a posledné štyri v ECX. V registri eax sa vráti najvyyššia funkcia, ktorú ešte môžeme
+            použiť. (12 chars = 3 x 4 bytes = 3 x 4 x 8 bits = 3 x 32 bits)<br>
+
+            Ďalšie funkcie, ktoré dostaneme zapísaním prísušného čísla do EAX pred volaním funkcie sú:<br>
+
+            Funkcia 1 vracia Signature<br>
+
+            Funkcia 2 vracia Config<br>
+
+            Funkcia 3 Serial Number<br>
+
+            Vyššie čísla sú rezervované.<br>
+        </section>
+    </article>
+</main>

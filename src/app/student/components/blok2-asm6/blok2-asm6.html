@@ -1,0 +1,36 @@
+<main class="main-student">
+    <article
+        class="assignment">
+        <h1 class="student-page-h1-title">
+            Rozdiely v kódovaniach slovenčiny
+        </h1>
+        <section>
+            Podľa medzinárodnej normalizačnej organizácie ISO je štandardom pre kódovanie stredoeurópskych jazykov norma
+            ISO 8859-2. Firma Microsoft si pre systém Windows vybrala svoje vlastné kódovanie, ktoré je prakticky
+            zhodné, až na kódy 8 znakov. Ich kódy sú uvedené v tabuľke:
+        </section>
+        <div
+            class="copy-code">
+            <pre #znaky>
+       ISO-8859-2     Windows-1250
+znak    hex dec         hex dec
+
+ Ľ      A5  165         BC  188
+ Š      A9  169         8A  138
+ Ť      AB  171         8D  141
+ Ž      AE  174         8E  142
+
+ ľ      B5  181         BE  190
+ š      B9  185         9A  154
+ ť      BB  187         9D  157
+ ž      BE  190         9E  158 
+            </pre>
+            <app-copy-button [sourceElement]="znaky"></app-copy-button>
+        </div>
+        <section>
+            Úloha vášho prekódovacieho programu spočíva v nahradení znakov s kódom v ľavom stĺpci kódmi z pravého
+            stĺpca. Napríklad slovo uši je na disku v súbore uložené ako postupnosť ASCII kódov v kódovaní ISO-8859-2
+            takto [75 B9 69]H, resp. (117 185 105)D a treba ju nahradiť postupnosťou [75 9A 69]H, resp. (117 154 105)D.
+        </section>
+    </article>
+</main>

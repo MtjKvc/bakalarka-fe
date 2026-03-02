@@ -1,0 +1,50 @@
+<div class="relative w-full max-w-md">
+
+    <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="teacher-icon-smaller" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+        </div>
+        
+        <input 
+            type="text" 
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearch($event)"
+            (focus)="onFocus()"
+            class="search-bar"
+            placeholder="Meno alebo AIS ID..."
+            autocomplete="off">
+
+        <div *ngIf="isLoading" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+            <svg class="animate-spin h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        </div>
+    </div>
+
+    <div *ngIf="showDropdown && (results.length > 0 || (searchTerm.length >= 1 && !isLoading))" 
+         class="absolute mt-1 w-full bg-white shadow-xl rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto max-h-60 focus:outline-none sm:text-sm z-50 animate-fade-in-down">
+        
+        <ul *ngIf="results.length > 0" class="divide-y divide-gray-100">
+            <li *ngFor="let student of results" 
+                (mousedown)="selectStudent(student)"
+                class="cursor-pointer select-none relative py-2 pl-3 pr-4 hover:bg-emerald-50 transition-colors flex items-center justify-between">
+                
+                <div class="flex flex-col">
+                    <span class="font-medium text-gray-900 block truncate">
+                        {{ student.fullName }}
+                    </span>
+                    <span class="text-xs text-gray-500" *ngIf="student.aisId">
+                        AIS ID: <span class="font-mono text-emerald-600 font-bold">{{ student.aisId }}</span>
+                    </span>
+                </div>
+            </li>
+        </ul>
+
+        <div *ngIf="results.length === 0 && !isLoading" class="py-3 px-4 text-center text-gray-500 text-sm italic">
+            Žiadni študenti sa nenašli.
+        </div>
+    </div>
+</div>

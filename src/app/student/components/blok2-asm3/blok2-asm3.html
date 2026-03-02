@@ -1,0 +1,486 @@
+<main class="main-student">
+    <article
+        class="assignment">
+        <h1 class="student-page-h1-title">
+            Assembler procesorov x86
+        </h1>
+        V tomto dokumente nájdete výber inštrukcií aj s popisom, ktoré budete potrebovať na riešenie úloh 2.1 a - d.
+        Zoznam nie je ani zďaleka kompletný, záujemcovia o hlbšie štúdium môžu čerpať napríklad z knihy Rudolf Marek:
+        Učíme se programovat v jazyce Assembler pro PC. Vydavateľstvo Computer Press, Brno, 2005.
+    </article>
+    <div class="list-container">
+        <article
+            class="assignment">
+            <h2 class="student-page-h2-title">
+                Podľa funkcie:
+            </h2>
+            <ul class="list">
+                <h3 class="student-page-h3-title">
+                    Presuny
+                </h3>
+                <li><a (click)="scrollTo('mov')" style="cursor: pointer;">MOV</a></li>
+                <h3 class="student-page-h3-title">
+                    Aritmeticko-logické
+                </h3>
+                <li><a (click)="scrollTo('add')" style="cursor: pointer;">ADD</a></li>
+                <li><a (click)="scrollTo('sub')" style="cursor: pointer;">SUB</a></li>
+                <li><a (click)="scrollTo('inc')" style="cursor: pointer;">INC</a></li>
+                <li><a (click)="scrollTo('dec')" style="cursor: pointer;">DEC</a></li>
+                <h3 class="student-page-h3-title">
+                    Posuny
+                </h3>
+                <li><a (click)="scrollTo('shl')" style="cursor: pointer;">SHL</a></li>
+                <li><a (click)="scrollTo('shr')" style="cursor: pointer;">SHR</a></li>
+                <h3 class="student-page-h3-title">
+                    Skoky
+                </h3>
+                <li><a (click)="scrollTo('cmp')" style="cursor: pointer;">CMP</a></li>
+                <li><a (click)="scrollTo('jg')" style="cursor: pointer;">JG</a></li>
+                <li><a (click)="scrollTo('jz')" style="cursor: pointer;">JE</a></li>
+                <li><a (click)="scrollTo('jz')" style="cursor: pointer;">JZ</a></li>
+                <li><a (click)="scrollTo('jmp')" style="cursor: pointer;">JMP</a></li>
+                <h3 class="student-page-h3-title">
+                    Špeciálne
+                </h3>
+                <li><a (click)="scrollTo('cpuid')" style="cursor: pointer;">CPUID</a></li>
+                <li><a (click)="scrollTo('nop')" style="cursor: pointer;">NOP</a></li>
+            </ul>
+        </article>
+        <article
+            class="assignment">
+            <h2 class="student-page-h2-title">
+                Podľa abecedy:
+            </h2>
+            <ul class="list">
+                <li><a (click)="scrollTo('add')" style="cursor: pointer;">ADD</a></li>
+                <li><a (click)="scrollTo('cmp')" style="cursor: pointer;">CMP</a></li>
+                <li><a (click)="scrollTo('cpuid')" style="cursor: pointer;">CPUID</a></li>
+                <li><a (click)="scrollTo('dec')" style="cursor: pointer;">DEC</a></li>
+                <li><a (click)="scrollTo('inc')" style="cursor: pointer;">INC</a></li>
+                <li><a (click)="scrollTo('jg')" style="cursor: pointer;">JG</a></li>
+                <li><a (click)="scrollTo('jz')" style="cursor: pointer;">JE</a></li>
+                <li><a (click)="scrollTo('jz')" style="cursor: pointer;">JZ</a></li>
+                <li><a (click)="scrollTo('jmp')" style="cursor: pointer;">JMP</a></li>
+                <li><a (click)="scrollTo('mov')" style="cursor: pointer;">MOV</a></li>
+                <li><a (click)="scrollTo('nop')" style="cursor: pointer;">NOP</a></li>
+                <li><a (click)="scrollTo('shl')" style="cursor: pointer;">SHL</a></li>
+                <li><a (click)="scrollTo('shr')" style="cursor: pointer;">SHR</a></li>
+                <li><a (click)="scrollTo('sub')" style="cursor: pointer;">SUB</a></li>
+            </ul>
+        </article>
+    </div>
+    <article id="mov"
+        class="assignment">
+        <h2 class="student-page-h2-title">MOV Move</h2>
+        <strong>Popis:</strong> Inštrukcia presunie obsah z jedného miesta na druhé. Najčastejšie sa vyskytujúca
+        inštrukcia. Procesor vlastne stále len niečo niekam presúva.
+        <div
+            class="copy-code">
+            <pre #mov>
+
+
+MOV ciel,zdroj ; ciel &lg;- zdroj
+
+Operandy:
+
+        reg, reg
+        reg, mem
+        mem, reg
+        reg, imm
+        mem, imm
+
+Príznaky:
+
+        O D I T S Z A P C
+
+Príklad:
+
+        MOV eax, 22    ; do registra EAX vlozime cislo 22
+        MOV ecx, 8     ; do registra ECX vlozime cislo 8
+        ADD eax, ecx   ; vypocitame EAX = EAX + ECX
+            </pre>
+            <app-copy-button [sourceElement]="mov"></app-copy-button>
+        </div>
+    </article>
+    <article id="add"
+        class="assignment">
+        <h2 class="student-page-h2-title">ADD Addition</h2>
+        <strong>Popis:</strong> Inštrukcia spočíta oba operandy a výsledok uloží do prvého z nich.
+        <div
+            class="copy-code">
+            <pre #add>
+
+
+ADD ciel,zdroj ; ciel = ciel + zdroj
+
+Operandy:
+
+        reg, reg
+        reg, mem
+        mem, reg
+        reg, imm
+        mem, imm
+
+Príznaky:
+
+        O D I T S Z A P C
+        + - - - + + + + +
+
+Príklad:
+
+        MOV eax, 22    ; do registra EAX vlozime cislo 22
+        MOV ecx, 8     ; do registra ECX vlozime cislo 8
+        ADD eax, ecx   ; vypocitame EAX = EAX + ECX
+
+            </pre>
+            <app-copy-button [sourceElement]="add"></app-copy-button>
+        </div>
+    </article>
+    <article id="sub"
+        class="assignment">
+        <h2 class="student-page-h2-title">SUB Subtraction</h2>
+        <strong>Popis:</strong> Inštrukcia odpočíta druhý operand od prvého a výsledok uloží do prvého z nich.
+        <div
+            class="copy-code">
+            <pre #sub>
+
+
+SUB ciel,zdroj ; ciel = ciel - zdroj
+
+Operandy:
+
+        reg, reg
+        reg, mem
+        mem, reg
+        reg, imm
+        mem, imm
+
+Príznaky:
+
+        O D I T S Z A P C
+        + + + + + +
+
+Príklad:
+
+        MOV eax, 22    ; do registra EAX vlozime cislo 22
+        MOV ecx, 8     ; do registra ECX vlozime cislo 8
+        SUB eax, ecx   ; vypocitame EAX = EAX - ECX
+
+            </pre>
+            <app-copy-button [sourceElement]="sub"></app-copy-button>
+        </div>
+    </article>
+    <article id="inc"
+        class="assignment">
+        <h2 class="student-page-h2-title">INC Increment by 1</h2>
+        <strong>Popis:</strong> Inštrukcia zväčší obsah operandu o jednotku. Je to rýchlejšie ako ADD zdroj,1.
+        <div
+            class="copy-code">
+            <pre #inc>
+
+
+INC zdroj ; zdroj = zdroj + 1
+
+Operandy:
+
+        reg
+        mem
+
+Príznaky:
+
+        O D I T S Z A P C
+        + + + + +
+
+Popis: Inštrukcia zväčší obsah operandu o jednotku. Je to rýchlejšie ako ADD zdroj,1.
+
+Príklad:
+
+        MOV eax, 22    ; do registra EAX vlozime cislo 22
+        INC eax        ; teraz EAX = 22 + 1
+
+            </pre>
+            <app-copy-button [sourceElement]="inc"></app-copy-button>
+        </div>
+    </article>
+    <article id="dec"
+        class="assignment">
+        <h2 class="student-page-h2-title">DEC Decrement by 1</h2>
+        <strong>Popis:</strong> Inštrukcia zmenší obsah operandu o jednotku. Je to rýchlejšie ako SUB zdroj,1.
+        <div
+            class="copy-code">
+            <pre #dec>
+
+
+DEC zdroj ; zdroj = zdroj - 1
+
+Operandy:
+
+        reg
+        mem
+
+Príznaky:
+
+        O D I T S Z A P C
+        + + + + +
+
+Príklad:
+
+        MOV eax, 22    ; do registra EAX vlozime cislo 22
+        SUB eax        ; teraz EAX = 22 - 1
+
+            </pre>
+            <app-copy-button [sourceElement]="dec"></app-copy-button>
+        </div>
+    </article>
+    <article id="shl"
+        class="assignment">
+        <h2 class="student-page-h2-title">SHL Shift Logical Left</h2>
+        <strong>Popis:</strong> Inštrukcia posunie register, alebo obsah pamäti o pocet miest doľava. Sprava sa doplní
+        nula a najvyšší bit “prepadne” do príznakového bitu CF (carry flag). Pozn.: pocet sa uloží v registri CL.
+        <div
+            class="copy-code">
+            <pre #shl>
+
+
+SHL zdroj,pocet ; zdroj = zdroj&lg;&lg;pocet
+
+Operandy:
+
+        reg,CL
+        mem,CL
+
+Príznaky:
+
+        O D I T S Z A P C
+        + + +
+
+Príklad:
+
+        MOV eax, 22    ; do registra EAX vlozime cislo 22
+        SHL eax, 1     ; teraz EAX = 22&lg;&lg;1, teda 44.
+            </pre>
+            <app-copy-button [sourceElement]="shl"></app-copy-button>
+        </div>
+    </article>
+    <article id="shr"
+        class="assignment">
+        <h2 class="student-page-h2-title">SHR Shift Logical Right</h2>
+        <strong>Popis:</strong> Inštrukcia posunie register, alebo obsah pamäti o pocet miest doľava. Sprava sa doplní
+        nula a najvyšší bit “prepadne” do príznakového bitu CF (carry flag). Pozn.: pocet sa uloží v registri CL.
+        <div
+            class="copy-code">
+            <pre #shr>
+
+
+SHR zdroj,pocet ; zdroj = zdroj>>pocet
+
+Operandy:
+
+        reg,CL
+        mem,CL
+
+Príznaky:
+
+        O D I T S Z A P C
+        + + +
+
+Príklad:
+
+        MOV eax, 22    ; do registra EAX vlozime cislo 22
+        SHR eax, 1     ; teraz EAX = 22>>1, teda 11.
+
+            </pre>
+            <app-copy-button [sourceElement]="shr"></app-copy-button>
+        </div>
+    </article>
+    <article id="cmp"
+        class="assignment">
+        <h2 class="student-page-h2-title">CMP Compare</h2>
+        <strong>Popis:</strong> Inštrukcia odpočíta druhý operand od prvého ale výsledok neuloží nikam, iba nastaví
+        príznaky podobne ako inštrukcia SUB. Používa sa pri rozhodovaní, obvykle nasleduje inštrukcia podmieneného
+        skoku.
+        <div
+            class="copy-code">
+            <pre #cmp>
+
+
+CMP ciel,zdroj ; ciel - zdroj
+
+Operandy:
+
+        reg, reg
+        reg, mem
+        mem, reg
+        reg, imm
+        mem, imm
+
+Príznaky:
+
+        O D I T S Z A P C
+        + + + + + +
+
+Príklad:
+
+        MOV eax, 22    ; do registra EAX vlozime cislo 22
+        MOV ecx, 8     ; do registra ECX vlozime cislo 8
+        CMP eax,ecx    ; porovnaj EAX a ECX
+        JZ niekam      ; ak su rovnake, skoc niekam 
+
+            </pre>
+            <app-copy-button [sourceElement]="cmp"></app-copy-button>
+        </div>
+    </article>
+    <article id="jz"
+        class="assignment">
+        <h2 class="student-page-h2-title">JZ/JE Jump if Zero / Jump if Equal</h2>
+        <strong>Popis:</strong> Inštrukcia vykoná skok na návestie ak je výsledok predošlej operácie nula. Presnejšie
+        povedané, ak ZF je nastavený skok sa vykoná. Nemusí to byť výsledok bezprostredne predošlej inštrukcie. Obvykle
+        sa používa v kombinácii s inštrukciou CMP. Vtedy to znamená, že oba jej operandy boli rovnaké. Preto sa táto
+        inštrukcia používa aj ako JE. Vygenerovaný kód je však rovnaký. Skok samotný procesor zrealizuje veľmi
+        jednoducho — presunie novú adresu do registra IP (instruction pointer).
+        <div
+            class="copy-code">
+            <pre #jmp1>
+
+
+JZ navestie ; if (ZF==1) goto navestie
+JE navestie ; if (ZF==1) goto navestie
+
+Operandy:
+
+        lab
+
+Príznaky:
+
+        O D I T S Z A P C
+
+Príklad:
+
+        MOV eax, 22    ; do registra EAX vlozime cislo 22
+        MOV ecx, 8     ; do registra ECX vlozime cislo 8
+        CMP eax,ecx    ; porovnaj EAX a ECX
+        JE niekam      ; ak su rovnake, skoc niekam
+        …            ; tu pokracuje program ak EAX != ECX
+        niekam: …    ; tu pokracuje program ak EAX == ECX
+
+            </pre>
+            <app-copy-button [sourceElement]="jmp1"></app-copy-button>
+        </div>
+    </article>
+    <article id="jg"
+        class="assignment">
+        <h2 class="student-page-h2-title">JG/JNLE Jump if Greater Than / Jump if Not Less Or Equal</h2>
+        <strong>Popis:</strong> Inštrukcia vykoná skok na návestie ak výsledok niektorej predošlej operácie nastaví
+        príznaky SF a OF na rovnakú hodnotu a nie je to nula. Obvykle sa používa v kombinácii s inštrukciou CMP. Vtedy
+        to znamená, že prvý jej operand je väčší (preto JG). To ale môžeme interpretovať aj tak, že nie je menší alebo
+        rovný a preto sa táto inštrukcia používa aj ako JNLE. Vygenerovaný kód je však rovnaký.
+        <div
+            class="copy-code">
+            <pre #jmp2>
+
+
+JG navestie ; if (SF==OF && ZF==0) goto navestie
+JNLE navestie ; if (SF==OF && ZF==0) goto navestie
+
+Operandy:
+
+        lab
+
+Príznaky:
+
+        O D I T S Z A P C
+
+Príklad:
+
+        MOV eax, 22    ; do registra EAX vlozime cislo 22
+        MOV ecx, 8     ; do registra ECX vlozime cislo 8
+        CMP eax,ecx    ; porovnaj EAX a ECX
+        JG niekam      ; ak je EAX > ECX, skoc niekam
+        …              ; tu pokracuje program ak EAX &lg;= ECX
+        niekam: …      ; tu pokracuje program ak EAX > ECX
+
+            </pre>
+            <app-copy-button [sourceElement]="jmp2"></app-copy-button>
+        </div>
+    </article>
+    <article id="jmp"
+        class="assignment">
+        <h2 class="student-page-h2-title">JMP Jump</h2>
+        <strong>Popis:</strong> Inštrukcia vykoná skok na návestie. Skok samotný procesor zrealizuje veľmi jednoducho —
+        presunie novú adresu do registra IP (instruction pointer).
+        <div
+            class="copy-code">
+            <pre #jmp3>
+JMP ciel ; goto ciel
+
+Operandy:
+
+        ciel
+
+Príznaky:
+
+        O D I T S Z A P C
+
+Príklad:
+
+        JMP niekam     ; skoc niekam
+        …              ; toto preskocime
+        niekam: …      ; tu pokracuje program
+            </pre>
+            <app-copy-button [sourceElement]="jmp3"></app-copy-button>
+        </div>
+    </article>
+    <article id="cpuid"
+        class="assignment">
+        <h2 class="student-page-h2-title">CPUID CPU Identification</h2>
+        <strong>Popis:</strong> Inštrukcia uloží do registrov xxx, xxx a xxx 12 znakový reťazec, jednoznačne
+        identifikujúci výrobcu procesora. Podrobnejšie o inštrukcii CPUID…
+        <div
+            class="copy-code">
+            <pre #cpuid>
+CPUID ; ebx,ecx,edx = VendorString
+
+Operandy:
+
+Príznaky:
+
+        O D I T S Z A P C
+
+Príklad:
+
+        MOV eax, 0    ; do registra EAX vlozime 0
+        CPUID         ; volanie funkcie CPUid
+            </pre>
+            <app-copy-button [sourceElement]="cpuid"></app-copy-button>
+        </div>
+    </article>
+    <article id="nop"
+        class="assignment">
+        <h2 class="student-page-h2-title">
+            NOP No Operation</h2>
+        <strong>Popis:</strong> Inštrukcia, ktorá nerobí nič. Používa sa ako malé oneskorenie, doladenie časových
+        slučiek a pod.
+        <div
+            class="copy-code">
+            <pre #nop>
+NOP ; nerobim nic
+
+Operandy:
+
+        žiadne
+
+Príznaky:
+
+        O D I T S Z A P C
+        - - - - - - - - -
+
+Príklad:
+
+        OUT 44, AX    ; na port 44 zapisem obsah registra AX
+        NOP           ; chvilu pockam, lebo viem, ze je pomaly
+        OUT 44, BX    ; na port 44 zapisem druhe cislo z registra BX 
+            </pre>
+            <app-copy-button [sourceElement]="nop"></app-copy-button>
+        </div>
+    </article>
+</main>
