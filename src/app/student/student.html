@@ -1,10 +1,9 @@
-
 <canvas #canvasDigitalRain class="bg-digital-rain"></canvas>
 
-<div class="header">
+<div class="header" >
 
-  <div class="title-div" >
-   <a routerLink="frontpage" class="title">Architektúra počítačov</a>
+  <div class="title-div">
+    <a routerLink="frontpage" class="title">Architektúra počítačov</a>
   </div>
 
   <button (click)="toggleMenu()" class="mobile-nav-hamburger-button">
@@ -14,62 +13,60 @@
     </svg>
   </button>
 
-  <nav class="pc-nav">
+  <nav class="pc-nav" *transloco="let t; read: 'student'">
     <ul class="flex space-x-6">
-            <li><a routerLink="first-exercise" routerLinkActive="pc-nav-link-active"
-             class="pc-nav-link">Úvodné cvičenie</a></li>
-      <li><a routerLink="blok-1" routerLinkActive="pc-nav-link-active"
-             class="pc-nav-link">Blok 1</a></li>
-      <li><a routerLink="blok-2" routerLinkActive="pc-nav-link-active"
-             class="pc-nav-link">Blok 2</a></li>
-      <li><a routerLink="blok-3" routerLinkActive="pc-nav-link-active"
-             class="pc-nav-link">Blok 3</a></li>
-      <li><a routerLink="questions" routerLinkActive="pc-nav-link-active"
-             class="pc-nav-link">Kontrolné otázky</a></li>
-      <li><a routerLink="manuals" routerLinkActive="pc-nav-link-active"
-             class="pc-nav-link">Návody</a></li>
-      <li><a routerLink="rules" routerLinkActive="pc-nav-link-active"
-             class="pc-nav-link">Pravidlá</a></li>
-      <li><a routerLink="contacts" routerLinkActive="pc-nav-link-active"
-             class="pc-nav-link">Kontakty</a></li>
+      <li><a routerLink="first-exercise" routerLinkActive="pc-nav-link-active" class="pc-nav-link"> {{
+          t('first_exercise') }}</a></li>
+      <li><a routerLink="blok-1" routerLinkActive="pc-nav-link-active" class="pc-nav-link"> {{ t('block_1') }}</a></li>
+      <li><a routerLink="blok-2" routerLinkActive="pc-nav-link-active" class="pc-nav-link"> {{ t('block_2') }}</a></li>
+      <li><a routerLink="blok-3" routerLinkActive="pc-nav-link-active" class="pc-nav-link"> {{ t('block_3') }}</a></li>
+      <li><a routerLink="questions" routerLinkActive="pc-nav-link-active" class="pc-nav-link"> {{ t('questions') }}</a>
+      </li>
+      <li><a routerLink="manuals" routerLinkActive="pc-nav-link-active" class="pc-nav-link"> {{ t('manuals') }}</a></li>
+      <li><a routerLink="rules" routerLinkActive="pc-nav-link-active" class="pc-nav-link"> {{ t('rules') }}</a></li>
+      <li><a routerLink="contacts" routerLinkActive="pc-nav-link-active" class="pc-nav-link"> {{ t('contacts') }}</a>
+      </li>
+      <li class="flex space-x-2 pl-4 border-l border-gray-500">
+        <button *ngFor="let lang of availableLangs" 
+                (click)="changeLanguage(lang)"
+                [ngClass]="lang === activeLang ? 'font-bold text-green-400' : 'opacity-70 hover:opacity-100'"
+                class="uppercase cursor-pointer transition-all">
+          {{ lang }}
+        </button>
+      </li>
     </ul>
   </nav>
 </div>
 
-<div
-  *ngIf="menuOpen"
-  (click)="toggleMenu()"
-  class="mobile-nav-site-blur">
+<div *ngIf="menuOpen" (click)="toggleMenu()" class="mobile-nav-site-blur">
 </div>
 
-<div
-  class="mobile-nav"
-  [ngClass]="{ 'translate-x-0': menuOpen, 'translate-x-full': !menuOpen }">
+<div class="mobile-nav" [ngClass]="{ 'translate-x-0': menuOpen, 'translate-x-full': !menuOpen }">
 
-  <div class="mobile-nav-button-div">
+  <div class="mobile-nav-button-div" *transloco="let t; read: 'student'">
     <button (click)="toggleMenu()" class="mobile-nav-close-button">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-           viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M6 18L18 6M6 6l12 12"/>
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
 
-     <a routerLink="first-exercise" (click)="toggleMenu()"
-       class="mobile-nav-link">Úvodné cvičenie</a>
-    <a routerLink="blok-1" (click)="toggleMenu()"
-       class="mobile-nav-link">Blok 1</a>
-    <a routerLink="blok-2" (click)="toggleMenu()"
-       class="mobile-nav-link">Blok 2</a>
-    <a routerLink="blok-3" (click)="toggleMenu()"
-       class="mobile-nav-link">Blok 3</a>
-    <a routerLink="questions" (click)="toggleMenu()"
-       class="mobile-nav-link">Kontrolné otázky</a>
-    <a routerLink="manuals" (click)="toggleMenu()"
-       class="mobile-nav-link">Návody</a>
-    <a routerLink="rules" (click)="toggleMenu()"
-       class="mobile-nav-link">Pravidlá</a>
-    <a routerLink="contacts" (click)="toggleMenu()"
-       class="mobile-nav-link">Kontakty</a>
+    <a routerLink="first-exercise" (click)="toggleMenu()" class="mobile-nav-link"> {{ t('first_exercise') }}</a>
+    <a routerLink="blok-1" (click)="toggleMenu()" class="mobile-nav-link"> {{ t('block_1') }}</a>
+    <a routerLink="blok-2" (click)="toggleMenu()" class="mobile-nav-link"> {{ t('block_2') }}</a>
+    <a routerLink="blok-3" (click)="toggleMenu()" class="mobile-nav-link"> {{ t('block_3') }}</a>
+    <a routerLink="questions" (click)="toggleMenu()" class="mobile-nav-link"> {{ t('questions') }}</a>
+    <a routerLink="manuals" (click)="toggleMenu()" class="mobile-nav-link"> {{ t('manuals') }}</a>
+    <a routerLink="rules" (click)="toggleMenu()" class="mobile-nav-link"> {{ t('rules') }}</a>
+    <a routerLink="contacts" (click)="toggleMenu()" class="mobile-nav-link"> {{ t('contacts') }}</a>
+    <div class="flex justify-center space-x-6 mt-8 pt-4 border-t border-gray-700">
+      <button *ngFor="let lang of availableLangs" 
+              (click)="changeLanguage(lang)"
+              [ngClass]="lang === activeLang ? 'font-bold text-green-400 scale-110' : 'opacity-70'"
+              class="uppercase text-xl cursor-pointer transition-all">
+        {{ lang }}
+      </button>
+    </div>
   </div>
 </div>
 

@@ -1,11 +1,11 @@
-<main class="main-student">
+<main class="main-student" *transloco="let t; read: 'computer_architecture'">
     <h1
         class="student-page-h1-title">
         Architektúra počítačov
     </h1>
     <article
         class="assignment">
-        Pre záujemcov odporúčame tento turotiál na získanie dobrých základov v jazyku C:
+        {{ t('tutorial_intro') }}
         <div class="video-div"><iframe class="video"
                 src="https://www.youtube.com/embed/KJgsSFOSQv0" frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

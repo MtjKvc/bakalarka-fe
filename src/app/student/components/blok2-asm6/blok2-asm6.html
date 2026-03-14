@@ -1,13 +1,10 @@
-<main class="main-student">
+<main class="main-student" *transloco="let t; read: 'blok2-asm6'">
     <article
         class="assignment">
         <h1 class="student-page-h1-title">
-            Rozdiely v kódovaniach slovenčiny
+            {{ t('title') }}
         </h1>
-        <section>
-            Podľa medzinárodnej normalizačnej organizácie ISO je štandardom pre kódovanie stredoeurópskych jazykov norma
-            ISO 8859-2. Firma Microsoft si pre systém Windows vybrala svoje vlastné kódovanie, ktoré je prakticky
-            zhodné, až na kódy 8 znakov. Ich kódy sú uvedené v tabuľke:
+        <section class="space-y-4" [innerHTML]="t('info.intro')">
         </section>
         <div
             class="copy-code">
@@ -27,10 +24,7 @@ znak    hex dec         hex dec
             </pre>
             <app-copy-button [sourceElement]="znaky"></app-copy-button>
         </div>
-        <section>
-            Úloha vášho prekódovacieho programu spočíva v nahradení znakov s kódom v ľavom stĺpci kódmi z pravého
-            stĺpca. Napríklad slovo uši je na disku v súbore uložené ako postupnosť ASCII kódov v kódovaní ISO-8859-2
-            takto [75 B9 69]H, resp. (117 185 105)D a treba ju nahradiť postupnosťou [75 9A 69]H, resp. (117 154 105)D.
+        <section [innerHTML]="t('info.task')">
         </section>
     </article>
 </main>

@@ -1,11 +1,10 @@
-<main class="main-student">
+<main class="main-student" *transloco="let t; read: 'blok2-asm8'">
     <article
         class="assignment">
         <h1 class="student-page-h1-title">
-            Podpora pre Linux
+            {{ t('title') }}
         </h1>
-        Na Linuxe môžete použiť knižnicu Libsdl.<br>
-        1. stiahnutie a instalacia kniznic:<br>
+<span [innerHTML]="t('info.intro')"></span>
         <div
             class="copy-code">
             <pre #linux1>
@@ -13,7 +12,7 @@ sudo apt-get install libsdl2-dev libsdl2-mixer-dev
             </pre>
             <app-copy-button [sourceElement]="linux1"></app-copy-button>
         </div>
-        2. komplovanie a linkovanie:<br>
+<span [innerHTML]="t('info.compiling')"></span>
         <div
             class="copy-code">
             <pre #linux2>
@@ -21,7 +20,7 @@ gcc main.c -o main -lSDL2main -lSDL2 -lSDL2_mixer
             </pre>
             <app-copy-button [sourceElement]="linux2"></app-copy-button>
         </div>
-        Ukážkový program:<br>
+<span [innerHTML]="t('info.example')"></span>
            <div
             class="copy-code">
             <pre #linux3>
@@ -46,7 +45,7 @@ int main(int argc, char* argv[])
             </pre>
             <app-copy-button [sourceElement]="linux3"></app-copy-button>
         </div>
-        Ďalšie príkazy:<br>
+<span [innerHTML]="t('info.more_commands')"></span>
                    <div
             class="copy-code">
             <pre #linux4>

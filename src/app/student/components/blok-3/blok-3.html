@@ -1,16 +1,11 @@
-<main class="main-student">
+<main class="main-student" *transloco="let t; read: 'blok3'">
     <h1
         class="student-page-h1-title">
-        Blok 3
+        {{ t('title') }}
     </h1>
     <article
         class="student-info-block">
-        V treťom bloku cvičení budeme komunikovať naprieč internetom so serverom. Vašou úlohou bude naprogramovať
-        "klientský program" schopný posielať a prijímať textové správy. Jedná sa o jeden rozsiahlejší projekt, ktorý
-        budete riešiť počas celého tretieho bloku. V prvej fáze budete mať za úlohu pripojiť sa na server a
-        identifikovať sa svojím osobným číslom. Ďalej musíte vedieť prijať správu zo servera a zobraziť ju na obrazovke.
-        Ak sa Vám to podarí, tak Vás Morfeus osloví Vaším vlastným menom a zadá Vám úlohy, ktoré musíte splniť. Ak sa
-        Vám podarí všetky splniť, plný počet 12 bodov za tretí blok je Váš :).
+        <span [innerHTML]="t('info.description1')"></span>
     </article>
     <div class="video-div"><iframe class="video"
             src="https://www.youtube.com/embed/LI_4v__IVTg" frameborder="0"
@@ -20,71 +15,29 @@
     <article
         class="assignment">
 
-        <h2 class="student-page-h2-title">NUTNÝ MALÝ TEORETICKÝ ÚVOD</h2>
-        <section>
-            Komunikácia počítačov cez internet je veľmi zjednodušene povedané len posielanie jednotiek a núl z Vášho
-            počítača na počítač na druhej strane a opačne. Je to samozrejme oveľa sofistikovanejšie, no pre potreby
-            tohto
-            projektu Vám stačí vedieť, že budete komunikovať prostredníctvom protokolu TCP/IP, ktorý zabezpečuje, aby sa
-            Vaše jednotky a nuly dostali na počítač na druhej strane v poriadku.
+        <h2 class="student-page-h2-title">{{ t('info.theoryTitle') }}</h2>
+        <section [innerHTML]="t('info.theoryDesc1')">
+
         </section>
         <img class="student-img"src="images/blok3-1.jpeg" alt="klient-server">
-        <section>
-            Aby Váš počítač vedel, na ktorý počítač z miliónov strojov na celom svete má dáta poslať, musí existovať
-            nejaký
-            systém adresovania. Funguje to podobne ako pošta - obálka Vám príde na konkrétnu ulicu, do konkrétnej
-            schránky.
-            Z hľadiska tejto analógie je v prípade internetu ulica a číslo domu tzv. IP adresa, a konkrétna schránka v
-            rámci
-            domu sa nazýva port. Tak ako v paneláku býva viacero ľudí, tak aj vo Vašom počítači môže bežať viacero
-            aplikácií, ktoré prostredníctvom internetu komunikujú. Váš operačný systém preto musí vedieť, ktorej
-            aplikácii
-            má čo poslať. Práve na to slúži číslo portu.
+ <section [innerHTML]="t('info.theoryDesc2')">
         </section>
-        <section>
-            Teraz zistite Vašu IP adresu. Spustite si konzolu (program, v ktorom ste kompilovali úvodné zadanie
-            semestra) a
-            napíšte:<br>
-            ipconfig
-            Vo výpise viete nájsť IP adresu. Ako vidíte, skladá sa zo štyroch bajtov oddelených bodkami:<br>
-            192.168.0.132
+  <section [innerHTML]="t('info.theoryDesc3')">
         </section>
-        Ďalej si vyskúšajte príkaz ping. Pomocou neho viete otestovať funkčnosť servera, ktorý má takéto testovanie
-        povolené na svojej strane. Skúste otestovať napríklad:<br>
-        ping www.google.com<br>
-        Výstup bude vyzerať podobne tomuto (Všimnite si ako krátko celá operácia trvá. Jednotky a nuly sa dostanú z
-        Vášho počítača na server google-u a späť v zlomku sekundy):
+<span [innerHTML]="t('info.theoryDesc4')"></span>
         <img class="student-img" src="images/blok3-2.jpeg" alt="konzola príkaz ping">
     </article>
     <article
         class="assignment">
-        <h2 class="student-page-h2-title">ZÁKLADNÝ POHĽAD NA ZADANIE</h2>
-        <ol class="list">
-            <li>Pripojiť sa na server s IP adresou 147.175.115.34 na port 777 pomocou protokolu TCP.</li>
-            <li>Poslať úvodnú správu (zobraziť ju v konzole).</li>
-            <li>Prijať odpoveď (zobraziť ju v konzole).</li>
-            <li>Postupovať podľa ďalších príkazov prijatých v komunikácii so serverom. Komunikácia funguje tak, že vždy
-                po tom,
-                čo Vám server niečo pošle očakáva nejakú odpoveď od Vás.</li>
-        </ol>
-        <section>(bodové hodnotenie je komplexné a bude zhrnuté dolu, hodnotí sa celý projekt, štruktúra a funkčnosť
-            kódu,
-            vizuálna stránka, ako aj splnenie úloh)</section>
+        <h2 class="student-page-h2-title">{{ t('info.assignmentTitle') }}</h2>
+        <ol class="list space-y-2" [innerHTML]="t('info.assignmentDesc1')"></ol>
+
+        <section [innerHTML]="t('info.assignmentDesc2')"></section>
     </article>
     <article
         class="assignment">
-        <h2 class="student-page-h2-title">SOCKETY</h2>
-        <section>
-
-            Na komunikáciu cez internet z Vášho programu budete používať tzv. sockety, v OS Windows budeme používať
-            implementáciu Winsock. Podpora v rámci predmetu sa poskytuje výlučne pre Windows. Kto si však trúfa, môže
-            skúsiť
-            v operačnom systéme na báze Linux-u. Príklad na implementáciu socket komunikácie je <a rel="noopener noreferrer"
-                class="student-link"
-                href="https://www.linuxhowtos.org/data/6/client.c">tu.
-            </a> Vo Visual Studio
-            treba
-            pridať nasledovné knižnice:
+        <h2 class="student-page-h2-title">{{ t('tasks.sockets.title') }}</h2>
+        <section [innerHTML]="t('tasks.sockets.description1')">
         </section>
         <div
             class="copy-code">
@@ -97,28 +50,13 @@
         </pre>
 <app-copy-button [sourceElement]="text1"></app-copy-button>
         </div>
-        <section>
-            Ak pracujete v Dev-C++, musíte nalinkovať knižnice cez Tools -> Compiler Options a tam napísať
-            to,
-            čo je na <a rel="noopener noreferrer"
-                class="student-link"
-                href="http://ap.urk.fei.stuba.sk/wp-content/link_veci_k_devku.png">tomto
-            </a> screenshote.<br>
-
-            Ak pracujete v CLione, musíte si nalinkovať knižnice modifikovaním CMakeLists.txt a doplnit
-            target
-            libraries ako v <a rel="noopener noreferrer"
-                class="student-link"
-                href="http://ap.urk.fei.stuba.sk/wp-content/linkovanieVclione.png">tomto
-            </a> screenshote.
+        <section [innerHTML]="t('tasks.sockets.description2')">
         </section>
     </article>
     <article
         class="assignment">
-        <h2 class="student-page-h2-title">1. Úvodné nastavenia</h2>
-        <section>
-            Najprv treba nastaviť základné parametre štruktúr socketu, IP adresu servera a port, na ktorom
-            chcete komunikovať. Prejdite si každý riadok kódu, nepracujte len systémom "copy/paste".
+        <h2 class="student-page-h2-title">{{ t('tasks.step1.title') }}</h2>
+        <section [innerHTML]="t('tasks.step1.description')">
         </section>
         <div
             class="copy-code">
@@ -163,10 +101,8 @@ printf("getaddrinfo didn't fail…\n");
     </article>
     <article
         class="assignment">
-        <h2 class="student-page-h2-title">2. Pripojenie sa</h2>
-        <section>
-            V tejto časti kódu sa snažíme pripojiť na server spôsobom, ktorý sme definovali v časti
-            predošlej.
+        <h2 class="student-page-h2-title">{{ t('tasks.step2.title') }}</h2>
+        <section [innerHTML]="t('tasks.step2.description')">
         </section>
         <div
             class="copy-code">
@@ -215,13 +151,9 @@ Sleep(250);
     </article>
     <article
         class="assignment">
-        <h2 class="student-page-h2-title">3. Posielanie dát</h2>
-        <section>Pri posielaní dát v zásade pracujeme z reťazcami ako aj v predošlých blokoch. Posielame znaky,
-            čo sú
-            v konečnom dôsledku jednotky a nuly, ktoré server prijme. Musíte si zvoliť vhodnú dĺžku reťazca,
-            za
-            každým ho naplniť znakmi, ktoré chcete poslať a následne "posunút" reťazec vytvorenému socketu,
-            ktorý sa pokúsi dáta poslať.</section>
+        <h2 class="student-page-h2-title">{{ t('tasks.step3.title') }}</h2>
+        <section [innerHTML]="t('tasks.step3.description')">
+        </section>
         <div
             class="copy-code">
             <pre #text4>
@@ -248,11 +180,9 @@ printf("Bytes Sent: %ld\n", iResult); //vypisanie poctu odoslanych dat
     </article>
     <article
         class="assignment">
-        <h2 class="student-page-h2-title">4. Prijímanie dát</h2>
-        <section> Aby Vám server vedel odpovedať, musíte si nachystať buffer, do ktorého si budete ukladať dáta,
-            ktoré
-            Vám pošle. V našom prípade sa bude takmer vždy jednať o znaky, takže si ich môžete ukladať do
-            reťazca.</section>
+        <h2 class="student-page-h2-title">{{ t('tasks.step4.title') }}</h2>
+        <section [innerHTML]="t('tasks.step4.description')">
+        </section>
         <div
             class="copy-code">
             <pre #text5>
@@ -277,9 +207,9 @@ printf("recv failed with error: %d\n", WSAGetLastError()); //ina chyba
     </article>
     <article
         class="assignment">
-        <h2 class="student-page-h2-title">5. Zavretie socketu</h2>
+        <h2 class="student-page-h2-title">{{ t('tasks.step5.title') }}</h2>
 
-        <section>Po ukončení komunikácie je potrebné socket zavrieť.
+        <section [innerHTML]="t('tasks.step5.description')">
         </section>
         <div
             class="copy-code">
@@ -296,54 +226,18 @@ WSACleanup();
 
     <article
         class="assignment">
-        <h2 class="student-page-h2-title">TIPY, TRIKY A PODMIENKY</h2>
-        <section>
-            <h3 class="student-page-h3-title">1. Načítanie vstupu s konzoly aj s medzerami</h3>
-            Funkcia scanf() Vám štandardne ukončí načítanie reťazca zo vstupu po výskyte prvej medzery. Ak
-            chcete uložiť vstup vrátane medzier je lepšie použiť funkciu fgets():<br>
-
-            char name[1024];<br>
-            int size = 1024;<br>
-            fgets(name, size, stdin);<br>
-            printf("%s\n", name);
+        <h2 class="student-page-h2-title">{{ t('tasks.tips.title') }}</h2>
+        <section [innerHTML]="t('tasks.tips.description1')">
+            
         </section>
-        <section>
-            <h3 class="student-page-h3-title">2. Práca s prijatými dátami</h3>
-            Z pohľadu socketu sú prijaté dáta len postupnosťou bajtov, nie reťazce. V prijatých dátach sa
-            ani
-            nemusí nachádzať ukončovacia nula (všetci viete, čím je ukončený reťazec, však?). Ako teda
-            zistiť,
-            kedy "končia" dáta, ktoré Vám server posiela v našom prípade? Vo väčšine správ sú ukončené
-            znakom
-            <strong class="text-green-400">'\n'</strong>. Aby sa Vám v konzole pri vypísaní prijatých dát nevyskytol nejaký neporiadok, musíte tento
-            znak nahradiť ukončovacou nulou <strong class="text-green-400">'\0'</strong>. Môžete na to použiť napríklad <a rel="noopener noreferrer"
-                class="student-link"
-                href="https://www.w3schools.com/c/ref_string_strchr.php">túto funkciu.
-            </a> Lokalizujete
-            znak
-            '\n' a nhradíte ho ukončovacou nulou.
-
-            V jednom špecifickom prípade sa však nebudete môcť spoľahnút ani na znak '\n'. Vtedy budete
-            musieť
-            ukončovaciu nulu umiestniť manuálne na základe informácie, ktorá Vám bude včas doručená.
+        <section [innerHTML]="t('tasks.tips.description2')">            
         </section>
-        <section>
-            <h3 class="student-page-h3-title">3. Ak vám vo Windows 11 nefunguje umiestňovanie znakov na požadované
-                súradnice</h3>
+        <section [innerHTML]="t('tasks.tips.description3')">
 
-
-            Môžete posúvať písmená doprava o požadovaný počet medzier napríklad takto:
-            printf("%60cMorpheus:", '
-            ');
         </section>
     </article>
-    <article>
-        BODOVÉ OHODNOTENIE
-
-        Na získanie plného počtu bodov sa musíte dostať až po poslednú správu zo servera. Úlohy musíte
-        mať
-        riešené algoritmicky - predovšetkým úlohu s rozdeľovaním textu na ľavú a pravú stranu, a úlohu s
-        prvočíslami (tie sú najvyššie bodovo hodnotené). Úloha s prvočíslami musí fungovať pre akúkoľvek
-        dlhú správu.
+    <article class="assignment">
+        <h2 class="student-page-h2-title">{{ t('tasks.grading.title') }}</h2>
+        <span [innerHTML]="t('tasks.grading.description')"></span>
     </article>
 </main>

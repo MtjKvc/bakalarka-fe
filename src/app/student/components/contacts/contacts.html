@@ -1,13 +1,12 @@
-<main class="main-student">
-      <h1
-        class="student-page-h1-title">
-        Kontakty
-    </h1>
+<main class="main-student" *transloco="let t; read: 'contacts'">
+  <h1 class="student-page-h1-title">
+    {{ t('title') }}
+  </h1>
   <div class="table-container">
     <table class="table">
       <tbody class="text-white">
         <tr>
-          <td class="table-content">Prednášajúci</td>
+          <td class="table-content"> {{ t('contacts_table.lecturer.role') }}</td>
           <td class="table-content">Ing. Juraj Slačka, PhD.</td>
           <td class="table-content">
             <p class="table-content">
@@ -16,7 +15,7 @@
           </td>
         </tr>
         <tr>
-          <td class="table-content">Vedúci cvičení</td>
+          <td class="table-content"> {{ t('contacts_table.exercise_leader.role') }}</td>
           <td class="table-content">Ing. Michal Tölgyessy, PhD.</td>
           <td class="table-content">
             <p class="table-content">
@@ -28,7 +27,7 @@
     </table>
   </div>
 
-  <h2 class="student-page-h2-title">ROZVRH:</h2>
+  <h2 class="student-page-h2-title">{{ t('schedule_title') }}</h2>
 
   <img src="images/timetable.png" alt="rozvrh" class="student-img" width="415" height="189">
 </main>

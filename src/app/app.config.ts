@@ -7,7 +7,9 @@ import { authInterceptor } from './core/auth/auth-interceptor';
 
 import { registerLocaleData } from '@angular/common'; 
 import localeSk from '@angular/common/locales/sk'; 
-import { LOCALE_ID } from '@angular/core';
+import { LOCALE_ID, isDevMode } from '@angular/core';
+import { TranslocoHttpLoader } from './transloco-loader';
+import { provideTransloco } from '@jsverse/transloco';
 registerLocaleData(localeSk);
 
 export const appConfig: ApplicationConfig = {
@@ -19,7 +21,15 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([authInterceptor])
     ),
-    { provide: LOCALE_ID, useValue: 'sk' }
+    { provide: LOCALE_ID, useValue: 'sk' }, provideHttpClient(), provideTransloco({
+        config: { 
+          availableLangs: ['en', 'sk'],
+          defaultLang: 'sk',
+          reRenderOnLangChange: true,
+          prodMode: !isDevMode(),
+        },
+        loader: TranslocoHttpLoader
+      })
 
   ]
 };

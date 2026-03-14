@@ -1,36 +1,13 @@
-<main class="main-student">
+<main class="main-student" *transloco="let t; read: 'blok2-asm10'">
     <article
         class="assignment">
         <h1 class="student-page-h1-title">
-            Semigrafika
+            {{ t('title') }}
         </h1>
-        <section>Ak vytvárame grafiku nie kreslením čiar, ale vhodným skladaním znakov rozšírenej ASCII znakovej sady,
-            potom hovoríme o tzv. semigrafike.<br>
-
-            Odkiaľ vieme, ktoré znaky sa dajú použiť?<br>
-
-            Najjednoduchšia cesta je spraviť si krátky program, ktorý vypíše všetky znaky aj s prislúchajúcim kódom
-            (viď. úloha 1.1).<br>
-
-            Ako urobím zelený text?<br>
-
-            Tak isto ako v úlohe 2.5.1<br>
-
-            Ale ako napíšem text do stredu obrazovky, keď printf si tlačí kam chce?<br>
-
-            Aby ste napr. príkazom <strong class="text-green-400">putchar('!');</strong> vypísali znak '!' na pozíciu [x,y], musíte použiť funkciu:<br>
-
-            SetConsoleCursorPosition(hConsole, point);<br>
-
-            kde hConsole je handle konzoly ako v úlohe 2.6 a premenná point je štruktúra s dvoma zložkami X a Y:<br>
-
-            x = 4; y =5; COORD point = &#123;x,y&#125;; alebo aj point.X = x; point.Y = y;<br>
-
-            Najlepšie to vidno vo vzorovom programe.<br>
-
-            A čo znamenajú x, y?<br>
-
-            Štandardné rozmery konzolového okna sú 25×80 (riadky x stĺpce). Súradnice okna začínajú v ľavom hornom rohu,
-            smerom nadol sa y zväčšuje od 0 až po 24, smerom doprava rastie x od 0 až po 79. </section>
-    </article>
+        <section class="space-y-4" [innerHTML]="t('info.intro')"></section>
+<section class="space-y-4" [innerHTML]="t('info.characters')"></section>
+<section class="space-y-4" [innerHTML]="t('info.color')"></section>
+<section class="space-y-4" [innerHTML]="t('info.position')"></section>
+<section class="space-y-4" [innerHTML]="t('info.coordinates')"></section>   
+</article>
 </main>

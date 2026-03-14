@@ -1,15 +1,10 @@
-<main class="main-student">
+<main class="main-student" *transloco="let t; read: 'blok2-asm5'">
     <article
         class="assignment">
         <h1 class="student-page-h1-title">
-            Error C2443: operand size conflict
+            {{ t('title') }}
         </h1>
-        <section class="space-y-4">
-Význam: inštrukcia vyžaduje, aby oba operandy boli rovnakej veľkosti. Musíte jeden z operandov zmeniť tak, aby oba mali rovnakú veľkosť.<br>
-
-Táto chyba môže znamenať aj to, že kompilátor NEVIE akú veľkosť máte na mysli, musíte mu dať pomôcku ktorou presne špecifikujete veľkosť premennej.<br>
-
-Príklad:<br>
+        <section class="space-y-4" [innerHTML]="t('description')">
         </section>
                 <div
             class="copy-code">

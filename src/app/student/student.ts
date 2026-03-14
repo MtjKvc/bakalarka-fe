@@ -2,10 +2,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, AfterViewInit, ViewChild, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import { RouterModule, } from '@angular/router';
+import { TranslocoModule, TranslocoService} from '@jsverse/transloco';
 
 @Component({
   selector: 'app-student',
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, TranslocoModule],
   templateUrl: './student.html',
   styleUrl: './student.css'
 })
@@ -24,9 +25,28 @@ export class Student implements AfterViewInit, OnDestroy{
   private fpsInterval = 1000 / this.fps;
   private lastDrawTime = 0;
 
+  public availableLangs = ['en', 'sk'];
   public menuOpen = false;
 
   private animationId: number = 0;
+
+constructor(private translocoService: TranslocoService) {}
+
+public ngOnInit() {
+    const savedLang = localStorage.getItem('app_lang');
+    if (savedLang) {
+      this.translocoService.setActiveLang(savedLang);
+    }
+  }
+
+  public changeLanguage(lang: string) {
+    this.translocoService.setActiveLang(lang);
+    localStorage.setItem('app_lang', lang);
+  }
+
+  get activeLang() {
+    return this.translocoService.getActiveLang();
+  }
 
   public toggleMenu() {
     this.menuOpen = !this.menuOpen;

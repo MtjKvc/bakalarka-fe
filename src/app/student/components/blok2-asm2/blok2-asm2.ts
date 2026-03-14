@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-blok2-asm2',
-  imports: [],
+  imports: [TranslocoModule],
   templateUrl: './blok2-asm2.html',
 
 })
