@@ -52,7 +52,6 @@ export class Teacher implements OnInit {
     rola: 'USER'
   }
 
-  public activeView: string = 'default';
   public isSidebarOpen: boolean = false;
   public selectedStudent: StudentBasic | null = null;
 
@@ -98,6 +97,10 @@ export class Teacher implements OnInit {
     });
   }
 
+  public get activeView(): string {
+    return this.contextService.activeView();
+  }
+
   public onLogout(): void {
     this.contextService.clearContext();
     this.authService.logout();
@@ -132,7 +135,7 @@ export class Teacher implements OnInit {
   }
 
   public onSidebarButtonClick(buttonLabel: string): void {
-    this.activeView = buttonLabel;
+    this.contextService.setActiveView(buttonLabel);
     this.isSidebarOpen = false;
   }
 }

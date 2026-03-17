@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../core/context/teacher-context.service';
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../core/logging/logger.service';
-import { AttendanceItemDto,StudentBasic,SessionColumn,ApiResponse } from '../../../shared/models/interfaces';
+import { AttendanceItemDto, StudentBasic, SessionColumn, ApiResponse } from '../../../shared/models/interfaces';
 
 interface StudentRowDto {
   studentId?: number;
@@ -48,7 +48,6 @@ export class Attendance implements OnInit {
 
   public isLoading: boolean = false;
   public error: string | null = null;
-  public showFullHistory: boolean = false;
 
   private processingSet = new Set<string>();
 
@@ -58,24 +57,24 @@ export class Attendance implements OnInit {
     'SUBSTITUTED': 'Nahradené'
   };
 
-  @ViewChild('errorContainer') set errorContent(content: ElementRef){
-  if (content) {
-      content.nativeElement.scrollIntoView({ 
-        behavior: 'smooth', 
+  @ViewChild('errorContainer') set errorContent(content: ElementRef) {
+    if (content) {
+      content.nativeElement.scrollIntoView({
+        behavior: 'smooth',
         block: 'center',
         inline: 'nearest'
       });
       content.nativeElement.focus({ preventScroll: true });
+    }
   }
-}
 
   constructor() {
     effect(() => {
       const selectedEx = this.contextService.selectedExercise() as ContextExercise | null;
+      const showHistory = this.contextService.showAttendanceHistory();
 
       if (selectedEx && selectedEx.exerciseId) {
-        this.showFullHistory = false;
-        this.logger.log('Načítavam skupinu ID:', selectedEx.exerciseId);
+        this.logger.log('Načítavam skupinu ID:', selectedEx.exerciseId, 'História:', showHistory);
         this.fetchAttendance(selectedEx.exerciseId);
       } else {
         this.clearTable();
@@ -99,9 +98,9 @@ export class Attendance implements OnInit {
   }
 
   public toggleHistory(): void {
-    this.showFullHistory = !this.showFullHistory;
-    this.logger.log(`Toggling history: ${this.showFullHistory}`);
-    this.fetchAttendance();
+    const currentValue = this.contextService.showAttendanceHistory();
+    this.contextService.setShowAttendanceHistory(!currentValue);
+    this.logger.log(`Toggling history to: ${!currentValue}`);
   }
 
   private async fetchAttendance(exerciseId?: number): Promise<void> {
@@ -117,20 +116,13 @@ export class Attendance implements OnInit {
       return;
     }
 
-    const isCurrentParam = !this.showFullHistory;
+    const isCurrentParam = !this.contextService.showAttendanceHistory();
 
     try {
       const url = `${this.apiUrl}/student-attendance/attendance?exerciseId=${targetId}&current=${isCurrentParam}`;
-
-      const data = await lastValueFrom(
-        this.http.get<StudentRowDto[]>(url)
-      );
-      const rows = data || [];
-      this.logger.log(`Attendance data loaded: ${rows.length || 0} rows`);
-      this.processData(rows);
-
+      const data = await lastValueFrom(this.http.get<StudentRowDto[]>(url));
+      this.processData(data || []);
     } catch (err) {
-      this.logger.error('Nepodarilo sa načítať záznamy', err);
       this.error = 'Nepodarilo sa načítať záznamy.';
     } finally {
       this.isLoading = false;
@@ -161,8 +153,8 @@ export class Attendance implements OnInit {
 
             let columnLabel = '';
 
-            if (this.showFullHistory) {
-                columnLabel = `${syntheticSessionId}. týž.`;
+            if (this.contextService.showAttendanceHistory()) {
+              columnLabel = `${syntheticSessionId}. týž.`;
             } else {
               columnLabel = 'Aktuálny týždeň';
             }

@@ -54,7 +54,6 @@ export class GradingComponent implements OnInit, AfterViewChecked {
   public studentRows: StudentGradingRow[] = [];
   public isLoading = false;
   public isSaving = false;
-  public isSemesterMode = false;
 
   public blockMaxPoints = 0;
   public blockRequiredPoints = 0;
@@ -85,24 +84,27 @@ export class GradingComponent implements OnInit, AfterViewChecked {
   }
 }
 
-  constructor() {
-    effect(() => {
-      const block = this.contextService.selectedBlock();
-      if (block && block.id) {
-        this.isSemesterMode = false;
-        this.logger.log('Context block changed', block.id);
-        this.loadGradingData(block.id);
-      }
-    });
+public get isSemesterMode(): boolean {
+  return this.contextService.isSemesterMode();
+}
 
-    effect(() => {
-      const exercise = this.contextService.selectedExercise();
-      if (exercise && this.isSemesterMode) {
-        this.logger.log('Context exercise changed in Semester Mode', exercise.exerciseId);
-        this.loadSemesterData();
-      }
-    }, { allowSignalWrites: true });
-  }
+constructor() {
+  effect(() => {
+    const isSemester = this.contextService.isSemesterMode();
+    const exercise = this.contextService.selectedExercise();
+    const block = this.contextService.selectedBlock();
+
+    if (!exercise) return;
+
+    if (isSemester) {
+      this.logger.log('Loading Semester Data (persisted mode)');
+      this.loadSemesterData();
+    } else if (block) {
+      this.logger.log('Loading Grading Data for block:', block.id);
+      this.loadGradingData(block.id);
+    }
+  }, { allowSignalWrites: true });
+}
 
   public ngOnInit(): void {
     this.logger.log('GradingComponent initialized');
@@ -148,12 +150,10 @@ export class GradingComponent implements OnInit, AfterViewChecked {
     this.searchSubject.next(text);
   }
 
-  public async selectSemester(): Promise<void> {
-    this.logger.log('Switching to Semester Mode');
-    this.isSemesterMode = true;
-    this.contextService.selectBlock(null);
-    await this.loadSemesterData();
-  }
+public async selectSemester(): Promise<void> {
+  this.logger.log('Switching to Semester');
+  this.contextService.setSemesterMode(true);
+}
 
   private performSearch(): void {
     if (this.isSemesterMode) {

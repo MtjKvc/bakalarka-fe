@@ -76,7 +76,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   public searchName: string = '';
   public searchAisId: string = '';
 
-  public sortField: string = 'id';
+  public sortField: string = 'fullName';
   public sortDirection: 'asc' | 'desc' = 'asc';
 
   private searchSubject = new Subject<void>();

@@ -18,7 +18,8 @@
 
         <div class="w-px h-8 bg-gray-200 mx-1"></div>
 
-        <button *ngFor="let block of contextService.blocks()" (click)="contextService.selectBlock(block)"
+        <button *ngFor="let block of contextService.blocks()"
+          (click)="contextService.setSemesterMode(false); contextService.selectBlock(block)"
           [class.bg-emerald-600]="!isSemesterMode && contextService.selectedBlock()?.id === block.id"
           [class.text-white]="!isSemesterMode && contextService.selectedBlock()?.id === block.id"
           [class.bg-gray-100]="isSemesterMode || contextService.selectedBlock()?.id !== block.id"
@@ -112,10 +113,11 @@
         <tr *ngFor="let student of studentRows" class="table-hover">
           <td class="student-collumn">
             <div class="flex flex-col">
-           <span> {{ student.studentFullName }} </span>
-          <span class="text-[10px] text-gray-400 font-normal" *ngIf="student.aisId != null">AIS: {{ student.aisId }}</span>
-        </div>  
-        </td>
+              <span> {{ student.studentFullName }} </span>
+              <span class="text-[10px] text-gray-400 font-normal" *ngIf="student.aisId != null">AIS: {{ student.aisId
+                }}</span>
+            </div>
+          </td>
           <td *ngFor="let assign of assignments" class="assignment-data">
             <ng-container *ngIf="getAssignmentRecord(student, assign.id) as record; else emptyCell">
               <div class="w-full h-full flex items-center justify-center transition-colors"
