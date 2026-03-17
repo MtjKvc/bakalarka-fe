@@ -1,0 +1,12 @@
+Options -MultiViews
+RewriteEngine On
+RewriteBase /
+
+# Proxy /api to backend
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteRule ^api/(.*)$ http://localhost:8080/api/$1 [P,L]
+
+# Angular HTML5 routing — redirect everything else to index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]
