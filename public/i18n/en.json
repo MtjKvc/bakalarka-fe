@@ -176,7 +176,7 @@
       "task_2_3_1": {
         "title": "Task 2.3.1 - disks",
         "points": "2pts",
-        "description": "You have already worked with files. Download and save <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/uploads/2019/03/poviedka.html\">this text</a> of a short story to a file. It is written in ISO-8859-2 encoding, but to read it properly in Windows, it must be in CP-1250 encoding. Fortunately, these two encodings differ only in a few characters. Write a program that converts the text to the correct encoding. What encoding is is explained in the review questions. To get full points for this assignment, you must be able to explain this term.",
+        "description": "You have already worked with files. Download and save <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/poviedka.html\">this text</a> of a short story to a file. It is written in ISO-8859-2 encoding, but to read it properly in Windows, it must be in CP-1250 encoding. Fortunately, these two encodings differ only in a few characters. Write a program that converts the text to the correct encoding. What encoding is is explained in the review questions. To get full points for this assignment, you must be able to explain this term.",
         "tip_1": "How to download and save the file with the story? Right-click, choose 'Save as…' and save the file to your disk with the .html extension. The output file will also have the .html extension, so you can easily check the text in a web browser.",
         "tip_2": {
           "text": "Here you can find the complete encoding table for <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://www.jakpsatweb.cz/cestina-tabulky.html\">ISO-8859-2, Win-1250</a> but you will probably only need the table with the ",
@@ -188,7 +188,7 @@
       "task_2_3_2": {
         "title": "Task 2.3.2 - disks",
         "points": "1pt",
-        "description": "Are you curious how the story from task 2.3 turned out? You can download the continuation <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/koniec_poviedky.html\">from here.</a> Oh, it's unreadable? You need to decrypt it. Fortunately, a very simple cipher was used. The logical XOR operation with the number 27 was applied to each character. Write a program that reads the text from a file and decrypts each character before printing.",
+        "description": "Are you curious how the story from task 2.3 turned out? You can download the continuation <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/koniec_poviedky.html\">from here.</a> Oh, it's unreadable? You need to decrypt it. Fortunately, a very simple cipher was used. The logical XOR operation with the number 27 was applied to each character. Write a program that reads the text from a file and decrypts each character before printing.",
         "tip_1": "Encryption using exclusive OR (Exclusive OR, XOR) is mainly used because if Code = Character XOR Number, then Character = Code XOR Number. So Character = (Character XOR Number) XOR Number.",
         "tip_2": "How to download and save the file with the story? Right-click, choose 'Save as…' and save the file to your disk with the .html extension. The output file will also have the .html extension, so you can easily check the text in a web browser.",
         "tip_3": "Since the encrypted file may contain various characters, we recommend opening such a file not in text mode (“r”), but in binary mode (“rb”). As a reminder, the XOR operator in C is ^."
@@ -196,7 +196,7 @@
       "task_2_3_3": {
         "title": "Task 2.3.3 - RAID",
         "points": "3pts",
-        "description": "A text about the harmfulness of alcohol was stored on a disk array. Unfortunately, due to a failure of one of the disks, the text was damaged. Fortunately, it was a RAID array, so the text can be reconstructed. The blocks that belonged to the file with the text were read from the disks. There are four blocks, and among them is the damaged one. Everything that was salvaged is available packed <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/liehoviny.zip\">here.</a> Reconstruct the missing text.<br><strong>To get full points, you must be able to describe the individual RAID types - including which type is used in the assignment. CAUTION - the assignment in its current form only works under Windows OS and the files must be read in text mode.</strong>",
+        "description": "A text about the harmfulness of alcohol was stored on a disk array. Unfortunately, due to a failure of one of the disks, the text was damaged. Fortunately, it was a RAID array, so the text can be reconstructed. The blocks that belonged to the file with the text were read from the disks. There are four blocks, and among them is the damaged one. Everything that was salvaged is available packed <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/liehoviny.zip\">here.</a> Reconstruct the missing text.<br><strong>To get full points, you must be able to describe the individual RAID types - including which type is used in the assignment. CAUTION - the assignment in its current form only works under Windows OS and the files must be read in text mode.</strong>",
         "tip_1": "Read about what <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://sk.wikipedia.org/wiki/RAID\">RAID</a> actually is.",
         "tip_2": "It is not stated here which RAID structure was used in the array, but try to figure it out yourself. As a reminder, the XOR operator in C is ^."
       },
@@ -204,11 +204,11 @@
         "title": "Task 2.4 - multimedia",
         "points": "4pts",
         "description": {
-          "text1": "Write a program in C that can play a <a class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/audio.mp3\">song</a>, or a <a class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/video.mpg\">video</a> (you can choose).<br>First, read ",
+          "text1": "Write a program in C that can play a <a class=\"student-link\" href=\"content/audio.mp3\">song</a>, or a <a class=\"student-link\" href=\"content/video.mpg\">video</a> (you can choose).<br>First, read ",
           "link_text": "how to work with multimedia in the Windows API",
-          "text2": "Then try some commands in the interactive program <a class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe\">TestMCI.exe</a> (you enter a command in the window, and it is executed immediately). Then write a playback program in C. The program must have the option to enter the name of the file to be played, start, pause, and stop playback.<br>The program's initial screen should, as far as possible, have a nice design with an explanation of the individual functions. USE ASCII CHARACTERS to create a graphical border. After playback ends, the screen should clear and the initial screen should be displayed again."
+          "text2": "Then try some commands in the interactive program <a class=\"student-link\" href=\"content/TestMCI.exe\">TestMCI.exe</a> (you enter a command in the window, and it is executed immediately). Then write a playback program in C. The program must have the option to enter the name of the file to be played, start, pause, and stop playback.<br>The program's initial screen should, as far as possible, have a nice design with an explanation of the individual functions. USE ASCII CHARACTERS to create a graphical border. After playback ends, the screen should clear and the initial screen should be displayed again."
         },
-        "tip_1": "If everything works for you in <a class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe\">TestMCI.exe</a>, rewrite it into a C program. Working with multimedia devices is done using the mciSendString() function (need #include <windows.h>). Simply insert the strings you entered in <a class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe\">TestMCI.exe</a> as arguments to the mciSendString() function.",
+        "tip_1": "If everything works for you in <a class=\"student-link\" href=\"content/TestMCI.exe\">TestMCI.exe</a>, rewrite it into a C program. Working with multimedia devices is done using the mciSendString() function (need #include <windows.h>). Simply insert the strings you entered in <a class=\"student-link\" href=\"content/TestMCI.exe\">TestMCI.exe</a> as arguments to the mciSendString() function.",
         "warning": "You need to link the library file winmm.lib (in Visual C++: Project >> Settings >> Link >> Object/library modules, append winmm.lib to the end of the line). (For Dev-C++: Project >> Project Options >> Parameters >> Add Lib >> libwinmm.a)",
         "tip_2": "To avoid digging through menu depths, you can also link the library with a compiler directive directly in the header of your source code: #pragma comment( lib, \"winmm.lib\" )",
         "tip_3": "To prevent the program from having to work with UNICODE, set your project to work in MultiByte character mode: (<a class=\"student-link\" href=\"https://senzor.robotika.sk/ap/images/SetMultiByte.png\">see image</a>)",
@@ -235,7 +235,7 @@
         "title": "Task 2.5.2 - semigraphics",
         "points": "3pts",
         "description": "Write a program that prints a table with information about yourself at a location in the window specified at startup by coordinates [x,y]. The parameters shown in the picture are illustrative, but they must be specified in variables; the entire output cannot be 'hardcoded'. The display parameters will therefore be the position in the window and variables with the values of the data to be printed. If some data changes (e.g., name), the frame must adapt to the text, not the other way around.",
-        "tip": "You can change colors from task 2.6. Learn how to print text at a specific position from this <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/uloha27.htm\">example program</a>. Create the frame using characters with ASCII code > 127. To find out which characters you need, use a modified program from task 1.1, which prints the entire ASCII character table.",
+        "tip": "You can change colors from task 2.6. Learn how to print text at a specific position from this <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha27.htm\">example program</a>. Create the frame using characters with ASCII code > 127. To find out which characters you need, use a modified program from task 1.1, which prints the entire ASCII character table.",
         "source_link": "explanations for the example program",
         "source_text": "<br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx\">SetConsoleCursorPosition() [msdn]</a>"
       },
@@ -244,12 +244,12 @@
         "points": "4pts",
         "description": "Write a program that, when the F1 key is pressed, displays instructions for use, F2 starts a measurement, and the program ends with F10 or ESC. The measurement will consist of the program generating a random character (just letters will do), displaying it in the center of the window, and starting a timer. The measurement stops the moment the user presses the same key. If the user presses something else, the program will ignore it. Finally, the program prints the measured time that elapses from the display until the same key is pressed. After the first measurement, the next measurement follows, and after that another, until the user terminates the program (use a loop). The instructions for use must have a nice design, use some ASCII characters to create a border around the instructions.<br>Example:<br>Press: X …. 1.25 s pressed X<br>Press: Z ….. 33.12 s pressed sequentially A B C D E F … Z<br>End pressed F10",
         "tip_1_link": "Tutorial",
-        "tip_1": " and <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/blok-2-asm10\">example program</a> for working with time and the time.h library",
+        "tip_1": " and <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29time.c.html\">example program</a> for working with time and the time.h library",
         "tip_2_link": "Tutorial",
-        "tip_2": " and <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/uloha29conio.c.html\">example program</a> for working with the keyboard and the conio.h library",
+        "tip_2": " and <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29conio.c.html\">example program</a> for working with the keyboard and the conio.h library",
         "tip_3": "Instead of the conio.h library, you can also use others, such as curses.h, or ncurses, used in the Unix world.",
-        "tip_4": "Win32 <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/uloha29.htm\">Example program</a> for detecting Alt, Ctrl, and Shift keys, including mouse movement recognition. Note: needs to be compiled as a C++ project, plain C is not sufficient. It uses standard WinApi functions. Unlike the previous one, it can also work with the mouse.",
-        "tip_macos": "Thanks to your proactive colleague, we are adding experimental support for macOS/Linux for Tip 2. You can use <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/kbhit.c\">this</a> implementation of the kbhit() function. The F1, F2, etc. keys will not work, so use others.",
+        "tip_4": "Win32 <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29.htm\">Example program</a> for detecting Alt, Ctrl, and Shift keys, including mouse movement recognition. Note: needs to be compiled as a C++ project, plain C is not sufficient. It uses standard WinApi functions. Unlike the previous one, it can also work with the mouse.",
+        "tip_macos": "Thanks to your proactive colleague, we are adding experimental support for macOS/Linux for Tip 2. You can use <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/kbhit.c\">this</a> implementation of the kbhit() function. The F1, F2, etc. keys will not work, so use others.",
         "source": {
           "source_text": "Source:<br>Hopefully this ",
           "source_link": "example program",
@@ -287,7 +287,7 @@
       "sockets": {
         "title": "SOCKETS",
         "description1": "To communicate over the internet from your program, you will use so-called sockets. In Windows OS, we will use the Winsock implementation. Support within the course is provided exclusively for Windows. However, if you dare, you can try on a Linux-based operating system. An example of implementing socket communication is <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://www.linuxhowtos.org/data/6/client.c\">here.</a> In Visual Studio, you need to add the following libraries:",
-        "description2": "If you are working in Dev-C++, you need to link the libraries via Tools -> Compiler Options and enter what is shown in <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/link_veci_k_devku.png\">this</a> screenshot.<br>If you are working in CLion, you need to link the libraries by modifying CMakeLists.txt and adding target libraries as in <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/linkovanieVclione.png\">this</a> screenshot."
+        "description2": "If you are working in Dev-C++, you need to link the libraries via Tools -> Compiler Options and enter what is shown in <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/link_veci_k_devku.png\">this</a> screenshot.<br>If you are working in CLion, you need to link the libraries by modifying CMakeLists.txt and adding target libraries as in <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/linkovanieVclione.png\">this</a> screenshot."
       },
       "step1": {
         "title": "1. Initial settings",
@@ -465,7 +465,7 @@
     "devices": {
       "title": "Multimedia devices",
       "description": "It probably doesn't need special explanation that a sound card is used for audio output from a computer. It converts a sequence of numbers (samples) into analog values that form the resulting acoustic \"wave.\" In addition, the sound card is capable of converting data in the opposite direction, i.e., from a source (microphone) into a sequence of numbers, samples. These are then saved to a file (e.g., voice.wav).<br>A CD-ROM drive is also capable of playing audio, referred to as audio CD.<br>A special part capable of playing video is referred to as video avi, or Video for Windows.<br>All these devices can be accessed through the so-called Media Control Interface (MCI). It is a \"higher\" level interface that contains a set of commands common to all devices. They are based on the principle that they can all be controlled similarly to a tape recorder — start/stop, record/play, open/close, etc.<br>A list of several commands (all <a class=\"student-link\" href=\"https://docs.microsoft.com/en-us/previous-versions//ms712587(v=vs.85)?redirectedfrom=MSDN\">mci commands</a> on the msdn page).",
-      "test_program": "First, we will explore the possibilities using the TESTmci.exe program (<a class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe\">download</a>) - it doesn't install, just runs. Save it in the same directory as your audio or video file. After launching, you will see a window with three areas. In the first, you can write commands, which are executed immediately. The second window shows return codes (if it's not 1, something is wrong) and the third shows their meaning (error messages)."
+      "test_program": "First, we will explore the possibilities using the TESTmci.exe program (<a class=\"student-link\" href=\"content/TestMCI.exe\">download</a>) - it doesn't install, just runs. Save it in the same directory as your audio or video file. After launching, you will see a window with three areas. In the first, you can write commands, which are executed immediately. The second window shows return codes (if it's not 1, something is wrong) and the third shows their meaning (error messages)."
     },
     "examples": {
       "title": "Examples",
@@ -510,7 +510,7 @@
     "title": "Making the program sleep",
     "info": {
       "description": "Usually we need to speed up the computer's operation, not slow it down. But when communicating with the user, it is sometimes really appropriate to give them more time. To pause the program's work for a defined period, we simply use the function <strong class=\"text-green-400\">Sleep(milliseconds)</strong>, which is defined either in <strong class=\"text-green-400\">windows.h</strong> or <strong class=\"text-green-400\">unistd.h</strong> (Unix).<br><strong class=\"text-green-300\">static void Sleep(int millisecondsTimeout)</strong><br>The variable <strong class=\"text-green-400\">millisecondsTimeout</strong> specifies for how many ms the program execution will be suspended. During the suspension, however, other programs, or possibly other threads of the same program, can run.",
-      "tip": "<span class=\"important-icon\">💡 Tip: </span><span class=\"important-text\">Try the <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/uloha26delay.c.html\">example program</a> for working with time.</span>"
+      "tip": "<span class=\"important-icon\">💡 Tip: </span><span class=\"important-text\">Try the <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha26delay.c.html\">example program</a> for working with time.</span>"
     }
   },
   "blok2-asm12": {
@@ -529,7 +529,7 @@
       "warning": "Caution: first try to understand the program, then study how the given functions work in MSDN, and only then use them in your own program.",
       "special_keys": "When working with these functions, you'll find they have other pleasant properties compared to <strong class=\"text-green-400\">getchar()</strong> - for example, they can also detect codes for function and special keys. However, there's a small catch: if you press, say, [F1], the function <strong class=\"text-green-400\">getch()</strong> returns 0 (signaling that something special was pressed) and you must determine the key code with another read. Similarly, if you press, for example, the up arrow: two characters are also read, but the first is not zero but 0xE0, and the second is again the key code.",
       "enter_key": "Another small catch is with the Enter key, which also always returns two characters: carriage return (CR) and line feed (LF). Fortunately, in C, these two characters correspond to just one character: <strong class=\"text-green-400\">\\n</strong>.",
-      "tip": "<span class=\"important-icon\">💡 Tip: </span><span class=\"important-text\">The best way to understand this is to try it yourself. Download and try the <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/uloha29conio.c.html\">example program</a> for working with the keyboard and the <strong class=\"text-green-400\">conio.h</strong> library. It shows how regular and special characters are read from the keyboard.</span>"
+      "tip": "<span class=\"important-icon\">💡 Tip: </span><span class=\"important-text\">The best way to understand this is to try it yourself. Download and try the <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29conio.c.html\">example program</a> for working with the keyboard and the <strong class=\"text-green-400\">conio.h</strong> library. It shows how regular and special characters are read from the keyboard.</span>"
     }
   },
   "contacts": {
@@ -561,6 +561,7 @@
     }
   },
   "computer_architecture": {
+    "title" : "Computer architecture",
     "tutorial_intro": "For those interested, we recommend this tutorial to gain a good foundation in the C language:"
   },
   "manuals": {
@@ -644,6 +645,7 @@
     }
   },
   "student": {
+    "title": "Computer Architecture",
     "first_exercise": "Introductory Exercise",
     "block_1": "Block 1",
     "block_2": "Block 2",

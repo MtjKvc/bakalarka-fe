@@ -30,6 +30,8 @@ export class Student implements AfterViewInit, OnDestroy{
 
   private animationId: number = 0;
 
+  public isRainActive = true;
+
 constructor(private translocoService: TranslocoService) {}
 
 public ngOnInit() {
@@ -37,7 +39,31 @@ public ngOnInit() {
     if (savedLang) {
       this.translocoService.setActiveLang(savedLang);
     }
+  const savedRainState = localStorage.getItem('matrix_rain_active');
+    if (savedRainState !== null) {
+      this.isRainActive = savedRainState === 'true';
+    }
   }
+
+  public toggleRain() {
+    this.isRainActive = !this.isRainActive;
+    localStorage.setItem('matrix_rain_active', this.isRainActive.toString());
+
+    if (this.isRainActive) {
+      this.initCanvas();
+      this.animate(performance.now());
+    } else {
+      // Zastavenie animácie a vymazanie plátna
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = 0;
+      }
+      if (this.ctx) {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+      }
+    }
+  }
+  
 
   public changeLanguage(lang: string) {
     this.translocoService.setActiveLang(lang);
@@ -53,7 +79,9 @@ public ngOnInit() {
   }
   public ngAfterViewInit() {
     this.initCanvas();
-    this.animate(0);
+    if (this.isRainActive) {
+      this.animate(0);
+    }
   }
 
   public ngOnDestroy() {
@@ -68,6 +96,7 @@ public ngOnInit() {
   }
 
   private initCanvas() {
+    if (!this.canvasRef) return;
     const canvas = this.canvasRef.nativeElement;
     this.ctx = canvas.getContext('2d')!;
     this.width = window.innerWidth;
@@ -80,6 +109,8 @@ public ngOnInit() {
   }
 
   private animate(currentTime: number) {
+
+    if (!this.isRainActive) return;
     this.animationId = requestAnimationFrame((time) => this.animate(time));
     const elapsed = currentTime - this.lastDrawTime;
     if (elapsed < this.fpsInterval) return;

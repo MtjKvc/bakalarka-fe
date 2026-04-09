@@ -176,7 +176,7 @@
       "task_2_3_1": {
         "title": "Úloha 2.3.1 - disky",
         "points": "2b",
-        "description": "So súbormi ste už pracovali. Stiahnite a uložte si do súboru <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/uploads/2019/03/poviedka.html\">tento text</a> poviedky. Je napísaný v kódovaní ISO-8859-2, ale aby ste ho vo Windows mohli poriadne prečítať, musí byť v kódovaní CP-1250. Našťastie sa tieto dve kódovania líšia len v niekoľkch znakoch. Napíšte program, ktorý text prevedie do správneho kódovania. Čo to je kódovanie máte vysvetlené v kontrolných otázkach. Pre plný počet bodov zo zadania musíte tento termín vedieť vysvetliť.",
+        "description": "So súbormi ste už pracovali. Stiahnite a uložte si do súboru <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/poviedka.html\">tento text</a> poviedky. Je napísaný v kódovaní ISO-8859-2, ale aby ste ho vo Windows mohli poriadne prečítať, musí byť v kódovaní CP-1250. Našťastie sa tieto dve kódovania líšia len v niekoľkch znakoch. Napíšte program, ktorý text prevedie do správneho kódovania. Čo to je kódovanie máte vysvetlené v kontrolných otázkach. Pre plný počet bodov zo zadania musíte tento termín vedieť vysvetliť.",
         "tip_1": "Ako stiahnuť a uložiť súbor s poviedkou? Kliknite pravým tlačidlom, zvoľte 'Uložiť ako' (Save as…) a uložte si súbor na disk aj s príponou .html. Výstupný súbor bude tiež mať príponu .html, takže text ľahko skontrolujete v internetovom prehliadači.",
         "tip_2": {
           "text": "Tu nájdete kompletnú tabuľku kódovania <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://www.jakpsatweb.cz/cestina-tabulky.html\">ISO-8859-2, Win-1250</a> ale zrejme vystačíte s tabuľkou, kde je len tých ",
@@ -188,7 +188,7 @@
       "task_2_3_2": {
         "title": "Úloha 2.3.2 - disky",
         "points": "1b",
-        "description": "Zaujíma vás, ako to dopadlo v príbehu z úlohy 2.3? Pokračovanie si môžete stiahnuť <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/koniec_poviedky.html\">odtiaľto.</a> Aha, že sa nedá prečítať? Musíte ho rozšifrovať. Našťastie je použitá veľmi jednoduchá šifra. Na každý znak je aplikovaná operácia logický XOR s číslom 27. Napíšte program, ktorý prečíta text zo súboru a každý znak pred výpisom dešifruje.",
+        "description": "Zaujíma vás, ako to dopadlo v príbehu z úlohy 2.3? Pokračovanie si môžete stiahnuť <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/koniec_poviedky.html\">odtiaľto.</a> Aha, že sa nedá prečítať? Musíte ho rozšifrovať. Našťastie je použitá veľmi jednoduchá šifra. Na každý znak je aplikovaná operácia logický XOR s číslom 27. Napíšte program, ktorý prečíta text zo súboru a každý znak pred výpisom dešifruje.",
         "tip_1": "Šifrovanie pomocou exkluzívneho súčtu (Exclusive OR, XOR) sa používa hlavne preto, lebo ak platí Kod = Znak XOR Cislo, potom Znak = Kod XOR Cislo. Čiže Znak = (Znak XOR Cislo) XOR Cislo.",
         "tip_2": "Ako stiahnuť a uložiť súbor s poviedkou? Kliknite pravým tlačidlom, zvoľte 'Uložiť ako' (Save as…) a uložte si súbor na disk aj s príponou .html. Výstupný súbor bude tiež mať príponu .html, takže text ľahko skontrolujete v internetovom prehliadači.",
         "tip_3": "Keďže v zašifrovanom súbore sa môžu vyskytnúť všelijaké znaky, odporúčame takýto súbor otvoriť nie v textovom (“r”), ale binárnom (“rb”) režime. Pre istotu ešte pripomeňme, že operátor XOR v jazyku C je ^."
@@ -196,7 +196,7 @@
       "task_2_3_3": {
         "title": "Úloha 2.3.3 - RAID",
         "points": "3b",
-        "description": "Na diskovom poli bol uložený text o škodlivosti alkoholu. Žiaľ, v dôsledku poruchy jedného z diskov sa text poškodil. Našťastie to bolo RAIDové pole, takže text je možné zrekonštruovať. Z diskov sa podarilo prečítať bloky, ktoré patrili súboru s textom. Bloky sú štyri, je medzi nimi aj ten pokazený. Všetko, čo sa podarilo zachrániť je k dispozícii zabalené <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/liehoviny.zip\">tu.</a> Zrekonštruujte chýbajúci text.<br><strong>Aby ste získali plný počet bodov, musíte vedieť opísať jednotlivé typy RAID-ov - aj ktorý typ je v zadaní použitý. POZOR - zadanie v súčasnej forme funguje len pod OS Windows a súbory je nutné čítať v textovom režime.</strong>",
+        "description": "Na diskovom poli bol uložený text o škodlivosti alkoholu. Žiaľ, v dôsledku poruchy jedného z diskov sa text poškodil. Našťastie to bolo RAIDové pole, takže text je možné zrekonštruovať. Z diskov sa podarilo prečítať bloky, ktoré patrili súboru s textom. Bloky sú štyri, je medzi nimi aj ten pokazený. Všetko, čo sa podarilo zachrániť je k dispozícii zabalené <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/liehoviny.zip\">tu.</a> Zrekonštruujte chýbajúci text.<br><strong>Aby ste získali plný počet bodov, musíte vedieť opísať jednotlivé typy RAID-ov - aj ktorý typ je v zadaní použitý. POZOR - zadanie v súčasnej forme funguje len pod OS Windows a súbory je nutné čítať v textovom režime.</strong>",
         "tip_1": "Prečítajte si čo je to vlastne <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://sk.wikipedia.org/wiki/RAID\">RAID</a>",
         "tip_2": "Nie je tu síce uvedené, aká RAID štruktúra bola v poli použitá, ale skúste na to prísť sami. Pre istotu ešte pripomeňme, že operátor XOR v jazyku C je ^."
       },
@@ -204,11 +204,11 @@
         "title": "Úloha 2.4 - multimédiá",
         "points": "4b",
         "description": {
-          "text1": "Napíšte program v jazyku C, ktorý dokáže prehrať <a class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/audio.mp3\">pesničku</a>, alebo <a class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/video.mpg\">video</a> (vy si môžete vybrať).<br>Najprv si prečítajte, ",
+          "text1": "Napíšte program v jazyku C, ktorý dokáže prehrať <a class=\"student-link\" href=\"content/audio.mp3\">pesničku</a>, alebo <a class=\"student-link\" href=\"content/video.mpg\">video</a> (vy si môžete vybrať).<br>Najprv si prečítajte, ",
           "link_text": "ako sa pracuje s multimédiami vo Windows API",
-          "text2": "Potom si vyskúšajte niektoré príkazy v interaktívnom programe <a class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe\">TestMCI.exe</a> (do okienka zadáte príkaz, ten sa hneď vykoná). Potom napíšte program na prehrávanie v jazyku C. Program musí mať možnosť zadať meno prehrávaného súboru, spustiť, pozastaviť a ukončiť prehrávanie.<br>Úvodná obrazovka programu musí mať v rámci možností pekný dizajn s vysvetlením jednotlivých funkcií. POUŽITE ASCII ZNAKY na vytvorenie grafického ohraničenia. Po ukončení prehrávania sa obrazovka vyčistí a opäť sa zobrazí úvodná obrazovka."
+          "text2": "Potom si vyskúšajte niektoré príkazy v interaktívnom programe <a class=\"student-link\" href=\"content/TestMCI.exe\">TestMCI.exe</a> (do okienka zadáte príkaz, ten sa hneď vykoná). Potom napíšte program na prehrávanie v jazyku C. Program musí mať možnosť zadať meno prehrávaného súboru, spustiť, pozastaviť a ukončiť prehrávanie.<br>Úvodná obrazovka programu musí mať v rámci možností pekný dizajn s vysvetlením jednotlivých funkcií. POUŽITE ASCII ZNAKY na vytvorenie grafického ohraničenia. Po ukončení prehrávania sa obrazovka vyčistí a opäť sa zobrazí úvodná obrazovka."
         },
-        "tip_1": "Ak vám už v <a class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe\">TestMCI.exe</a> všetko funguje, prepíšte to do programu v jazyku C. Práca s multimediálnymi zariadeniami sa robí pomocou funkcie mciSendString() (treba #include ). Jednoducho vložte reťazce, ktoré ste zadávali v <a class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe\">TestMCI.exe</a> ako argumenty do funkcie mciSendString().",
+        "tip_1": "Ak vám už v <a class=\"student-link\" href=\"content/TestMCI.exe\">TestMCI.exe</a> všetko funguje, prepíšte to do programu v jazyku C. Práca s multimediálnymi zariadeniami sa robí pomocou funkcie mciSendString() (treba #include ). Jednoducho vložte reťazce, ktoré ste zadávali v <a class=\"student-link\" href=\"content/TestMCI.exe\">TestMCI.exe</a> ako argumenty do funkcie mciSendString().",
         "warning": "Musíte si prilinkovať knižničný súbor winmm.lib (vo Visual C++: Project >> Settings >> Link >> Object/library modules, dopíšte na koniec riadku winmm.lib). (Pre Dev-C++: Project >> Project Options >> Parameters >> Add Lib >> libwinmm.a)",
         "tip_2": "Aby ste sa nemuseli prehrabávať v hlbinách menu, môžete knižnicu pripojiť aj príkazom pre kompilátor priamo do záhlavia vášho zdrojového kódu: #pragma comment( lib, “winmm.lib” )",
         "tip_3": "Aby program nemusel pracovať s UNICODE, nastavte si projekt pre prácu v znakovom režime MultiByte:(<a class=\"student-link\" href=\"https://senzor.robotika.sk/ap/images/SetMultiByte.png\">viď. obrázok</a>)",
@@ -235,7 +235,7 @@
         "title": "Úloha 2.5.2 - semigrafika",
         "points": "3b",
         "description": "Napíšte program, ktorý na miesto v okne zadané pri spustení súradnicami [x,y] vypíše tabuľku s informáciami o Vašej osobe. Parametre uvedené na obrázku sú ilustračné, ale musia byť zadané v premenných, nemôže byť celý výpis “natvrdo” naprogramovaný. Parametrom zobrazenia teda bude pozícia v okne a premenné s hodnotami vypisovaných údajov. Pri zmene niektorého údaja (napr. meno) sa musí rámik prispôsobiť textu, nie naopak.",
-        "tip": "Farby viete meniť z úlohy 2.6. Ako sa text vypíše na konkrétnu pozíciu sa naučte z tohoto <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/uloha27.htm\">vzorového programu</a>. Rámik vytvorte zo znakov s ASCII kódom > 127. Na zistenie, ktoré znaky potrebujete využite upravený program z úlohy 1.1, ktorým si vypíšete celú tabuľku ASCII znakov.",
+        "tip": "Farby viete meniť z úlohy 2.6. Ako sa text vypíše na konkrétnu pozíciu sa naučte z tohoto <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha27.htm\">vzorového programu</a>. Rámik vytvorte zo znakov s ASCII kódom > 127. Na zistenie, ktoré znaky potrebujete využite upravený program z úlohy 1.1, ktorým si vypíšete celú tabuľku ASCII znakov.",
         "source_link": "vysvetlivky k vzorovému programu",
         "source_text": "<br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx\">SetConsoleCursorPosition() [msdn]</a>"
       },
@@ -244,14 +244,14 @@
         "points": "4b",
         "description": "Napíšte program, ktorý po stlačení klávesy F1 vypíše návod na použitie, F2 spustí meranie a program skončí F10 alebo ESC. Meranie bude spočívať v tom, že program vygeneruje náhodný znak (stačí písmená), zobrazí ho do stredu okna a spustí meranie času. Meranie sa zastaví v okamihu, keď užívateľ stlačí rovnakú klávesu. Ak užívateľ stlačí niečo iné, program to bude ignorovať. Napokon program vypíše zmeraný čas, ktorý uplynie od vypísania po stlačenie rovnakej klávesy. Po prvom meraní ide ďalšie meranie a po ňom ďalšie, až kým používateľ program neukončí (použite cyklus). Návod na použitie musí mať pekný dizajn, použite nejaké ASCII znaky na vytvorenie ohraničenia návodu.<br>Príklad:<br>Stlač: X …. 1,25 s stlačené X<br>Stlač: Z ….. 33,12 s stlačené postupne ABCDEF…Z<br>Koniec stlačené F10",
         "tip_1_link": "Návod",
-        "tip_1": "a <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/blok-2-asm10\">vzorový program</a> na prácu s časom a knižnicou time.h",
+        "tip_1": "a <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29time.c.html\">vzorový program</a> na prácu s časom a knižnicou time.h",
         "tip_2_link": "Návod",
-        "tip_2": "a <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/uloha29conio.c.html\">vzorový program</a> na prácu s klávesnicou a knižnicou conio.h",
+        "tip_2": "a <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29conio.c.html\">vzorový program</a> na prácu s klávesnicou a knižnicou conio.h",
         "tip_3": "Namiesto knižnice conio.h môžete použiť aj iné, napríklad curses.h, prípadne ncurses, používané v Unixovom svete.",
-        "tip_4": "Win32 <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/uloha29.htm\">Vzorový program</a> na detekciu kláves Alt, Ctrl a Shift vrátane rozpoznávania pohybu myši. Pozn.: treba kompilovať ako C++ projekt, nestačí obyčajné C. Používa štandartné funkcie WinApi. Na rozdiel od predošlého vie pracovať aj s myšou.",
-        "tip_macos": "Vďaka vášmu iniciatívnemu kolegovi pridávame experimentálny support pre macOS/Linux k Tipu2. Môžete použiť <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/kbhit.c\">túto</a> implementáciu funkcie kbhit(). Klávesy F1,F2 atď. vám však nebudú fungovať, použite preto iné.",
+        "tip_4": "Win32 <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29.htm\">Vzorový program</a> na detekciu kláves Alt, Ctrl a Shift vrátane rozpoznávania pohybu myši. Pozn.: treba kompilovať ako C++ projekt, nestačí obyčajné C. Používa štandartné funkcie WinApi. Na rozdiel od predošlého vie pracovať aj s myšou.",
+        "tip_macos": "Vďaka vášmu iniciatívnemu kolegovi pridávame experimentálny support pre macOS/Linux k Tipu2. Môžete použiť <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/kbhit.c\">túto</a> implementáciu funkcie kbhit(). Klávesy F1,F2 atď. vám však nebudú fungovať, použite preto iné.",
         "source": {
-          "source_text":"Zdroj:<br>Snáď postačí tento ",
+          "source_text": "Zdroj:<br>Snáď postačí tento ",
           "source_link": "Vzorový program",
           "source_text2": " a popis funkcie <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx\">GetAsyncKeyState() [msdn]</a>. Kódy <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx\">Virtual Key[msdn].</a>"
         }
@@ -287,7 +287,7 @@
       "sockets": {
         "title": "SOCKETY",
         "description1": "Na komunikáciu cez internet z Vášho programu budete používať tzv. sockety, v OS Windows budeme používať implementáciu Winsock. Podpora v rámci predmetu sa poskytuje výlučne pre Windows. Kto si však trúfa, môže skúsiť v operačnom systéme na báze Linux-u. Príklad na implementáciu socket komunikácie je <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://www.linuxhowtos.org/data/6/client.c\">tu.</a> Vo Visual Studio treba pridať nasledovné knižnice:",
-        "description2": "Ak pracujete v Dev-C++, musíte nalinkovať knižnice cez Tools -> Compiler Options a tam napísať to, čo je na <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/link_veci_k_devku.png\">tomto</a> screenshote.<br>Ak pracujete v CLione, musíte si nalinkovať knižnice modifikovaním CMakeLists.txt a doplnit target libraries ako v <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/linkovanieVclione.png\">tomto</a> screenshote."
+        "description2": "Ak pracujete v Dev-C++, musíte nalinkovať knižnice cez Tools -> Compiler Options a tam napísať to, čo je na <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/link_veci_k_devku.png\">tomto</a> screenshote.<br>Ak pracujete v CLione, musíte si nalinkovať knižnice modifikovaním CMakeLists.txt a doplnit target libraries ako v <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/linkovanieVclione.png\">tomto</a> screenshote."
       },
       "step1": {
         "title": "1. Úvodné nastavenia",
@@ -465,7 +465,7 @@
     "devices": {
       "title": "Multimediálne zariadenia",
       "description": "Asi netreba špeciálne vysvetľovať, že na výstup zvuku z počítača slúži zvuková karta. Prevádza postupnosť čísiel (vzoriek) na analógové hodnoty, ktoré tvoria výslednú akustickú “vlnu”. Okrem toho je zvuková karta schopná prevádzať dáta aj opačným smerom, teda zo zdroja (mikrofón) na postupnosť čísiel, vzoriek. Tie sa potom uložia do súboru, (napr. hlas.wav).<br>CD-ROM mechanika je tiež schopná prehrávať zvuk, označuje sa ako audio cd.<br>Špeciálna časť, ktorá je schopná prehrávať video sa označuje ako video avi, resp. Video for Windows.<br>K všetkým týmto zariadeniam možno pristupovať prostredníctvom tzv. Media Control Interface (mci). Je to rozhranie “vyššej” úrovne, ktoré obsahuje sadu príkazov, ktoré sa zhodujú pre všetky zariadenia. Vychádzajú z princípu, že všetky možno ovládať podobne ako magnetofón — štart/stop, nahrávaj/prehrávaj, otvor/zatvor a pod.<br>Zoznam niekoľkých príkazov (všetky <a class=\"student-link\" href=\"https://docs.microsoft.com/en-us/previous-versions//ms712587(v=vs.85)?redirectedfrom=MSDN\">mci príkazy</a> na stránke msdn).",
-      "test_program": "Najprv preskúmame možnosti pomocou programu TESTmci.exe (<a class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe\">download</a>) - neinštaluje sa, len spustí. Uložte si ho do rovnakého adresára ako zvukový, resp. video súbor. Po spustení vidíte okno s troma oblasťami. Do prvej môžete zapisovať príkazy, ktoré sa ihneď vykonajú. V druhom okienku vidno návratové kódy (ak nie je 1, niečo je zle) a v treťom ich význam (chybové hlásenia)."
+      "test_program": "Najprv preskúmame možnosti pomocou programu TESTmci.exe (<a class=\"student-link\" href=\"content/TestMCI.exe\">download</a>) - neinštaluje sa, len spustí. Uložte si ho do rovnakého adresára ako zvukový, resp. video súbor. Po spustení vidíte okno s troma oblasťami. Do prvej môžete zapisovať príkazy, ktoré sa ihneď vykonajú. V druhom okienku vidno návratové kódy (ak nie je 1, niečo je zle) a v treťom ich význam (chybové hlásenia)."
     },
     "examples": {
       "title": "Príklady",
@@ -510,7 +510,7 @@
     "title": "Uspávanie programu",
     "info": {
       "description": "Väčšinou potrebujeme beh počítača urýchliť a nie spomaliť. Ale pri komunikácii s užívateľom je niekedy naozaj vhodné dopriať mu viac času. Na definované pozdržanie práce programu použijeme jednoducho funkciu <strong class=\"text-green-400\">Sleep(milliseconds)</strong>, ktorá je definovaná buď vo <strong class=\"text-green-400\">windows.h</strong>, alebo <strong class=\"text-green-400\">unistd.h</strong> (Unix).<br><strong class=\"text-green-300\">static void Sleep(int millisecondsTimeout)</strong><br>Premenná <strong class=\"text-green-400\">millisecondsTimeout</strong> udáva, na koľko ms bude vykonávanie programu pozastavené. Počas pozastavenia však môžu pracovať iné programy, prípadne aj iné vlákna toho istého programu.",
-      "tip": "<span class=\"important-icon\">💡 Tip: </span><span class=\"important-text\">Vyskúšajte <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/uloha26delay.c.html\">vzorový program</a> na prácu s časom.</span>"
+      "tip": "<span class=\"important-icon\">💡 Tip: </span><span class=\"important-text\">Vyskúšajte <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha26delay.c.html\">vzorový program</a> na prácu s časom.</span>"
     }
   },
   "blok2-asm12": {
@@ -529,7 +529,7 @@
       "warning": "Pozor: najprv sa snažte program pochopiť, potom si naštudujte ako dané funkcie fungujú v msdn a až potom ich použite vo vlastnom programe.",
       "special_keys": "Pri práci s týmito funkciami zistíte, že majú oproti <strong class=\"text-green-400\">getchar()</strong> aj ďalšie príjemné vlastnosti - napríklad dokážu zistiť aj kódy funkčných a špeciálnych kláves. Je tu však malý zádrhel: v prípade, že stlačíte napríklad [F1], funkcia <strong class=\"text-green-400\">getch()</strong> vráti hodnotu 0 (čím signalizuje stlačenie niečoho špeciálneho) a kód klávesy musíte zistiť ešte jedným čítaním. Podobne je to aj ak stlačíte napríklad šípku nahor: tiež sa prečítajú dva znaky, lenže prvý nie je nula, ale 0xE0 a druhý je opäť kód klávesy.",
       "enter_key": "Ešte jeden malý zádrhel je s klávesou Enter, ktorá vracia tiež vždy dva znaky: návrat na začiatok riadku (CR) a posun na ďalší riadok (LF). Našťastie v C-čku týmto dvom znakom zodpovedá zasa len jeden znak: <strong class=\"text-green-400\">\\n</strong>.",
-      "tip": "<span class=\"important-icon\">💡 Tip: </span><span class=\"important-text\">Najlepšia možnosť, ako to pochopiť, je skúsiť si to. Stiahnite a vyskúšajte si <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://ap.urk.fei.stuba.sk/wp-content/uloha29conio.c.html\">vzorový program</a> na prácu s klávesnicou a knižnicou <strong class=\"text-green-400\">conio.h</strong> V ňom je vidno, ako sa načítavajú bežné i špeciálne znaky z klávesnice.</span>"
+      "tip": "<span class=\"important-icon\">💡 Tip: </span><span class=\"important-text\">Najlepšia možnosť, ako to pochopiť, je skúsiť si to. Stiahnite a vyskúšajte si <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29conio.c.html\">vzorový program</a> na prácu s klávesnicou a knižnicou <strong class=\"text-green-400\">conio.h</strong> V ňom je vidno, ako sa načítavajú bežné i špeciálne znaky z klávesnice.</span>"
     }
   },
   "contacts": {
@@ -561,6 +561,7 @@
     }
   },
   "computer_architecture": {
+    "title": "Architektúra počítačov",
     "tutorial_intro": "Pre záujemcov odporúčame tento tutoriál na získanie dobrých základov v jazyku C:"
   },
   "manuals": {
@@ -644,6 +645,7 @@
     }
   },
   "student": {
+    "title": "Architektúra počítačov",
     "first_exercise": "Úvodné cvičenie",
     "block_1": "Blok 1",
     "block_2": "Blok 2",

@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1' />
+	<title></title>
+	<style type='text/css' media='all'>
+pre.cppcode
+{
+	background: #FFFFFF;
+	color: #000000;;
+	font: Fixedsys,10pt;
+}
+.cpp01{
+	color: #007F00;
+}
+.cpp02{
+	color: #007F00;
+}
+.cpp03{
+	color: #3F703F;
+}
+.cpp04{
+	color: #007F7F;
+}
+.cpp05{
+	color: #00007F;
+	font: bold;
+}
+.cpp06{
+	color: #7F007F;
+}
+.cpp07{
+	color: #7F007F;
+}
+.cpp08{
+	color: #804080;
+}
+.cpp09{
+	color: #7F7F00;
+}
+.cpp10{
+	font: bold;
+}
+.cpp12{
+	background: #E0C0E0;
+}
+.cpp13{
+	background: #E0FFE0;
+	color: #007F00;
+	font: Courier New;
+}
+.cpp14{
+	background: #E0F0FF;
+	color: #3F7F3F;
+	font: Courier New;
+}
+.cpp15{
+	color: #3F703F;
+}
+.cpp16{
+	color: #B00040;
+}
+.cpp17{
+	color: #3060A0;
+}
+.cpp18{
+	color: #804020;
+}
+.cpp32{
+}
+.cpp34{
+	color: #0000EE;
+	font: bold;
+}
+.cpp35{
+	color: #EE0000;
+	font: bold;
+}
+.cpp36{
+	color: #808080;
+}
+	</style>
+</head>
+<body>
+<pre class='cppcode'><span class='cpp01'>
+
+<span class='cpp09'>#include &lt;windows.h&gt;     </span><span class='cpp02'>// Win32API Header File</span>
+<span class='cpp09'>#include &lt;stdio.h&gt;</span>
+
+<span class='cpp01'>/* ************************************************************************** */</span>
+<span class='cpp01'>/*                                                                            */</span>
+<span class='cpp01'>/*  Funkcia IsKeyPressed(int virtualKey)                                      */</span>
+<span class='cpp01'>/*         Je prave stlacena klavesa virtualKey? 0 nie, 1 ano                 */</span>
+<span class='cpp01'>/*                                                                            */</span>
+<span class='cpp01'>/* ************************************************************************** */</span>
+
+<span class='cpp05'>bool</span> IsKeyPressed<span class='cpp10'>(</span><span class='cpp05'>int</span> virtualKey<span class='cpp10'>)</span>
+<span class='cpp10'>{</span>
+    <span class='cpp05'>return</span> <span class='cpp10'>((</span>GetAsyncKeyState<span class='cpp10'>(</span>virtualKey<span class='cpp10'>)&amp;</span><span class='cpp04'>0x8000</span><span class='cpp10'>)!=</span><span class='cpp04'>0</span><span class='cpp10'>?</span><span class='cpp05'>true</span><span class='cpp10'>:</span><span class='cpp05'>false</span><span class='cpp10'>);</span>
+<span class='cpp10'>}</span>
+
+
+<span class='cpp01'>/* ************************************************************************** */</span>
+<span class='cpp01'>/*                                                                            */</span>
+<span class='cpp01'>/*  Hlavny program - ukazka pouzitia, navyse je tam aj mys                    */</span>
+<span class='cpp01'>/*                                                                            */</span>
+<span class='cpp01'>/*  Skuste stlacit postupne Ctrl, Alt alebo Shift, pripadne                   */</span>
+<span class='cpp01'>/*  pohybte mysou a stlacte lave tlacitko na mysi...                          */</span>
+<span class='cpp01'>/*                                                                            */</span>
+<span class='cpp01'>/* ************************************************************************** */</span>
+
+<span class='cpp05'>int</span> main<span class='cpp10'>(</span><span class='cpp05'>int</span> argc<span class='cpp10'>,</span> <span class='cpp05'>char</span><span class='cpp10'>*</span> argv<span class='cpp10'>[])</span>
+<span class='cpp10'>{</span>
+   <span class='cpp05'>short</span> x = 0;<span class='cpp10'>,</span> y = 0<span class='cpp10'>;</span>                                 <span class='cpp02'>// sem dame suradnice mysi</span>
+   BOOL lmouse = false<span class='cpp10'>;</span>                                   <span class='cpp02'>// ci bolo stlacene Lave tlacitko</span>
+
+   HANDLE  hConsole<span class='cpp10'>;</span>                           <span class='cpp02'>// ziskanie handle konzoly </span>
+   hConsole <span class='cpp10'>=</span> GetStdHandle<span class='cpp10'>(</span>STD_OUTPUT_HANDLE<span class='cpp10'>);</span> <span class='cpp02'>// poznate z ulohy 2.7                                          </span>
+   COORD point <span class='cpp10'>=</span> <span class='cpp10'>{</span><span class='cpp04'>2</span><span class='cpp10'>,</span><span class='cpp04'>2</span><span class='cpp10'>};</span>                        <span class='cpp02'>// sem budeme vypisovat text 2:stlpec, 2:riadok</span>
+   
+   <span class='cpp05'>while</span> <span class='cpp10'>(</span><span class='cpp05'>true</span><span class='cpp10'>)</span>                                <span class='cpp02'>// nekonecna slucka</span>
+     <span class='cpp10'>{</span>
+       SetConsoleCursorPosition<span class='cpp10'>(</span>hConsole<span class='cpp10'>,</span> point<span class='cpp10'>);</span>  <span class='cpp02'>// nastavi sa na [2,2]</span>
+       
+       printf<span class='cpp10'>(</span><span class='cpp06'>&quot; S:%s&quot;</span><span class='cpp10'>,</span> IsKeyPressed<span class='cpp10'>(</span>VK_SHIFT  <span class='cpp10'>)?</span><span class='cpp06'>&quot;*&quot;</span><span class='cpp10'>:</span><span class='cpp06'>&quot; &quot;</span><span class='cpp10'>);</span>
+       printf<span class='cpp10'>(</span><span class='cpp06'>&quot; C:%s&quot;</span><span class='cpp10'>,</span> IsKeyPressed<span class='cpp10'>(</span>VK_CONTROL<span class='cpp10'>)?</span><span class='cpp06'>&quot;*&quot;</span><span class='cpp10'>:</span><span class='cpp06'>&quot; &quot;</span><span class='cpp10'>);</span>
+       printf<span class='cpp10'>(</span><span class='cpp06'>&quot; A:%s&quot;</span><span class='cpp10'>,</span> IsKeyPressed<span class='cpp10'>(</span>VK_MENU   <span class='cpp10'>)?</span><span class='cpp06'>&quot;*&quot;</span><span class='cpp10'>:</span><span class='cpp06'>&quot; &quot;</span><span class='cpp10'>);</span> 
+
+       <span class='cpp05'>if</span> <span class='cpp10'>(</span>IsKeyPressed<span class='cpp10'>(</span>VK_ESCAPE<span class='cpp10'>))</span>            <span class='cpp02'>// Klavesa VK_ESCAPE konci program</span>
+         <span class='cpp10'>{</span>
+            printf<span class='cpp10'>(</span><span class='cpp06'>&quot;Escape!!        \n&quot;</span><span class='cpp10'>);</span>
+            <span class='cpp05'>break</span><span class='cpp10'>;</span>
+
+       <span class='cpp10'>}</span>
+
+<span class='cpp01'>/* ************************************************************************** */</span>
+<span class='cpp01'>/*                                                                            */</span>
+<span class='cpp01'>/*  Tato cast kodu zabezpeci nacitanie stavu mysi. Nemusite                   */</span>
+<span class='cpp01'>/*  mu rozumiet, ani nemusi byt vo vasom programe ak nechcete mys!            */</span>
+<span class='cpp01'>/*                                                                            */</span>
+<span class='cpp01'>/* ************************************************************************** */</span>
+
+       printf<span class='cpp10'>(</span><span class='cpp06'>&quot;  X:%d Y:%d                  \n&quot;</span><span class='cpp10'>,</span> x<span class='cpp10'>,</span> y<span class='cpp10'>);</span>
+       <span class='cpp05'>if</span> <span class='cpp10'>(</span>lmouse<span class='cpp10'>)</span>
+              printf<span class='cpp10'>(</span><span class='cpp06'>&quot;lave tlacitko na mysi&quot;</span><span class='cpp10'>);</span>
+       <span class='cpp05'>else</span> 
+                printf<span class='cpp10'>(</span><span class='cpp06'>&quot;                     &quot;</span><span class='cpp10'>);</span>
+
+    INPUT_RECORD <span class='cpp10'>*</span>str <span class='cpp10'>=</span> <span class='cpp05'>new</span> INPUT_RECORD<span class='cpp10'>[</span><span class='cpp04'>1</span><span class='cpp10'>];</span>
+    DWORD num <span class='cpp10'>=</span> <span class='cpp04'>0</span><span class='cpp10'>;</span>
+                                <span class='cpp02'>// nasledujuci prikaz zastavi a caka na udalost!</span>
+    ReadConsoleInput<span class='cpp10'>(</span>GetStdHandle<span class='cpp10'>(</span>STD_INPUT_HANDLE<span class='cpp10'>),</span> str<span class='cpp10'>,</span> <span class='cpp04'>1</span><span class='cpp10'>,</span> <span class='cpp10'>&amp;</span>num<span class='cpp10'>);</span> 
+                                <span class='cpp02'>// vysledkom udalosti je: </span>
+         x <span class='cpp10'>=</span> str<span class='cpp10'>-&gt;</span>Event<span class='cpp10'>.</span>MouseEvent<span class='cpp10'>.</span>dwMousePosition<span class='cpp10'>.</span>X<span class='cpp10'>;</span>
+         y <span class='cpp10'>=</span> str<span class='cpp10'>-&gt;</span>Event<span class='cpp10'>.</span>MouseEvent<span class='cpp10'>.</span>dwMousePosition<span class='cpp10'>.</span>Y<span class='cpp10'>;</span>
+       lmouse <span class='cpp10'>=</span> str<span class='cpp10'>-&gt;</span>Event<span class='cpp10'>.</span>MouseEvent<span class='cpp10'>.</span>dwButtonState <span class='cpp10'>==</span> FROM_LEFT_1ST_BUTTON_PRESSED<span class='cpp10'>;</span>
+
+    Sleep<span class='cpp10'>(</span><span class='cpp04'>1</span><span class='cpp10'>);</span>
+<span class='cpp01'>/* ************************************************************************** */</span>
+   
+   
+   
+   <span class='cpp10'>}</span>                            <span class='cpp02'>// toto je koniec nekonecnej slucky</span>
+
+    <span class='cpp05'>return</span> <span class='cpp04'>0</span><span class='cpp10'>;</span>                   <span class='cpp02'>// a toto koniec programu</span>
+<span class='cpp10'>}</span>
+
+</pre>
+</body>
+</html>
