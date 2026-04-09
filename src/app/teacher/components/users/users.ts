@@ -55,7 +55,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     public searchName: string = '';
     public searchEmail: string = '';
     public searchId: string = '';
-    public sortField: string = 'id';
+    public sortField: string = 'fullName';
     public sortDirection: 'asc' | 'desc' = 'asc';
 
     private searchSubject = new Subject<void>();

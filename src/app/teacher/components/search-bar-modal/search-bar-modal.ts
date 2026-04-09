@@ -48,7 +48,8 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
   private translations: Record<string, string> = {
     'PRESENT': 'Prítomný',
     'ABSENT': 'Neprítomný',
-    'SUBSTITUTED': 'Nahradené'
+    'SUBSTITUTED': 'Nahradené',
+    'EXCUSED': 'Ospravedlnené'
   };
 
   public isLoading = false;
@@ -361,6 +362,8 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
       case 'ABSENT': return 'bg-red-100 text-red-800 border border-red-200';
       case 'NAHRADENÉ':
       case 'SUBSTITUTED': return 'bg-purple-100 text-purple-800 border border-purple-200';
+      case 'OSPRAVEDLNENÉ':
+      case 'EXCUSED': return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
       default: return 'bg-gray-100 text-gray-500 border border-gray-200';
     }
   }

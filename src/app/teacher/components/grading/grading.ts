@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, effect, ViewChildren, QueryList, ElementRef, AfterViewChecked, ChangeDetectorRef, DestroyRef, ViewChild } from '@angular/core';
+import { Component, OnInit, inject, effect, ViewChildren, QueryList, ElementRef, AfterViewChecked, ChangeDetectorRef, DestroyRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -8,8 +8,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TeacherContextService, ExerciseSession as ContextExercise } from '../../../core/context/teacher-context.service';
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../core/logging/logger.service';
-import { AssignmentHeader,StudentAssignmentDto,ApiResponse, StudentGradingRow  } from '../../../shared/models/interfaces';
-
+import { AssignmentHeader, StudentAssignmentDto, ApiResponse, StudentGradingRow } from '../../../shared/models/interfaces';
 
 interface BlockPointDto {
   blockId: number;
@@ -42,9 +41,7 @@ export class GradingComponent implements OnInit, AfterViewChecked {
   private cdr = inject(ChangeDetectorRef);
   private logger = inject(LoggerService);
   private destroyRef = inject(DestroyRef);
-
   public contextService = inject(TeacherContextService);
-
   private apiUrl = `${environment.apiUrl}/api/v1`;
 
   @ViewChildren('pointInput') private pointInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
@@ -54,73 +51,120 @@ export class GradingComponent implements OnInit, AfterViewChecked {
   public studentRows: StudentGradingRow[] = [];
   public isLoading = false;
   public isSaving = false;
-
   public blockMaxPoints = 0;
   public blockRequiredPoints = 0;
-
   public error: string | null = null;
   public message: string | null = null;
-
   public editingRecordId: number | null = null;
   public editingValue: number | null = null;
-
   public isNoteModalOpen = false;
   public noteModalRecord: StudentAssignmentDto | null = null;
   public noteModalText: string = '';
-
   public studentSearchQuery: string = '';
   private searchSubject = new Subject<string>();
-  
   public tooltipData: { text: string, x: number, y: number } | null = null;
 
-    @ViewChild('errorContainer') set errorContent(content: ElementRef){
-  if (content) {
-      content.nativeElement.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center',
-        inline: 'nearest'
-      });
+  @Input() explicitExerciseId?: number;
+  @Input() explicitSelectedBlockId: number | null = null;
+  @Output() blockSelected = new EventEmitter<number>();
+  
+  public localSelectedBlockId?: number;
+  public localIsSemesterMode: boolean = false; 
+
+  @ViewChild('errorContainer') set errorContent(content: ElementRef) {
+    if (content) {
+      content.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
       content.nativeElement.focus({ preventScroll: true });
-  }
-}
-
-public get isSemesterMode(): boolean {
-  return this.contextService.isSemesterMode();
-}
-
-constructor() {
-  effect(() => {
-    const isSemester = this.contextService.isSemesterMode();
-    const exercise = this.contextService.selectedExercise();
-    const block = this.contextService.selectedBlock();
-
-    if (!exercise) return;
-
-    if (isSemester) {
-      this.logger.log('Loading Semester Data (persisted mode)');
-      this.loadSemesterData();
-    } else if (block) {
-      this.logger.log('Loading Grading Data for block:', block.id);
-      this.loadGradingData(block.id);
     }
-  }, { allowSignalWrites: true });
-}
+  }
+
+  public get isSemesterMode(): boolean {
+    return this.explicitExerciseId ? this.localIsSemesterMode : this.contextService.isSemesterMode();
+  }
+
+  constructor() {
+    effect(() => {
+      if (this.explicitExerciseId) return;
+
+      const isSemester = this.contextService.isSemesterMode();
+      const exercise = this.contextService.selectedExercise();
+      const block = this.contextService.selectedBlock();
+
+      if (!exercise) return;
+
+      if (isSemester) {
+        this.loadSemesterData();
+      } else if (block) {
+        this.loadGradingData(block.id);
+      }
+    }, { allowSignalWrites: true });
+  }
 
   public ngOnInit(): void {
-    this.logger.log('GradingComponent initialized');
-
-    this.contextService.loadBlocks()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe();
+    if (this.explicitExerciseId) {
+      const currentBlocks = this.contextService.blocks();
+      
+      if (currentBlocks && currentBlocks.length > 0) {
+        if (this.explicitSelectedBlockId === -1) {
+          this.selectSemester();
+        } else {
+          const blockToSelect = this.explicitSelectedBlockId ? this.explicitSelectedBlockId : currentBlocks[0].id;
+          this.selectLocalBlock(blockToSelect);
+        }
+      } else {
+        this.contextService.loadBlocks()
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe(() => {
+            const fetchedBlocks = this.contextService.blocks();
+            if (fetchedBlocks && fetchedBlocks.length > 0) {
+              if (this.explicitSelectedBlockId === -1) {
+                this.selectSemester();
+              } else {
+                const blockToSelect = this.explicitSelectedBlockId ? this.explicitSelectedBlockId : fetchedBlocks[0].id;
+                this.selectLocalBlock(blockToSelect);
+              }
+            }
+          });
+      }
+    } else {
+      this.contextService.loadBlocks()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe();
+    }
 
     this.searchSubject.pipe(
-      takeUntilDestroyed(this.destroyRef),
-      debounceTime(400),
+      takeUntilDestroyed(this.destroyRef), 
+      debounceTime(400), 
       distinctUntilChanged()
     ).subscribe((text) => {
-      this.logger.log(`Performing search: "${text}"`);
       this.performSearch();
     });
+  }
+
+  public async selectSemester(): Promise<void> {
+    if (this.explicitExerciseId) {
+        this.localIsSemesterMode = true;
+        this.localSelectedBlockId = undefined;
+        this.blockSelected.emit(-1);
+        this.loadSemesterData();
+    } else {
+        this.contextService.setSemesterMode(true);
+    }
+  }
+
+  public selectLocalBlock(blockId: number): void {
+    if (this.explicitExerciseId) {
+        this.localIsSemesterMode = false;
+        this.localSelectedBlockId = blockId;
+        this.blockSelected.emit(blockId);
+        this.loadGradingData(blockId); 
+    } else {
+        const block = this.contextService.blocks().find(b => b.id === blockId);
+        if (block) {
+            this.contextService.setSemesterMode(false);
+            this.contextService.selectBlock(block as any);
+        }
+    }
   }
 
   public ngAfterViewChecked(): void {
@@ -134,33 +178,22 @@ constructor() {
   public showTooltip(event: MouseEvent, text: string): void {
     const target = event.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
-    this.tooltipData = {
-      text: text,
-      x: rect.left + (rect.width / 2),
-      y: rect.top
-    };
+    this.tooltipData = { text: text, x: rect.left + (rect.width / 2), y: rect.top };
   }
 
-  public hideTooltip(): void {
-    this.tooltipData = null;
-  }
+  public hideTooltip(): void { this.tooltipData = null; }
 
   public onSearchInput(text: string): void {
     this.studentSearchQuery = text;
     this.searchSubject.next(text);
   }
 
-public async selectSemester(): Promise<void> {
-  this.logger.log('Switching to Semester');
-  this.contextService.setSemesterMode(true);
-}
-
   private performSearch(): void {
     if (this.isSemesterMode) {
       this.loadSemesterData();
     } else {
-      const block = this.contextService.selectedBlock();
-      if (block) this.loadGradingData(block.id);
+      const activeBlockId = this.explicitExerciseId ? this.localSelectedBlockId : this.contextService.selectedBlock()?.id;
+      if (activeBlockId) this.loadGradingData(activeBlockId);
     }
   }
 
@@ -178,20 +211,14 @@ public async selectSemester(): Promise<void> {
     this.blockRequiredPoints = 0;
 
     try {
-      const currentExercise = this.contextService.selectedExercise() as ContextExercise | null;
-      const exerciseId = currentExercise?.exerciseId;
+      const exerciseId = this.explicitExerciseId || (this.contextService.selectedExercise() as ContextExercise | null)?.exerciseId;
 
       if (!exerciseId) {
-        this.error = 'Vyberte cvičenie pre zobrazenie semestra.';
+        this.error = 'Chýba ID cvičenia.';
         return;
       }
 
-      const blocks = this.contextService.blocks();
-      this.assignments = blocks.map(b => ({
-        id: b.id,
-        name: b.name,
-        maxPoints: 0
-      }));
+      this.assignments = this.contextService.blocks().map(b => ({ id: b.id, name: b.name, maxPoints: 0 }));
 
       let params = new HttpParams().set('exerciseId', exerciseId);
       if (this.studentSearchQuery.trim()) {
@@ -208,19 +235,12 @@ public async selectSemester(): Promise<void> {
           studentFullName: dto.studentFullName,
           aisId: dto.aisId,
           studentAssignments: dto.allBlockPoints.map(bp => ({
-            studentAssignmentId: 0,
-            assignmentId: bp.blockId,
-            earnedPoints: bp.blockPoints,
-            note: ''
+            studentAssignmentId: 0, assignmentId: bp.blockId, earnedPoints: bp.blockPoints, note: ''
           }))
         };
-      });
-
-      this.studentRows.sort((a, b) => a.studentFullName.localeCompare(b.studentFullName));
-      this.logger.log(`Semester data loaded: ${this.studentRows.length} students`);
+      }).sort((a, b) => a.studentFullName.localeCompare(b.studentFullName));
 
     } catch (err) {
-      this.logger.error('Failed to load semester data', err);
       this.error = 'Nepodarilo sa načítať dáta semestra.';
     } finally {
       this.isLoading = false;
@@ -228,16 +248,15 @@ public async selectSemester(): Promise<void> {
   }
 
   private async loadGradingData(blockId: number): Promise<void> {
-    const currentExercise = this.contextService.selectedExercise() as ContextExercise | null;
-    const exerciseId = currentExercise?.exerciseId;
+    const exerciseId = this.explicitExerciseId || (this.contextService.selectedExercise() as ContextExercise | null)?.exerciseId;
 
     if (!exerciseId) {
-      this.error = 'Prosím, vyberte cvičenie v hornej lište.';
-      this.studentRows = []; this.assignments = []; return;
+        this.error = 'Prosím, vyberte cvičenie.';
+        this.studentRows = []; this.assignments = []; return;
     }
 
     const currentBlock = this.contextService.blocks().find(b => b.id === blockId) as ExtendedBlock | undefined;
-    
+
     if (currentBlock) {
       this.blockMaxPoints = currentBlock.maxPoints || 0;
       this.blockRequiredPoints = currentBlock.requiredPoints || 0;
@@ -248,24 +267,19 @@ public async selectSemester(): Promise<void> {
     this.editingRecordId = null;
 
     try {
-      let params = new HttpParams()
-        .set('blockId', blockId)
-        .set('exerciseId', exerciseId);
-
+      let params = new HttpParams().set('blockId', blockId).set('exerciseId', exerciseId);
       if (this.studentSearchQuery.trim()) {
         params = params.set('studentFullName', this.studentSearchQuery.trim());
       }
 
-      const assignments = await lastValueFrom(this.http.get<AssignmentHeader[]>(`${this.apiUrl}/assignment?blockId=${blockId}`)) || [];
+      const assignments = await lastValueFrom(this.http.get<AssignmentHeader[]>(`${this.apiUrl}/assignment?blockId=${blockId}`));
       this.assignments = assignments || [];
-      
+
       const gradingResponse = await lastValueFrom(
         this.http.get<StudentGradingRow[]>(`${this.apiUrl}/student-assignment/grading`, { params })
       );
 
-      const rawData = gradingResponse || [];
-
-      this.studentRows = (rawData || []).map((row, index) => {
+      this.studentRows = (gradingResponse || []).map((row, index) => {
         if (row.studentAssignments) {
           row.studentAssignments.forEach((sa, i) => {
             if (this.assignments[i]) sa.assignmentId = this.assignments[i].id;
@@ -274,10 +288,7 @@ public async selectSemester(): Promise<void> {
         return { ...row, studentId: row.studentId ?? index };
       }).sort((a, b) => a.studentFullName.localeCompare(b.studentFullName));
 
-      this.logger.log(`Grading data loaded for Block ${blockId}: ${this.studentRows.length} rows`);
-
     } catch (err) {
-      this.logger.error('Failed to load grading data', err);
       this.error = 'Nepodarilo sa načítať dáta.';
     } finally {
       this.isLoading = false;
@@ -340,19 +351,17 @@ public async selectSemester(): Promise<void> {
     this.isSaving = true;
     const oldPoints = record.earnedPoints;
     const oldNote = record.note;
-    
+
     record.earnedPoints = newPoints;
     record.note = newNote;
 
     try {
-      this.logger.log(`Updating assignment ${record.studentAssignmentId}`, { newPoints, newNote });
       await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.apiUrl}/student-assignment/${record.studentAssignmentId}`, { earnedPoints: newPoints, note: newNote }));
       this.message = 'Uložené.';
       setTimeout(() => this.message = null, 2000);
     } catch (err) {
-      this.logger.error('Update grading failed', err);
       this.error = 'Chyba ukladania.';
-      record.earnedPoints = oldPoints; 
+      record.earnedPoints = oldPoints;
       record.note = oldNote;
     } finally {
       this.isSaving = false;

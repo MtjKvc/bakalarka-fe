@@ -45,7 +45,7 @@
     <table class="teacher-table">
       <thead class="table-header">
         <tr>
-          <th (click)="toggleSort('updatedAt')" class="table-head">
+          <th (click)="toggleSort('updatedAt')" class="table-head cursor-pointer">
             <div class="flex items-center">
               Dátum
               <span class="teacher-asc-desc-icon" *ngIf="sortField === 'updatedAt'">
@@ -55,23 +55,23 @@
             </div>
           </th>
           
-          <th (click)="toggleSort('updatedByUser.fullName')" class="table-head">
+          <th (click)="toggleSort('updatedByUserFullName')" class="table-head cursor-pointer">
             <div class="flex items-center">
               Zmenil
-              <span class="teacher-asc-desc-icon" *ngIf="sortField === 'updatedByUser.fullName'">
+              <span class="teacher-asc-desc-icon" *ngIf="sortField === 'updatedByUserFullName'">
                  {{ sortDir === 'asc' ? '▲' : '▼' }}
               </span>
-              <span class="ml-1 text-gray-300 opacity-0 group-hover:opacity-100" *ngIf="sortField !== 'updatedByUser.fullName'">↕</span>
+              <span class="ml-1 text-gray-300 opacity-0 group-hover:opacity-100" *ngIf="sortField !== 'updatedByUserFullName'">↕</span>
             </div>
           </th>
 
-          <th (click)="toggleSort('originalUser.fullName')" class="table-head">
+          <th (click)="toggleSort('originalUserFullName')" class="table-head cursor-pointer">
             <div class="flex items-center">
               Pôvodný hodnotiteľ
-              <span class="teacher-asc-desc-icon" *ngIf="sortField === 'originalUser.fullName'">
+              <span class="teacher-asc-desc-icon" *ngIf="sortField === 'originalUserFullName'">
                  {{ sortDir === 'asc' ? '▲' : '▼' }}
               </span>
-              <span class="ml-1 text-gray-300 opacity-0 group-hover:opacity-100" *ngIf="sortField !== 'originalUser.fullName'">↕</span>
+              <span class="ml-1 text-gray-300 opacity-0 group-hover:opacity-100" *ngIf="sortField !== 'originalUserFullName'">↕</span>
             </div>
           </th>
 
@@ -87,7 +87,7 @@
             Zadanie
           </th>
 
-          <th (click)="toggleSort('updatedPoints')" class="table-head">
+          <th (click)="toggleSort('updatedPoints')" class="table-head cursor-pointer">
               <div class="flex items-center justify-end">
                Zmena bodov
                <span class="teacher-asc-desc-icon" *ngIf="sortField === 'updatedPoints'">
@@ -107,12 +107,12 @@
           </td>
 
           <td class="table-data">
-                <div class="text-sm text-gray-900 font-medium">{{ log.updatedByUser.fullName }}</div>
+                <div class="text-sm text-gray-900 font-medium">{{ log.updatedByUserFullName }}</div>
           </td>
 
           <td class="table-data">
-            <div class="flex items-center" *ngIf="log.originalUser; else unknownUser">
-                <div class="text-sm text-gray-900">{{ log.originalUser.fullName }}</div>
+            <div class="flex items-center" *ngIf="log.originalUserFullName; else unknownUser">
+                <div class="text-sm text-gray-900">{{ log.originalUserFullName }}</div>
             </div>
             <ng-template #unknownUser>
               <span class="text-xs text-gray-400 italic">Neznámy / Systém</span>
@@ -121,22 +121,22 @@
 
           <td class="table-data">
             <div class="text-sm text-gray-800 font-semibold">
-              {{ log.studentAssignment.student?.fullName }}
+              {{ log.studentFullName }}
             </div>
-            <div class="text-xs text-gray-500 font-mono mt-0.5" *ngIf="log.studentAssignment.student?.aisId">
-               AIS ID: {{ log.studentAssignment.student?.aisId }}
+            <div class="text-xs text-gray-500 font-mono mt-0.5" *ngIf="log.studentAisId">
+               AIS ID: {{ log.studentAisId }}
             </div>
           </td>
 
            <td class="table-data">
             <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-semibold border border-gray-200">
-              {{ log.studentAssignment.assignment?.block?.name || '-' }}
+              {{ log.blockName || '-' }}
             </span>
           </td>
 
           <td class="table-data">
              <span class="text-gray-700 font-medium">
-               {{ log.studentAssignment.assignment?.name || 'Zadanie' }}
+               {{ log.assignmentName || 'Zadanie' }}
              </span>
           </td>
 

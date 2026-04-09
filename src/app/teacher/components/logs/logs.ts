@@ -6,35 +6,17 @@ import { lastValueFrom, Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { LoggerService } from '../../../core/logging/logger.service';
-import { ApiResponse, UserDTO } from '../../../shared/models/interfaces';
 
-
-interface BlockDTO {
+export interface LogEntry {
   id: number;
-  name: string;
-}
-
-interface AssignmentDTO {
-  id?: number;
-  name?: string;
-  block?: BlockDTO;
-}
-
-interface StudentAssignment {
-  id: number;
-  assignment?: AssignmentDTO; 
-  student?: { id?: number; fullName?: string; aisId?: number };
-  note: string;
-  earnedPoints: number;
-}
-
-interface LogEntry {
-  id: number;
-  studentAssignment: StudentAssignment;
+  studentFullName: string;
+  studentAisId: number;
+  blockName: string;
+  assignmentName: string;
   originalPoints: number;
   updatedPoints: number;
-  originalUser?: UserDTO;
-  updatedByUser: UserDTO; 
+  originalUserFullName: string;
+  updatedByUserFullName: string;
   updatedAt: string;
 }
 
@@ -82,7 +64,7 @@ export class Logs implements OnInit, OnDestroy {
     this.searchSubject.next();
   }
 
- private async fetchLogs(): Promise<void> {
+  private async fetchLogs(): Promise<void> {
     this.isLoading = true;
     this.error = null;
 

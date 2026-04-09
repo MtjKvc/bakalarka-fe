@@ -1,0 +1,91 @@
+<div class="teacher-div">
+  
+  <ng-container *ngIf="!selectedSubstitution">
+    <div class="teacher-div-line">
+      <h1 class="teacher-bigger-title">
+        <svg class="teacher-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        Zoznam náhrad
+      </h1>
+    </div>
+
+    <div class="table-div">
+      <table class="teacher-table">
+        <thead class="table-header">
+          <tr>
+            <th class="table-head">Dátum</th>
+            <th class="table-head">Čas</th>
+            <th class="table-head">Miestnosť</th>
+            <th class="table-head">Vyučujúci</th>
+          </tr>
+        </thead>
+        <tbody class="table-body">
+          <tr *ngFor="let sub of substitutions" 
+              (click)="onSelectSubstitution(sub)" 
+              class="table-hover cursor-pointer transition-colors hover:bg-emerald-50/50">
+            <td class="table-data font-medium">{{ sub.sessionDay }}</td>
+            <td class="table-data">{{ sub.startTime | slice:0:5 }}</td>
+            <td class="table-data">
+              <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-semibold border border-gray-200">
+                {{ sub.roomEnum }}
+              </span>
+            </td>
+            <td class="table-data"><span class="text-sm text-gray-900 font-medium">{{ sub.leaderFullName }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="selectedSubstitution">
+    
+    <div class="flex items-center justify-between mb-6 border-b border-gray-200 pb-4">
+      <div>
+        <button (click)="closeDetail()" class="flex items-center text-sm text-gray-500 hover:text-gray-800 transition-colors mb-2">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          Späť na zoznam
+        </button>
+        <h1 class="text-2xl font-bold text-gray-800">
+          Suplovanie: {{ selectedSubstitution.roomEnum }} 
+          <span class="text-gray-500 font-normal text-lg ml-2">({{ selectedSubstitution.sessionDay}} o {{ selectedSubstitution.startTime | slice:0:5 }})</span>
+        </h1>
+        <p class="text-sm text-gray-500 mt-1">Pôvodný vyučujúci: <span class="font-medium text-gray-700">{{ selectedSubstitution.leaderFullName }}</span></p>
+      </div>
+    </div>
+
+    <div class="flex space-x-4 mb-6 border-b border-gray-200">
+      <button 
+        (click)="switchTab('attendance')"
+        [class.text-emerald-600]="activeTab === 'attendance'"
+        [class.border-emerald-600]="activeTab === 'attendance'"
+        [class.text-gray-500]="activeTab !== 'attendance'"
+        [class.border-transparent]="activeTab !== 'attendance'"
+        class="pb-3 px-1 border-b-2 font-medium text-sm transition-colors hover:text-emerald-600 focus:outline-none">
+        Dochádzka
+      </button>
+      <button 
+        (click)="switchTab('grading')"
+        [class.text-emerald-600]="activeTab === 'grading'"
+        [class.border-emerald-600]="activeTab === 'grading'"
+        [class.text-gray-500]="activeTab !== 'grading'"
+        [class.border-transparent]="activeTab !== 'grading'"
+        class="pb-3 px-1 border-b-2 font-medium text-sm transition-colors hover:text-emerald-600 focus:outline-none">
+        Bodovanie zadaní
+      </button>
+    </div>
+
+    <div *ngIf="activeTab === 'attendance'" class="animate-fade-in mt-4">
+      <app-attendance [explicitExerciseId]="selectedSubstitution.id"></app-attendance>
+    </div>
+
+    <div *ngIf="activeTab === 'grading'" class="animate-fade-in mt-4">
+      <app-grading 
+        [explicitExerciseId]="selectedSubstitution.id"
+        [explicitSelectedBlockId]="selectedBlockId" 
+        (blockSelected)="selectBlock($event)">
+      </app-grading>
+    </div>
+
+  </ng-container>
+</div>
