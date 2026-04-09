@@ -22,17 +22,15 @@ type TabType = 'attendance' | 'grading';
   standalone: true,
   imports: [CommonModule, Attendance, GradingComponent],
   templateUrl: './substitution.html',
-  styleUrl: './substitution.css'
 })
 export class SubstitutionComponent implements OnInit {
   private http = inject(HttpClient);
   private logger = inject(LoggerService);
   private apiUrl = `${environment.apiUrl}/api/v1/exercise/substitution`;
 
-  // --- KĽÚČE PRE SESSION STORAGE ---
   private readonly STORAGE_KEY_SUB = 'substitution_selected_id';
   private readonly STORAGE_KEY_TAB = 'substitution_active_tab';
-  private readonly STORAGE_KEY_BLOCK = 'substitution_selected_block'; // <-- NOVÝ KĽÚČ
+  private readonly STORAGE_KEY_BLOCK = 'substitution_selected_block';
 
   public substitutions: SubstitutionDTO[] = [];
   public isLoading: boolean = false;
@@ -40,7 +38,7 @@ export class SubstitutionComponent implements OnInit {
 
   public selectedSubstitution: SubstitutionDTO | null = null;
   public activeTab: TabType = 'attendance';
-  public selectedBlockId: number | null = null; // <-- NOVÁ PREMENNÁ PRE BLOK
+  public selectedBlockId: number | null = null;
 
   public ngOnInit(): void {
     this.fetchSubstitutions();
@@ -64,20 +62,18 @@ export class SubstitutionComponent implements OnInit {
     }
   }
 
-  // --- LOGIKA PRE UCHOVANIE STAVU ---
   
   private restoreState(): void {
     const savedSubId = sessionStorage.getItem(this.STORAGE_KEY_SUB);
     const savedTab = sessionStorage.getItem(this.STORAGE_KEY_TAB) as TabType;
-    const savedBlockId = sessionStorage.getItem(this.STORAGE_KEY_BLOCK); // Načítanie bloku
-
+    const savedBlockId = sessionStorage.getItem(this.STORAGE_KEY_BLOCK);
     if (savedSubId) {
       const foundSub = this.substitutions.find(s => s.id === Number(savedSubId));
       
       if (foundSub) {
         this.selectedSubstitution = foundSub;
         this.activeTab = savedTab || 'attendance';
-        this.selectedBlockId = savedBlockId ? Number(savedBlockId) : null; // Priradenie bloku
+        this.selectedBlockId = savedBlockId ? Number(savedBlockId) : null;
         this.loadDetailsForSubstitution(foundSub.id);
       } else {
         this.clearState();
@@ -85,7 +81,6 @@ export class SubstitutionComponent implements OnInit {
     }
   }
 
-  // Ukladá aktuálny stav triedy priamo do session storage
   private saveState(): void {
     if (!this.selectedSubstitution) return;
 
@@ -102,17 +97,15 @@ export class SubstitutionComponent implements OnInit {
   private clearState(): void {
     sessionStorage.removeItem(this.STORAGE_KEY_SUB);
     sessionStorage.removeItem(this.STORAGE_KEY_TAB);
-    sessionStorage.removeItem(this.STORAGE_KEY_BLOCK); // Odstránenie bloku
+    sessionStorage.removeItem(this.STORAGE_KEY_BLOCK);
     this.selectedBlockId = null;
   }
-
-  // --- AKCIE POUŽÍVATEĽA ---
 
   public onSelectSubstitution(sub: SubstitutionDTO): void {
     this.logger.log('Opening details for substitution:', sub.id);
     this.selectedSubstitution = sub;
     this.activeTab = 'attendance'; 
-    this.selectedBlockId = null; // Pri novom výbere resetujeme blok
+    this.selectedBlockId = null;
     
     this.saveState();
     this.loadDetailsForSubstitution(sub.id);
@@ -128,8 +121,6 @@ export class SubstitutionComponent implements OnInit {
     this.saveState();
   }
 
-  // --- NOVÁ METÓDA PRE ZMENU BLOKU ---
-  // Toto zavoláš z HTML, keď učiteľ klikne na nejaký blok v záložke Hodnotenie (Grading)
   public selectBlock(blockId: number): void {
     this.selectedBlockId = blockId;
     this.saveState();
