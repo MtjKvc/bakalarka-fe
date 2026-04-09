@@ -19,13 +19,13 @@
         <section [innerHTML]="t('info.theoryDesc1')">
 
         </section>
-        <img class="student-img"src="images/blok3-1.jpeg" alt="klient-server">
+        <img class="student-img"src="images/blok3-1.jpeg" alt="klient-server" (click)="modalService.open('images/blok3-1.jpeg')">
  <section [innerHTML]="t('info.theoryDesc2')">
         </section>
   <section [innerHTML]="t('info.theoryDesc3')">
         </section>
 <span [innerHTML]="t('info.theoryDesc4')"></span>
-        <img class="student-img" src="images/blok3-2.jpeg" alt="konzola príkaz ping">
+        <img class="student-img" src="images/blok3-2.jpeg" alt="konzola príkaz ping" (click)="modalService.open('images/blok3-2.jpeg')">
     </article>
     <article
         class="assignment">

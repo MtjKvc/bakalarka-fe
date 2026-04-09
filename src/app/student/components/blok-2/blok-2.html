@@ -1,7 +1,7 @@
 <main class="main-student" *transloco="let t; read: 'blok2'">
     <h1 class="student-page-h1-title">
         {{ t('title') }}
-    </h1>>
+    </h1>
     <article class="student-info-block">
         <section>
             <h3 class="student-page-h3-title" [innerHTML]="t('intro.vs_community.title')"></h3>
@@ -35,8 +35,8 @@
         <p class="italic text-green-400">
             {{ t('sections.cpu.subtitle') }}
         <div class="img-spacing">
-            <img class="student-img" src="images/cpu1.jpg" alt="obrázok procesora">
-            <img class="student-img" src="images/cpu2.jpg" alt="obrázok procesora spredu aj zozadu">
+            <img class="student-img" src="images/cpu1.jpg" alt="obrázok procesora" (click)="modalService.open('images/cpu1.jpg')">
+            <img class="student-img" src="images/cpu2.jpg" alt="obrázok procesora spredu aj zozadu" (click)="modalService.open('images/cpu2.jpg')">
         </div>
     </section>
 
@@ -130,8 +130,8 @@
         <p class="italic text-green-400">
             {{ t('sections.ram.subtitle') }}</p>
         <div class="img-spacing">
-            <img class="student-img" src="images/ram1.jpg" alt="obrázok RAM pamätí">
-            <img class="student-img" src="images/ram2.jpg  " alt="obrázok RAM pamätí v matičnej doske">
+            <img class="student-img" src="images/ram1.jpg" alt="obrázok RAM pamätí" (click)="modalService.open('images/ram1.jpg')">
+            <img class="student-img" src="images/ram2.jpg" alt="obrázok RAM pamätí v matičnej doske" (click)="modalService.open('images/ram2.jpg')">
         </div>
     </section>
     <article class="assignment">
@@ -153,8 +153,8 @@
             {{ t('sections.hdd.subtitle') }}
         </p>
         <div class="img-spacing">
-            <img class="student-img" src="images/hdd1.jpg" alt="obrázok HDD pripojené k PC">
-            <img class="student-img" src="images/hdd2.jpg" alt="HDD">
+            <img class="student-img" src="images/hdd1.jpg" alt="obrázok HDD pripojené k PC" (click)="modalService.open('images/hdd1.jpg')">
+            <img class="student-img" src="images/hdd2.jpg" alt="HDD" (click)="modalService.open('images/hdd2.jpg')">
         </div>
     </section>
     <article class="assignment">
@@ -225,8 +225,8 @@
         <p class="italic text-green-400">
             {{ t('sections.media.subtitle') }} </p>
         <div class="img-spacing">
-            <img class="student-img" src="images/zav1.jpg" alt="obrázok zvuku">
-            <img class="student-img" src="images/zav2.png" alt="obrázok filmového štábu">
+            <img class="student-img" src="images/zav1.jpg" alt="obrázok zvuku" (click)="modalService.open('images/zav1.jpg')">
+            <img class="student-img" src="images/zav2.png" alt="obrázok filmového štábu" (click)="modalService.open('images/zav2.png')">
         </div>
     </section>
 
@@ -269,7 +269,7 @@
         <p class="italic text-green-400">
             {{ t('sections.pixel.subtitle') }} </p>
         <div class="img-spacing">
-            <img class="student-img" src="images/pixel1.jpg" alt="obrázok pixelov v monitory">
+            <img class="student-img" src="images/pixel1.jpg" alt="obrázok pixelov v monitory" (click)="modalService.open('images/pixel1.jpg')">
         </div>
     </section>
     <article class="assignment">
@@ -278,7 +278,7 @@
                 class="student-assignment-point">{{ t('tasks.task_2_5_1.points') }}</span>
         </div>
         <span [innerHTML]="t('tasks.task_2_5_1.description')"></span>
-        <img class="student-img" src="images/uloha2.5.1.png" alt="správny Výstup  v konzole">
+        <img class="student-img" src="images/uloha2.5.1.png" alt="správny Výstup  v konzole" (click)="modalService.open('images/uloha2.5.1.png')">
         <section>
             <span class="important-icon">{{ t('ui.tip') }} </span>
             <span class="important-text" [innerHTML]="t('tasks.task_2_5_1.tip_1')"></span>
@@ -311,7 +311,7 @@
                 class="student-assignment-point">{{ t('tasks.task_2_5_2.points') }}</span>
         </div>
         <section [innerHTML]="t('tasks.task_2_5_2.description')"></section>
-        <img class="student-img" src="images/uloha2.5.2.png" alt="približný výstup v konzole">
+        <img class="student-img" src="images/uloha2.5.2.png" alt="približný výstup v konzole" (click)="modalService.open('images/uloha2.5.2.png')">
         <section>
             <span class="important-icon">{{ t('ui.tip') }} </span>
             <span class="important-text" [innerHTML]="t('tasks.task_2_5_2.tip')"></span>
@@ -326,7 +326,7 @@
 
         <h2 class="student-page-h2-title" [innerHTML]="t('sections.keyboard.title')"></h2>
         <div class="img-spacing">
-            <img class="student-img" src="images/keyboard1.png" alt="obrázok klavesnice">
+            <img class="student-img" src="images/keyboard1.png" alt="obrázok klavesnice" (click)="modalService.open('images/keyboard1.png')">
         </div>
     </section>
     <article class="assignment">

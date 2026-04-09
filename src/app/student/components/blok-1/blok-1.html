@@ -5,7 +5,7 @@
     <article class="student-info-block">
         <section>
             <span [innerHTML]="t('info.description1')"></span>
-            <img src="images/uvod-blok1.png" alt="obrázok správneho odovzdania" width="938" height="403"
+            <img src="images/uvod-blok1.png" alt="obrázok správneho odovzdania" width="938" height="403" (click)="modalService.open('images/uvod-blok1.png')"
                 class="student-img">
             <span [innerHTML]="t('info.description2')"></span>
         </section>
@@ -42,7 +42,7 @@
             <span class="important-icon">{{ t('labels.tip') }}</span>
             <span class="important-text" [innerHTML]="t('tasks.task2.tip3')"></span>
 
-            <img src="images/uloha1.2.png" alt="int bit_count = sizeof(unsigned int) * 8;" class="student-img"
+            <img src="images/uloha1.2.png" alt="int bit_count = sizeof(unsigned int) * 8;" class="student-img" (click)="modalService.open('images/uloha1.2.png')"
                 width="328" height="25">
         </section>
     </article>
@@ -82,7 +82,7 @@
             <span class="student-assignment-point">{{ t('tasks.task5.points') }}</span>
         </div>
         <section [innerHTML]="t('tasks.task5.description1')"></section>
-        <img src="images/uloha1.5-1.png" alt="Rád sin(x) a cos(x)" class="student-img" width="1024" height="284">
+        <img src="images/uloha1.5-1.png" alt="Rád sin(x) a cos(x)" class="student-img" width="1024" height="284" (click)="modalService.open('images/uloha1.5-1.png')">
         <section [innerHTML]="t('tasks.task5.description2')"></section>
         <span class="important-icon">{{ t('labels.tip') }}</span>
         <span class="important-text" [innerHTML]="t('tasks.task5.tip1')"></span><br>
@@ -90,7 +90,7 @@
         <span class="important-text" [innerHTML]="t('tasks.task5.tip2')"></span><br>
         <span class="important-icon">{{ t('labels.tip') }}</span>
         <span class="important-text" [innerHTML]="t('tasks.task5.tip3')"></span><br>
-        <img src="images/uloha1.5-2.png" alt="graf funkcií" class="student-img" width="290" height="291">
+        <img src="images/uloha1.5-2.png" alt="graf funkcií" class="student-img" width="290" height="291" (click)="modalService.open('images/uloha1.5-2.png')">
         <section [innerHTML]="t('tasks.task5.description3')"></section>
     </article>
     <article class="assignment">
@@ -134,11 +134,11 @@
             <span [innerHTML]="t('tasks.task6.intelHexDesc2')"></span><br>
             <span [innerHTML]="t('tasks.task6.intelHexFormat')"></span>
         </section>
-        <img src="images/uloha1.6-1.png" alt="obrázok Intel HEX formátu" class="student-img" width="300" height="97">
+        <img src="images/uloha1.6-1.png" alt="obrázok Intel HEX formátu" class="student-img" width="300" height="97" (click)="modalService.open('images/uloha1.6-1.png')">
         <span [innerHTML]="t('tasks.task6.exampleMeaning')"></span><br>
         <span [innerHTML]="t('tasks.task6.calculation')"></span><br>
         <span [innerHTML]="t('tasks.task6.exampleMicrocomputer')"></span><br>
-        <img src="images/uloha1.6-2.png" alt="jednoduchý program pre mikropočítač" class="student-img" width="379"
+        <img src="images/uloha1.6-2.png" alt="jednoduchý program pre mikropočítač" class="student-img" width="379" (click)="modalService.open('images/uloha1.6-2.png')"
             height="516">
         <div class="copy-text">
             <div class="copy-text-spacing w-full">
