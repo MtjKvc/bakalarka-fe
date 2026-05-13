@@ -159,5 +159,29 @@
         </tr>
       </tbody>
     </table>
+    <div class="sticky bottom-0 left-0 w-full z-10 flex items-center justify-between px-6 py-3 border-t border-gray-200 bg-white" *ngIf="totalPages > 0">
+      
+      <div class="text-sm text-gray-500">
+        Strana <span class="font-medium text-gray-900">{{ currentPage + 1 }}</span> 
+        z <span class="font-medium text-gray-900">{{ totalPages }}</span>
+      </div>
+
+      <div class="flex space-x-2">
+        <button 
+          (click)="prevPage()" 
+          [disabled]="currentPage === 0"
+          class="px-3 py-1.5 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+          Predchádzajúca
+        </button>
+        
+        <button 
+          (click)="nextPage()" 
+          [disabled]="currentPage >= totalPages - 1"
+          class="px-3 py-1.5 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+          Ďalšia
+        </button>
+      </div>
+
+    </div>
   </div>
 </div>

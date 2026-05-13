@@ -20,6 +20,14 @@ export interface LogEntry {
   updatedAt: string;
 }
 
+export interface PaginatedLogsResponse {
+  data: LogEntry[];
+  meta: {
+    page: number;
+    totalPages: number;
+  };
+}
+
 @Component({
   selector: 'app-logs',
   standalone: true,
@@ -42,6 +50,10 @@ export class Logs implements OnInit, OnDestroy {
   public sortField: string = 'updatedAt';
   public sortDir: 'asc' | 'desc' = 'desc';
 
+  public currentPage: number = 0;
+  public totalPages: number = 0;
+  public pageSize: number = 20;
+
   private searchSubject = new Subject<void>();
   private searchSubscription?: Subscription;
 
@@ -61,6 +73,7 @@ export class Logs implements OnInit, OnDestroy {
   }
 
   public onSearchInput(): void {
+    this.currentPage = 0;
     this.searchSubject.next();
   }
 
@@ -69,7 +82,9 @@ export class Logs implements OnInit, OnDestroy {
     this.error = null;
 
     let params = new HttpParams()
-      .set('sort', `${this.sortField},${this.sortDir}`);
+      .set('sort', `${this.sortField},${this.sortDir}`)
+      .set('page', this.currentPage)
+      .set('size', this.pageSize);
 
     if (this.searchUpdatedBy?.trim()) {
       params = params.set('updatedByUserFullName', this.searchUpdatedBy.trim());
@@ -79,14 +94,18 @@ export class Logs implements OnInit, OnDestroy {
       params = params.set('originalUserFullName', this.searchOriginalBy.trim());
     }
 
-    this.logger.log(`Fetching logs. Sort: ${this.sortField} ${this.sortDir}, UpdatedBy: ${this.searchUpdatedBy}, OriginalBy: ${this.searchOriginalBy}`);
+    this.logger.log(`Fetching logs. Page: ${this.currentPage}, Sort: ${this.sortField} ${this.sortDir}`);
 
     try {
-      const data = await lastValueFrom(
-        this.http.get<LogEntry[]>(this.logsApiUrl, { params })
+      const response = await lastValueFrom(
+        this.http.get<PaginatedLogsResponse>(this.logsApiUrl, { params })
       );
-      this.logs = data;
-      this.logger.log(`Logs loaded: ${this.logs.length} entries`);
+      
+      this.logs = response.data;
+      this.currentPage = response.meta.page;
+      this.totalPages = response.meta.totalPages;
+      
+      this.logger.log(`Logs loaded: ${this.logs.length} entries. Page ${this.currentPage + 1}/${this.totalPages}`);
     } catch (err: unknown) {
       this.logger.error('Failed to load logs', err);
       this.error = 'Nepodarilo sa načítať históriu zmien.';
@@ -102,7 +121,22 @@ export class Logs implements OnInit, OnDestroy {
       this.sortField = field;
       this.sortDir = 'desc';
     }
+    this.currentPage = 0;
     this.logger.log(`Sorting changed to ${this.sortField} ${this.sortDir}`);
     this.fetchLogs();
+  }
+
+  public prevPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.fetchLogs();
+    }
+  }
+
+  public nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      this.fetchLogs();
+    }
   }
 }

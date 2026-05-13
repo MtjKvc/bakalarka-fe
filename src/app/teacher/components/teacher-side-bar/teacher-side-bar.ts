@@ -88,6 +88,18 @@ export class TeacherSidebarComponent {
       this.passwordError = 'Nové heslo musí obsahovať aspoň 8 znakov.';
       return;
     }
+    if (!/[a-z]/.test(this.newPassword)) {
+      this.passwordError = 'Heslo musí obsahovať aspoň jedno malé písmeno.';
+      return;
+    }
+    if (!/[A-Z]/.test(this.newPassword)) {
+      this.passwordError = 'Heslo musí obsahovať aspoň jedno veľké písmeno.';
+      return;
+    }
+    if (!/[0-9]/.test(this.newPassword)) {
+      this.passwordError = 'Heslo musí obsahovať aspoň jednu číslicu.';
+      return;
+    }
 
     this.isSubmitting = true;
     this.passwordError = null;

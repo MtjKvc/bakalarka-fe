@@ -32,36 +32,43 @@ export class Login {
       },
 
       error: (err: HttpErrorResponse) => {
-        // Bezpečné mapovanie chýb výlučne do slovenčiny
         switch (err.status) {
           case 400:
             this.errorMessage = "Nesprávne zadané údaje (chybný formát).";
             break;
-            
+
           case 401:
             this.errorMessage = "Nesprávne prihlasovacie meno alebo heslo.";
             break;
-            
+
           case 403:
             this.errorMessage = "Prístup zamietnutý. Platnosť tokenu vypršala alebo je neplatný.";
             break;
-            
+
           case 409:
             this.errorMessage = "Tento záznam už v systéme existuje (konflikt údajov).";
             break;
-            
+
           case 422:
             if (err.error?.message === "HELPER can login only on the day of assigned exercise") {
               this.errorMessage = "HELPER sa môže prihlásiť iba v deň priradeného cvičenia.";
-            } 
-            else if(err.error?.message === "Login allowed only between 07:00 and 19:00"){
+            }
+            else if (err.error?.message === "Login allowed only between 07:00 and 19:00") {
               this.errorMessage = "HELPER sa môže prihlásiť iba medzi 7:00 a 19:00.";
+            }
+            else if (err.error?.message.startsWith("Too many login attempts.")) {
+
+              let waitTimeStr = err.error?.message.replace("Too many login attempts. Try again in ", "").replace(".", "");
+
+              waitTimeStr = waitTimeStr
+              this.errorMessage = `Príliš veľa pokusov o prihlásenie.<br> Skúste to znova o ${waitTimeStr}.`;
             }
             else {
               this.errorMessage = "Zadané údaje neprešli kontrolou (chyba validácie).";
             }
+
             break;
-            
+
           default:
             this.errorMessage = "Vyskytla sa nečakaná chyba. Skúste to prosím neskôr.";
             break;

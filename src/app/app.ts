@@ -30,7 +30,7 @@ export class App implements OnInit {
       },
       { 
         name: 'keywords', 
-        content: 'architektúra počítačov, Moorov zákon, procesory, RAM, SSD, CISC, RISC, DMA, cloud computing, operačné systémy' 
+        content: 'architektúra počítačov, Moorov zákon, procesory, RAM, SSD, CISC, RISC, DMA, cloud computing, operačné systémy, urk, fei, stu, web predmetu architektúra počítačov' 
       },
       { name: 'robots', content: 'index, follow' },
       

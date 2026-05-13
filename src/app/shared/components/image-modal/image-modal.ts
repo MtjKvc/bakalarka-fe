@@ -9,7 +9,7 @@ import { ImageModalService } from '../../../core/utils/image-modal.service';
 })
 export class ImageModalComponent {
   isZoomed = false;
-  zoomOrigin = '50% 50%'; // Predvolený stred
+  zoomOrigin = '50% 50%';
 
   constructor(public modalService: ImageModalService) {}
 
@@ -20,7 +20,6 @@ export class ImageModalComponent {
       const img = event.currentTarget as HTMLImageElement;
       const rect = img.getBoundingClientRect();
       
-      // Vypočítame percentuálnu pozíciu kliknutia v rámci obrázka
       const x = ((event.clientX - rect.left) / rect.width) * 100;
       const y = ((event.clientY - rect.top) / rect.height) * 100;
       

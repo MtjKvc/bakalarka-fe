@@ -53,7 +53,6 @@ public ngOnInit() {
       this.initCanvas();
       this.animate(performance.now());
     } else {
-      // Zastavenie animácie a vymazanie plátna
       if (this.animationId) {
         cancelAnimationFrame(this.animationId);
         this.animationId = 0;
