@@ -89,6 +89,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     public isRemoveExerciseConfirmOpen: boolean = false;
     public assignmentToRemove: UserExerciseAssignment | null = null;
 
+
     @ViewChild('errorContainer') set errorContent(content: ElementRef) {
         if (content) {
             content.nativeElement.scrollIntoView({
@@ -101,7 +102,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     }
 
     public ngOnInit(): void {
-this.logger.log('UsersComponent initialized');
+        this.logger.log('UsersComponent initialized');
         this.loadRoles();
 
         this.searchSubscription = this.searchSubject.pipe(
@@ -158,7 +159,7 @@ this.logger.log('UsersComponent initialized');
         this.triggerSearch();
     }
 
-private async loadRoles(): Promise<void> {
+    private async loadRoles(): Promise<void> {
         try {
             const rolesData = await lastValueFrom(this.http.get<string[]>(this.rolesApiUrl));
             this.availableRoles = rolesData || [];
@@ -422,6 +423,13 @@ private async loadRoles(): Promise<void> {
     public async onCellSave(user: UserDTO): Promise<void> {
         this.error = null;
         this.shouldFocus = false;
+        if (this.editingField === 'email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(this.editingValue)) {
+                this.error = 'Neplatný formát emailu';
+                return;
+            }
+        }
         if (this.isSaving || this.editingId === null || this.editingField === null) return;
 
         const newValue = String(this.editingValue).trim();
@@ -453,7 +461,6 @@ private async loadRoles(): Promise<void> {
         } catch (err: unknown) {
             this.logger.error('Error saving cell edit', err);
             this.error = "Chyba pri aktualizácii.";
-            this.triggerSearch()
         } finally {
             this.editingId = null; this.editingField = null;
             this.isLoading = false; this.isSaving = false;
