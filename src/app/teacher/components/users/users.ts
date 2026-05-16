@@ -45,7 +45,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
 
     private usersApiUrl = `${environment.apiUrl}/api/v1/user`;
     private rolesApiUrl = `${environment.apiUrl}/api/v1/enum/role`;
-    private passwordApiUrl = `${environment.apiUrl}/api/v1/user/password`;
+    private passwordApiUrl = `${environment.apiUrl}/api/v1/user/generate-password`;
 
     private exercisesApiUrl = `${environment.apiUrl}/api/v1/exercise`;
     private userExerciseApiUrl = `${environment.apiUrl}/api/v1/user-exercise`;
