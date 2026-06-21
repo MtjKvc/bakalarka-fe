@@ -2,10 +2,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, AfterViewInit, ViewChild, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import { RouterModule, } from '@angular/router';
+import { TranslocoModule, TranslocoService} from '@jsverse/transloco';
 
 @Component({
   selector: 'app-student',
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, TranslocoModule],
   templateUrl: './student.html',
   styleUrl: './student.css'
 })
@@ -24,16 +25,62 @@ export class Student implements AfterViewInit, OnDestroy{
   private fpsInterval = 1000 / this.fps;
   private lastDrawTime = 0;
 
+  public availableLangs = ['en', 'sk'];
   public menuOpen = false;
 
   private animationId: number = 0;
+
+  public isRainActive = true;
+
+constructor(private translocoService: TranslocoService) {}
+
+public ngOnInit() {
+    const savedLang = localStorage.getItem('app_lang');
+    if (savedLang) {
+      this.translocoService.setActiveLang(savedLang);
+    }
+  const savedRainState = localStorage.getItem('matrix_rain_active');
+    if (savedRainState !== null) {
+      this.isRainActive = savedRainState === 'true';
+    }
+  }
+
+  public toggleRain() {
+    this.isRainActive = !this.isRainActive;
+    localStorage.setItem('matrix_rain_active', this.isRainActive.toString());
+
+    if (this.isRainActive) {
+      this.initCanvas();
+      this.animate(performance.now());
+    } else {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = 0;
+      }
+      if (this.ctx) {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+      }
+    }
+  }
+  
+
+  public changeLanguage(lang: string) {
+    this.translocoService.setActiveLang(lang);
+    localStorage.setItem('app_lang', lang);
+  }
+
+  get activeLang() {
+    return this.translocoService.getActiveLang();
+  }
 
   public toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
   public ngAfterViewInit() {
     this.initCanvas();
-    this.animate(0);
+    if (this.isRainActive) {
+      this.animate(0);
+    }
   }
 
   public ngOnDestroy() {
@@ -48,6 +95,7 @@ export class Student implements AfterViewInit, OnDestroy{
   }
 
   private initCanvas() {
+    if (!this.canvasRef) return;
     const canvas = this.canvasRef.nativeElement;
     this.ctx = canvas.getContext('2d')!;
     this.width = window.innerWidth;
@@ -60,6 +108,8 @@ export class Student implements AfterViewInit, OnDestroy{
   }
 
   private animate(currentTime: number) {
+
+    if (!this.isRainActive) return;
     this.animationId = requestAnimationFrame((time) => this.animate(time));
     const elapsed = currentTime - this.lastDrawTime;
     if (elapsed < this.fpsInterval) return;

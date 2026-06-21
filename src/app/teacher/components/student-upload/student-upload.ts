@@ -20,13 +20,13 @@ interface UploadPayload {
 })
 export class StudentUploadComponent {
   public readonly contextService = inject(TeacherContextService);
- private readonly http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
   private readonly logger = inject(LoggerService);
 
   public readonly parsedStudents = signal<StudentDto[]>([]);
   public readonly isUploading = signal(false);
   public readonly uploadStatus = signal<'idle' | 'success' | 'error'>('idle');
-  public readonly  errorMessage = signal<string>('');
+  public readonly errorMessage = signal<string>('');
 
   constructor() {
     effect(() => {
@@ -51,7 +51,7 @@ export class StudentUploadComponent {
       this.logger.warn('Invalid file format selected:', file.name);
       this.errorMessage.set('Chyba: Povolený je iba formát .csv!');
       this.uploadStatus.set('error');
-      input.value = ''; 
+      input.value = '';
       return;
     }
 
@@ -60,11 +60,11 @@ export class StudentUploadComponent {
       this.parseCSV(text);
     };
     reader.onerror = () => {
-        this.errorMessage.set('Chyba pri čítaní súboru.');
-        this.uploadStatus.set('error');
+      this.errorMessage.set('Chyba pri čítaní súboru.');
+      this.uploadStatus.set('error');
     };
 
-    reader.readAsText(file, 'windows-1250'); 
+    reader.readAsText(file, 'windows-1250');
   }
 
   private parseCSV(csvText: string) {
@@ -80,7 +80,7 @@ export class StudentUploadComponent {
       const cols = line.split(';');
 
       if (cols.length >= 3) {
-        
+
         const rawName = cols[1].trim();
         const rawId = cols[2].trim();
 
@@ -95,9 +95,9 @@ export class StudentUploadComponent {
       }
     }
     if (students.length === 0) {
-        this.errorMessage.set('Súbor neobsahuje žiadnych platných študentov alebo má zlý formát.');
-        this.uploadStatus.set('error');
-        return;
+      this.errorMessage.set('Súbor neobsahuje žiadnych platných študentov alebo má zlý formát.');
+      this.uploadStatus.set('error');
+      return;
     }
 
     this.logger.log(`Parsed ${students.length} students from CSV`);
@@ -107,7 +107,7 @@ export class StudentUploadComponent {
 
   public uploadData() {
     const currentExercise = this.contextService.selectedExercise();
-    
+
     if (!currentExercise) {
       this.logger.warn('Upload attempted without selected exercise');
       this.errorMessage.set('Musíte vybrať cvičenie v hornej lište!');
@@ -117,7 +117,7 @@ export class StudentUploadComponent {
 
     if (this.parsedStudents().length === 0) return;
 
-   this.isUploading.set(true);
+    this.isUploading.set(true);
     this.errorMessage.set('');
 
     const payload: UploadPayload = {
@@ -137,10 +137,17 @@ export class StudentUploadComponent {
           this.parsedStudents.set([]);
         },
         error: (err) => {
+          switch (err.status) {
+            case 409:
+              this.errorMessage.set("Tento záznam už v systéme existuje (konflikt údajov).");
+              break;
+            default:
+              this.errorMessage.set("Nepodarilo sa uložiť študentov.");
+              break;
+          }
           this.logger.error('Student upload failed', err);
           this.isUploading.set(false);
           this.uploadStatus.set('error');
-          this.errorMessage.set('Nepodarilo sa uložiť študentov. Skontrolujte konzolu.');
         }
       });
   }

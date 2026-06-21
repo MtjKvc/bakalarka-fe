@@ -11,9 +11,21 @@ import { StudentBasic,ApiResponse,AssignmentHeader,StudentAssignmentDto,SessionC
 
 interface StudentAttendanceRow {
   studentFullName: string;
+  aisId?: number;
+  allBlockPoints: BlockPointDto[];
   studentAttendances: AttendanceItemDto[];
 }
 
+export interface StudentExerciseDto {
+  sessionDay: string;
+  startTime: string;
+  roomEnum: string;
+}
+
+interface BlockPointDto {
+  blockId: number;
+  blockPoints: number;
+}
 
 interface AttendanceMapValue {
   id: number;      
@@ -34,6 +46,10 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
   private logger = inject(LoggerService);
   private apiUrl = `${environment.apiUrl}/api/v1`;
 
+  public allBlockPoints: BlockPointDto[] = [];
+
+  public studentExercise: StudentExerciseDto | null = null;
+
   public student = input.required<StudentBasic>();
   public close = output<void>();
 
@@ -48,7 +64,18 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
   private translations: Record<string, string> = {
     'PRESENT': 'Prítomný',
     'ABSENT': 'Neprítomný',
-    'SUBSTITUTED': 'Nahradené'
+    'SUBSTITUTED': 'Nahradené',
+    'EXCUSED': 'Ospravedlnené'
+  };
+
+  private dayTranslations: Record<string, string> = {
+    'MONDAY': 'Pondelok',
+    'TUESDAY': 'Utorok',
+    'WEDNESDAY': 'Streda',
+    'THURSDAY': 'Štvrtok',
+    'FRIDAY': 'Piatok',
+    'SATURDAY': 'Sobota',
+    'SUNDAY': 'Nedeľa'
   };
 
   public isLoading = false;
@@ -69,11 +96,31 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
   public ngOnInit(): void {
     this.logger.log('SearchBarModal initialized', this.student());
     this.loadAttendanceOptions();
+    this.loadStudentExercise();
     if (this.contextService.blocks().length === 0) {
         this.contextService.loadBlocks().subscribe(() => this.loadData());
     } else {
         this.loadData();
     }
+  }
+
+  private async loadStudentExercise() {
+    const aisId = this.student().aisId;
+    if (!aisId) return;
+
+    try {
+      const response = await lastValueFrom(
+        this.http.get<StudentExerciseDto>(`${this.apiUrl}/student-exercise/exercise-for-student?aisId=${aisId}`)
+      );
+      this.studentExercise = response;
+    } catch (e) {
+      this.logger.error('Nepodarilo sa načítať cvičenie študenta', e);
+    }
+  }
+
+  public getTranslatedDay(day: string): string {
+    if (!day) return '';
+    return this.dayTranslations[day.toUpperCase()] || day;
   }
 
   private async loadAttendanceOptions() {
@@ -178,7 +225,13 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
       });
     }
     this.attendanceSessions = Array.from(sessionsMap.values()).sort((a, b) => a.id - b.id);
+    this.allBlockPoints = row.allBlockPoints || [];
   }
+
+  public getBlockPoints(blockId: number): number {
+  const bp = this.allBlockPoints.find(p => p.blockId === blockId);
+  return bp ? bp.blockPoints : 0;
+}
 
   public getAssignmentRecord(assignmentId: number): StudentAssignmentDto | undefined {
     return this.gradingRow?.studentAssignments?.find(a => a.assignmentId === assignmentId);
@@ -361,6 +414,8 @@ export class SearchBarModalComponent implements OnInit, AfterViewChecked {
       case 'ABSENT': return 'bg-red-100 text-red-800 border border-red-200';
       case 'NAHRADENÉ':
       case 'SUBSTITUTED': return 'bg-purple-100 text-purple-800 border border-purple-200';
+      case 'OSPRAVEDLNENÉ':
+      case 'EXCUSED': return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
       default: return 'bg-gray-100 text-gray-500 border border-gray-200';
     }
   }

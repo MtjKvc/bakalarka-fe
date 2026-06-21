@@ -8,7 +8,7 @@
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()" autocomplete="off">
       
       @if (errorMessage) {
-        <div class="login-message">
+        <div class="login-message" [innerHTML]="errorMessage">
           {{ errorMessage }}
         </div>
       }

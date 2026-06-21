@@ -1,0 +1,18 @@
+@if (modalService.selectedImg(); as src) {
+  <div class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center overflow-hidden"
+       (click)="close()">
+      
+      <button class="fixed top-5 right-10 text-white text-5xl z-[10000]">&times;</button>
+
+      <div class="relative w-full h-full flex items-center justify-center p-5">
+          <img [src]="src" 
+               (click)="toggleZoom($event)"
+               class="rounded-lg shadow-2xl transition-transform duration-300 ease-out max-w-[90vw] max-h-[90vh] object-contain"
+               [style.transform-origin]="zoomOrigin"
+               [style.transform]="isZoomed ? 'scale(2.5)' : 'scale(1)'"
+               [class.cursor-zoom-out]="isZoomed"
+               [class.cursor-zoom-in]="!isZoomed"
+               alt="Detail">
+      </div>
+  </div>
+}

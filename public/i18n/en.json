@@ -1,0 +1,658 @@
+{
+  "blok1": {
+    "title": "Block 1",
+    "info": {
+      "description1": "Do not solve all of the following tasks. You can get a maximum of 10 points from them, so choose a combination to get at least 10 points in total.<br><strong>Compile the tasks of the first block using the command-line compiler. Just like in the introductory exercise.</strong><br>If you want to use the compiler on your own computer, download gcc <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-12.0.0-ucrt-r3/winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64ucrt-12.0.0-r3.zip\">here.</a> The file gcc.exe is located in the mingw64\\bin directory. Ideally, add the mingw64\\bin directory to your PATH, and then you can use gcc.exe from anywhere. A more detailed guide is in the Tutorials section.<br><strong>All tasks must be developed as separate functions in a single file.</strong> At the end of the block, you will therefore submit only one file according to this template:",
+      "description2": "Assignments must be submitted to the instructors continuously; after the fourth week of the semester, it will no longer be possible to submit tasks from this block. In case of partial completion of a task, you will receive fewer points for that task.<br><strong>To receive credit, you need at least half of the points from each block.</strong>",
+      "importantWarning": "⚠️ Important: ",
+      "importantText": "It is crucial to realize that Visual Studio essentially allows you to do the same things as the gcc compiler (introductory exercise), but it also offers other tools. However, the compilation process is fundamentally the same - your source file is used to create an executable file that can be run by the computer. The computer can only work with ones and zeros. From 'its perspective', everything is just a sequence of ones and zeros, for example 10101111000011000100. Therefore, even though from your perspective you are working with numbers or letters, the computer always 'sees' only ones and zeros. This is why it is absolutely crucial that you know how to work with the <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://sk.wikipedia.org/wiki/Dvojkov%C3%A1_%C4%8D%C3%ADseln%C3%A1_s%C3%BAstava\">binary system.</a>"
+    },
+    "labels": {
+      "tip": "💡 Tip: ",
+      "definition": "Definition:",
+      "otherDefinition": "Another definition:",
+      "example": "Example:"
+    },
+    "tasks": {
+      "task1": {
+        "title": "Task 1.1",
+        "points": "2pts",
+        "description": "Write a program that displays the following two inputs:<br>the number 33777<br>the ASCII code of the character 'X'<br>in the <strong>binary, decimal, and hexadecimal systems.</strong> The program must work in such a way that the inputs can be changed (can change them in the source file).",
+        "tip1": "Use the smallest possible number of variables; utilize the options provided by the <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://alvinalexander.com/programming/printf-format-cheat-sheet/\">printf</a> function, but you will have to program the conversion to the binary system yourself."
+      },
+      "task2": {
+        "title": "Task 1.2",
+        "points": "2pts",
+        "description": "Write a program that performs a right bit rotation for a positive integer. The user enters the number and the number of bits to shift (and optionally, the direction, but shifting right is sufficient).<br>Example:<br>The number 9 (in binary form 1001) after a right rotation by 1 bit becomes 1100.",
+        "tip1": "Bit rotation (also known as circular shift) is an operation where the bits in a binary number are shifted right or left by a certain number of positions, and the bits that \"fall off\" on one end are placed back on the opposite end. So start with a bit shift operation. Write a few examples on paper before programming.",
+        "tip2": "You can learn how to use bitwise operations in C <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://uim.fei.stuba.sk/wp-content/uploads/2020/04/p11.pdf\">here.</a> An interesting video on this topic is <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://www.youtube.com/watch?v=igIjGxF2J-w\">here.</a>",
+        "tip3": "Use the unsigned int data type."
+      },
+      "task3": {
+        "title": "Task 1.3",
+        "points": "2pts",
+        "description": "Write a program that counts the number of ones (set bits) in the binary representation of a given number.<br><br>Example:<br><br>Input: 13 (binary 1101)<br><br>Output: 3 ones",
+        "tip1": "Use bitwise AND and bit shifts. You can learn how to use bitwise operations in C <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://uim.fei.stuba.sk/wp-content/uploads/2020/04/p11.pdf\">here.</a> An interesting video on this topic is <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://www.youtube.com/watch?v=igIjGxF2J-w\">here.</a>"
+      },
+      "task4": {
+        "title": "Task 1.4",
+        "points": "3pts",
+        "description": "Write a program that finds and prints the machine epsilon for the float and double data types. Also, print the values of __FLT_EPSILON__ and __DBL_EPSILON__ defined in float.h. As a reminder, the term data type describes how the compiler 'understands' the ones and zeros you are working with. This allows you to identify whether you are working with integers, letters, real numbers, and so on.<br><strong>To get full points, you must be able to explain to the instructor what machine epsilon is, as well as any part of your code.</strong>",
+        "def1": "<h3>Definition:</h3><br>Machine epsilon is the smallest number such that when added to one, it gives something different from one. Simply put, using a limited number of ones and zeros you can represent a very, very large number of numbers, but their count is still finite. Therefore, it inevitably happens that 'next to' the number one, there exist real numbers that your computer cannot represent.",
+        "def2": "<h3>Another Definition:</h3><br>Machine epsilon is the 'distance' between the number 1 and its immediate right neighbor.<br>We work in the binary system (decimal is in parentheses):<br><br>1 + 0.1 = 1.1 (1 + 1/2 = 1.5)<br><br>1 + 0.01 = 1.01 (1 + 1/4 = 1.25)<br><br>1 + 0.001 = 1.001 (1 + 1/8 = 1.125)<br><br>then, due to the limited precision of the computer, after a certain number of decimal places, a situation occurs where 1 + 0.0...001 = 1 (instead of the correct 1.0...001). Then that previous number 0.0...01 is called machine epsilon. It is clear that its value may differ on different computers. However, machine epsilon is not the smallest number in the given representation.",
+        "tip1": "You find machine epsilon by starting to divide the number one. However, you do not divide by ten, but by two, because we are working in the binary system!",
+        "tip2": "Compare your result with the constants FLT_EPSILON and DBL_EPSILON (or __FLT_EPSILON__ and __DBL_EPSILON__) defined in float.h. If your calculated values do not match, try turning off all optimizations. If possible, also try running the program on a different platform than Win32/Intel.",
+        "tip3": {
+          "text": "If it still doesn't work out, you might find an explanation ",
+          "link_text": "here."
+        }
+      },
+      "task5": {
+        "title": "Task 1.5",
+        "points": "4pts",
+        "description1": "Write a program to calculate the sin(x) or cos(x) function using a Taylor series expansion around the point 0. In other words, you will program the sine or cosine function yourself, without using any other existing solution. Angles can be entered in degrees or radians.<strong> The program must work for any input, e.g., -4500° or +8649°.</strong> The function will have two arguments:<br><br>float sinus(float radians, float epsilon);<br><br>For your own implementation, use one of the following relations (you only need to program either sine or cosine, not both):",
+        "description2": "<strong>To get full points, the function must work correctly for any input angle (see the third Tip.). You can verify the correctness of your results by comparing them with the results from a regular calculator.</strong>",
+        "tip1": "Of course, you cannot calculate the sum of an infinite series indefinitely. You can see (if not, check in a program) that the terms keep getting smaller, so eventually a situation will occur where adding the next term no longer changes the result (see task 1.3 - machine epsilon). However, you can stop the calculation even earlier - when the result in two consecutive iterations changes by less than epsilon (a pre-specified, sufficiently small number, e.g., 0.000001).",
+        "tip2": "It is important to realize that epsilon does not represent the accuracy of the calculated approximation.",
+        "tip3": "Note that the mentioned series approximate well only near zero, which means that for larger input angles it will 'stop working' (see the image below - the higher the degree of the polynomial, the better the approximation).",
+        "description3": "For other arguments, use the periodicity of the sine and cosine functions."
+      },
+      "task6": {
+        "title": "Task 1.6",
+        "points": "4pts",
+        "description1": "Write a program to calculate the checksum for a given line of an IntelHex file.<br><strong>To get full points, you must be able to explain to the instructor the individual parts of an IntelHex line (see below), as well as any part of your code.</strong>",
+        "def1": "<h3>Definition:</h3><br>The checksum is calculated as the two's complement of the sum of the individual bytes from the beginning of the line up to the checksum.<br><br>Example:<br><br>If you enter this string:",
+        "description2": "For XX you must get the checksum 40.<br>Demonstrate the fulfillment of the task by calculating the checksums, for example, for these strings:",
+        "intelHexQuestion": "What is the Intel HEX format?",
+        "intelHexDesc1": "The Intel HEX format is a common ASCII text file whose lines consist of so-called records, which are made up of hexadecimal numbers (if you still don't know what ASCII is, google it quickly and absorb it ;). These represent data in memory, whether constants or machine code. This format is used to transfer compiled programs or data to memories such as EPROM, FLASH, EEPROM, etc. Most programming devices support this format.",
+        "intelHexDesc2": "Each line of an IntelHex file represents one record and consists of six parts:",
+        "intelHexFormat": "<strong class=\"text-green-400\">:LLAAAATT[DD…]CC</strong><br><strong class=\"text-green-400\">:</strong> Start character, one byte, one ASCII colon character ':'.<br><strong class=\"text-green-400\">LL </strong>Byte count, two hexadecimal digits. Represents the number of bytes (pairs of hex characters) in one record. The usual value is 16 (0x10).<br><strong class=\"text-green-400\">AAAA</strong> Address, four hexadecimal characters, representing the 16-bit address from which the following data should be stored in memory. The address is in big-endian format.<br><strong class=\"text-green-400\">TT</strong> Record type, two bytes - characters from 00 to 05, determining the meaning of the following data. Type 00 is pure data, type 01 is the end-of-file record, the last line. Others are special types.<br><strong class=\"text-green-400\">DD</strong> Data, a sequence of n bytes of the actual data.<br><strong class=\"text-green-400\">CC</strong> Checksum, two hexadecimal characters - it is the two's complement of the sum of the values of the entire record except for fields 1 and 6 (: and the checksum).<br>Example:",
+        "exampleMeaning": "Such a line (record) has the following meaning:<br><br><strong class=\"text-green-400\">10</strong> (i.e., 16 decimal) is the number of data bytes in the record.<br><br><strong class=\"text-green-400\">0100</strong> is the address where this data should start being written.<br><br><strong class=\"text-green-400\">00</strong> means the record is of type 00 (i.e., it is pure data).<br><br><strong class=\"text-green-400\">2146</strong> … this is the data.<br><br><strong class=\"text-green-400\">40</strong> is the checksum of the entire record.",
+        "calculation": "Checksum calculation:<br>10 + 01 + 00 + 00 + 21 + 46 + 01 + 36 + 01 + 21 + 47 + 01 + 36 + 00 + 7E + FE + 09 + D2 + 19 + 01 = 3C0<br>Sum modulo 256: <strong class=\"text-green-400\">C0</strong><br>Complement: <strong class=\"text-green-400\">3F</strong><br>Checksum: <strong class=\"text-green-400\">40</strong> (two's complement is complement + 1), i.e., FF - C0 + 1, try it out on a programmer's calculator.",
+        "exampleMicrocomputer": "A simple program for an Atmel AVR microcontroller and its resulting compilation in IntelHEX format:"
+      }
+    }
+  },
+  "blok2": {
+    "title": "Block 2",
+    "intro": {
+      "vs_community": {
+        "title": "USE MS VISUAL STUDIO COMMUNITY:",
+        "text": "In the second block of exercises, you will start using an Integrated Development Environment (IDE). On personal computers, we recommend using MS Visual Studio Community, which you can download",
+        "link_text": "here."
+      },
+      "task_for_everyone": {
+        "title": "TASK FOR EVERYONE",
+        "text_1": "During this block, you must learn how to step through code, i.e., how to 'debug'. This is a method of checking code (finding errors - 'bugs'). In this mode, you can go through your code step by step and see the values of variables, what is happening in memory, step into functions, etc. To start, watch this",
+        "link_text": "tutorial.",
+        "text_2": "To avoid losing points, you must demonstrate to your instructor during the second or at the beginning of the third block that you know how to step through code. Specifically:<br>1, Setting breakpoints.<br>2, Stepping over (F10).<br>3, Adding a variable to the list of 'watched' variables (right-click and select Add watch from the menu).<br>4, Stepping into a function (F11).<br>5, Showing the address of at least one variable/array."
+      },
+      "description": "The second block of exercises is designed so that in the individual tasks you gradually 'touch' the various components of a computer. Since a computer consists of many subsystems, there are relatively many tasks. <strong>Just like in the first block, all tasks must be programmed as separate functions in a single .c file, which you will submit to AIS at the end of the block. You don't have to solve all of them; choose the ones that interest you to get the required 16 points. There are 12 tasks here for a total of 27 points. You cannot get more than 16.</strong> Submit the tasks continuously (about one or two tasks per exercise session), but no later than the ninth week of the semester.",
+      "note": {
+        "title": "Note",
+        "text": "The tasks in the exercises complement and extend the lectures - the course does not function in a way that the lecture is an 'instruction manual' and the exercises are just for implementation. You gain knowledge in both."
+      }
+    },
+    "sections": {
+      "cpu": {
+        "title": "PROCESSOR - CPU",
+        "subtitle": "By programming, you can 'force' the processor to do what you want it to do, even at the lowest level!"
+      },
+      "ram": {
+        "title": "MEMORY - RAM",
+        "subtitle": "When working with memory, you write ones and zeros to specific locations (addresses) in the memory modules!"
+      },
+      "hdd": {
+        "title": "DISK - HDD",
+        "subtitle": "Knowledge of a programming language allows you to physically write the file you have created onto the disk!"
+      },
+      "media": {
+        "title": "SOUND AND VIDEO",
+        "subtitle": "By using appropriate libraries, you can create source code capable of manipulating video or audio!"
+      },
+      "pixel": {
+        "title": "PIXEL - PICTURE ELEMENT",
+        "subtitle": "Even when you program something seemingly ordinary like changing the font color, you are ultimately able to force the monitor to change the color of hundreds of pixels to exactly what you want, in a fraction of a second!"
+      },
+      "keyboard": {
+        "title": "KEYBOARD"
+      }
+    },
+    "tasks": {
+      "task_2_1_1": {
+        "title": "Task 2.1.1 - processor",
+        "points": "1pt",
+        "description": "Insert a piece of assembly code into a C program to calculate the sum of two variables.",
+        "tip": {
+          "text1": "As a basis, you can use ",
+          "link_text": "this program",
+          "text2": ", which increments a variable. Just add a second variable and replace the INC instruction with ADD. If the example program won't compile in MS Visual Studio, change the target architecture from x64 to x86 in the combo box on the main toolbar."
+        },
+        "source": {
+          "link_text1": ".., Assem… What? What assembler?",
+          "link_text2": "Selection of machine instructions with description."
+        }
+      },
+      "task_2_1_2": {
+        "title": "Task 2.1.2 - processor",
+        "points": "1pt",
+        "description": "Using embedded assembly, write a C program that uses your own function to multiply by two without using multiplication.",
+        "tip": {
+          "text1": "Just remember that multiplication by two in the binary system means shifting the number one place to the left. Again, you can use the ",
+          "link_text": "example program",
+          "text2": " from the previous task, which increments a variable. Just replace the INC instruction with SHL."
+        }
+      },
+      "task_2_1_3": {
+        "title": "Task 2.1.3 - processor",
+        "points": "3pts",
+        "description": "Using embedded assembly, write a C program with a function to convert a digit (0 - 15) to the corresponding ASCII character representing the value in the hexadecimal system. For numbers 0 - 9, the output will be the character '0' - '9', for numbers 10 - 15 the characters 'A' - 'F'. The entire core of the program must be written in assembly language; you may not use arrays. You may only use C for printing the result.",
+        "tip_1": "This piece of C code does the same thing:",
+        "code": "character = number < 10 ? number + '0' : number + 55;",
+        "tip_2": {
+          "text1": "As a basis, you can again use ",
+          "link_text": "this program",
+          "text2": ", which increments a variable. Just replace the INC instruction with ADD and add a test (CMP) with some conditional jump. <strong>When submitting the assignment, you must demonstrate knowledge of the <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://sk.wikipedia.org/wiki/ASCII\">ASCII table</a>.</strong>"
+        }
+      },
+      "task_2_1_4": {
+        "title": "Task 2.1.4 - processor",
+        "points": "2pts",
+        "description": "Using inline assembly and the cpuid instruction, write a program that determines what type of processor you have in your computer (Intel, AMD, Cyrix, …). The output must be stored in an array.",
+        "tip": "The cpuid instruction expects the function number in register EAX, in our case 0. The result is three registers, which need to be stored in an array and printed as a string.",
+        "note": "<strong>When submitting the assignment, you must be able to explain why you are putting zero there.</strong>",
+        "source": {
+          "link_text1": "more about the CPUID instruction ",
+          "link_text2": "error C2443: operand size conflict",
+          "link_text3": "<br> <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://www.paradicesoftware.com/specs/cpuid/index.htm\">Even more about the cpuid instruction</a><br>"
+        }
+      },
+      "task_2_2": {
+        "title": "Task 2.2 - memory",
+        "points": "3pts",
+        "description": "You already know how to work with pointers. But do you know what is actually stored in a pointer? Of course, a real address.<br>1. Declare an array of characters, assign values to it (e.g., “computer_architecture_is_a_great_subject”) and print the result on the screen.<br>2. Next, declare a pointer to this array and print the actual address it points to on the screen (e.g., printf(“%p”,pointer); ).<br>3. Then change the address value (add one). Write some value to this address and print the string on the screen again. What happened?<br>4. Finally, change the address value to a very high value (in the millions) and try to write something to it again. What happens? The program should crash. Think about why.<br>5. Comment out the line from step 4 and program steps 1-3 also for an array of data type int. When submitting, you must be able to explain what pointers are and what they are used for.",
+        "source": "Source:<br>Horovčák, P. a Podlubný, I.: Úvod do programovania v jazyku C — kapitola Smerníky. 1998. Textbook available online: Textbook available online: <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://www.tuke.sk/podlubny/C/Kap9.htm\">http: //www.tuke.sk/podlubny/C/</a>"
+      },
+      "task_2_3_1": {
+        "title": "Task 2.3.1 - disks",
+        "points": "2pts",
+        "description": "You have already worked with files. Download and save <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/poviedka.html\">this text</a> of a short story to a file. It is written in ISO-8859-2 encoding, but to read it properly in Windows, it must be in CP-1250 encoding. Fortunately, these two encodings differ only in a few characters. Write a program that converts the text to the correct encoding. What encoding is is explained in the review questions. To get full points for this assignment, you must be able to explain this term.",
+        "tip_1": "How to download and save the file with the story? Right-click, choose 'Save as…' and save the file to your disk with the .html extension. The output file will also have the .html extension, so you can easily check the text in a web browser.",
+        "tip_2": {
+          "text": "Here you can find the complete encoding table for <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://www.jakpsatweb.cz/cestina-tabulky.html\">ISO-8859-2, Win-1250</a> but you will probably only need the table with the ",
+          "link_text": "8 different characters"
+        },
+        "tip_3": "When working with the signed char data type, you will need to cast numbers greater than 127:<br>if (c == (char)165) c = (char)188;.",
+        "source": "Source:<br>Práca so súbormi - Horovčák, P. a Podlubný, I.: Úvod do programovania v jazyku C — kapitola Súbory. 1998.. Textbook available online:<br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://www.tuke.sk/podlubny/C/Kap9.htm\">http: //www.tuke.sk/podlubny/C/</a><br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://www.cestina.cz/kodovani/\">Overview of Czech encodings</a> (also valid for Slovak)"
+      },
+      "task_2_3_2": {
+        "title": "Task 2.3.2 - disks",
+        "points": "1pt",
+        "description": "Are you curious how the story from task 2.3 turned out? You can download the continuation <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/koniec_poviedky.html\">from here.</a> Oh, it's unreadable? You need to decrypt it. Fortunately, a very simple cipher was used. The logical XOR operation with the number 27 was applied to each character. Write a program that reads the text from a file and decrypts each character before printing.",
+        "tip_1": "Encryption using exclusive OR (Exclusive OR, XOR) is mainly used because if Code = Character XOR Number, then Character = Code XOR Number. So Character = (Character XOR Number) XOR Number.",
+        "tip_2": "How to download and save the file with the story? Right-click, choose 'Save as…' and save the file to your disk with the .html extension. The output file will also have the .html extension, so you can easily check the text in a web browser.",
+        "tip_3": "Since the encrypted file may contain various characters, we recommend opening such a file not in text mode (“r”), but in binary mode (“rb”). As a reminder, the XOR operator in C is ^."
+      },
+      "task_2_3_3": {
+        "title": "Task 2.3.3 - RAID",
+        "points": "3pts",
+        "description": "A text about the harmfulness of alcohol was stored on a disk array. Unfortunately, due to a failure of one of the disks, the text was damaged. Fortunately, it was a RAID array, so the text can be reconstructed. The blocks that belonged to the file with the text were read from the disks. There are four blocks, and among them is the damaged one. Everything that was salvaged is available packed <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/liehoviny.zip\">here.</a> Reconstruct the missing text.<br><strong>To get full points, you must be able to describe the individual RAID types - including which type is used in the assignment. CAUTION - the assignment in its current form only works under Windows OS and the files must be read in text mode.</strong>",
+        "tip_1": "Read about what <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://sk.wikipedia.org/wiki/RAID\">RAID</a> actually is.",
+        "tip_2": "It is not stated here which RAID structure was used in the array, but try to figure it out yourself. As a reminder, the XOR operator in C is ^."
+      },
+      "task_2_4": {
+        "title": "Task 2.4 - multimedia",
+        "points": "4pts",
+        "description": {
+          "text1": "Write a program in C that can play a <a class=\"student-link\" href=\"content/audio.mp3\">song</a>, or a <a class=\"student-link\" href=\"content/video.mpg\">video</a> (you can choose).<br>First, read ",
+          "link_text": "how to work with multimedia in the Windows API",
+          "text2": "Then try some commands in the interactive program <a class=\"student-link\" href=\"content/TestMCI.exe\">TestMCI.exe</a> (you enter a command in the window, and it is executed immediately). Then write a playback program in C. The program must have the option to enter the name of the file to be played, start, pause, and stop playback.<br>The program's initial screen should, as far as possible, have a nice design with an explanation of the individual functions. USE ASCII CHARACTERS to create a graphical border. After playback ends, the screen should clear and the initial screen should be displayed again."
+        },
+        "tip_1": "If everything works for you in <a class=\"student-link\" href=\"content/TestMCI.exe\">TestMCI.exe</a>, rewrite it into a C program. Working with multimedia devices is done using the mciSendString() function (need #include <windows.h>). Simply insert the strings you entered in <a class=\"student-link\" href=\"content/TestMCI.exe\">TestMCI.exe</a> as arguments to the mciSendString() function.",
+        "warning": "You need to link the library file winmm.lib (in Visual C++: Project >> Settings >> Link >> Object/library modules, append winmm.lib to the end of the line). (For Dev-C++: Project >> Project Options >> Parameters >> Add Lib >> libwinmm.a)",
+        "tip_2": "To avoid digging through menu depths, you can also link the library with a compiler directive directly in the header of your source code: #pragma comment( lib, \"winmm.lib\" )",
+        "tip_3": "To prevent the program from having to work with UNICODE, set your project to work in MultiByte character mode: (<a class=\"student-link\" href=\"https://senzor.robotika.sk/ap/images/SetMultiByte.png\">see image</a>)",
+        "source": "Source:<br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/dd757161%28v=vs.85%29.aspx\">mciSendString() - function description [msdn]</a><br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/dd743458%28v=vs.85%29.aspx\">List of mci commands [msdn]</a>",
+        "support": "WE ADDED SUPPORT FOR LINUX (click on me)"
+      },
+      "task_2_5_1": {
+        "title": "Task 2.5.1 graphics - colors",
+        "points": "1pt",
+        "description": "Write a program that will sequentially print numbers from 0 to 50, while the color of the numbers changes depending on their value, for example, for numbers 0 to 10 it will be green, 11 to 22 red, and 23 to 35 blue, etc. Limit the print speed to about 1 character/second.<br>The output must be in a loop and in the format 001 002 as shown in the picture.",
+        "tip_1": "In console mode, it is possible to change the color of the printed text using the function SetConsoleTextAttribute(hConsole, k); where hConsole is the console handle, and k is the color attribute from 0 to 255.",
+        "text": "To change colors, you must first obtain a handle to the console using GetStdHandle, similar to how you first get a file pointer before working with a file. This is done, for example, like this:<br>",
+        "text2": "<strong class=\"text-green-400\">HANDLE hConsole;<br>hConsole = GetStdHandle(STD_OUTPUT_HANDLE);</strong>",
+        "text3": "The above functions are defined in windows.h<br>",
+        "tip_2": "Write a helper program to find out the colors corresponding to all combinations of k from 0 to 255.",
+        "tip_3": {
+          "link_text": "Tutorial",
+          "text": " and <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx\">example program</a> for working with time."
+        },
+        "source_link": "What is a handle?",
+        "source_text": "<br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686047%28v=vs.85%29.aspx\">SetConsoleTextAttribute() [msdn]</a><br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms682073%28v=vs.85%29.aspx\"> Console functions [msdn]</a><br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686971%28v=vs.85%29.aspx\">Using the console [msdn]</a><br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms682088%28v=vs.85%29.aspx\">Colors and text attributes [msdn]</a>"
+      },
+      "task_2_5_2": {
+        "title": "Task 2.5.2 - semigraphics",
+        "points": "3pts",
+        "description": "Write a program that prints a table with information about yourself at a location in the window specified at startup by coordinates [x,y]. The parameters shown in the picture are illustrative, but they must be specified in variables; the entire output cannot be 'hardcoded'. The display parameters will therefore be the position in the window and variables with the values of the data to be printed. If some data changes (e.g., name), the frame must adapt to the text, not the other way around.",
+        "tip": "You can change colors from task 2.6. Learn how to print text at a specific position from this <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha27.htm\">example program</a>. Create the frame using characters with ASCII code > 127. To find out which characters you need, use a modified program from task 1.1, which prints the entire ASCII character table.",
+        "source_link": "explanations for the example program",
+        "source_text": "<br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx\">SetConsoleCursorPosition() [msdn]</a>"
+      },
+      "task_2_6": {
+        "title": "Task 2.6 - keyboard and mouse",
+        "points": "4pts",
+        "description": "Write a program that, when the F1 key is pressed, displays instructions for use, F2 starts a measurement, and the program ends with F10 or ESC. The measurement will consist of the program generating a random character (just letters will do), displaying it in the center of the window, and starting a timer. The measurement stops the moment the user presses the same key. If the user presses something else, the program will ignore it. Finally, the program prints the measured time that elapses from the display until the same key is pressed. After the first measurement, the next measurement follows, and after that another, until the user terminates the program (use a loop). The instructions for use must have a nice design, use some ASCII characters to create a border around the instructions.<br>Example:<br>Press: X …. 1.25 s pressed X<br>Press: Z ….. 33.12 s pressed sequentially A B C D E F … Z<br>End pressed F10",
+        "tip_1_link": "Tutorial",
+        "tip_1": " and <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29time.c.html\">example program</a> for working with time and the time.h library",
+        "tip_2_link": "Tutorial",
+        "tip_2": " and <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29conio.c.html\">example program</a> for working with the keyboard and the conio.h library",
+        "tip_3": "Instead of the conio.h library, you can also use others, such as curses.h, or ncurses, used in the Unix world.",
+        "tip_4": "Win32 <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29.htm\">Example program</a> for detecting Alt, Ctrl, and Shift keys, including mouse movement recognition. Note: needs to be compiled as a C++ project, plain C is not sufficient. It uses standard WinApi functions. Unlike the previous one, it can also work with the mouse.",
+        "tip_macos": "Thanks to your proactive colleague, we are adding experimental support for macOS/Linux for Tip 2. You can use <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/kbhit.c\">this</a> implementation of the kbhit() function. The F1, F2, etc. keys will not work, so use others.",
+        "source": {
+          "source_text": "Source:<br>Hopefully this ",
+          "source_link": "example program",
+          "source_text2": " and description of the function <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx\">GetAsyncKeyState() [msdn]</a> will suffice. Codes for <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx\">Virtual Keys [msdn].</a>"
+        }
+      }
+    },
+    "ui": {
+      "sources": "Source:<br>",
+      "tip": "💡 Tip:",
+      "warning": "⚠️ Warning:",
+      "tip_macos": "💡 Tip for macOS/Linux systems:"
+    }
+  },
+  "blok3": {
+    "title": "Block 3",
+    "info": {
+      "description1": "In the third block of exercises, we will communicate across the internet with a server. Your task will be to program a \"client program\" capable of sending and receiving text messages. This is a more extensive project that you will work on throughout the third block. In the first phase, you will be tasked with connecting to the server and identifying yourself with your personal number. Next, you must be able to receive a message from the server and display it on the screen. If you succeed, Morpheus will address you by your own name and give you tasks to complete. If you manage to complete them all, the full 12 points for the third block will be yours :)",
+      "theoryTitle": "A SHORT THEORETICAL INTRODUCTION",
+      "theoryDesc1": "Communication between computers over the internet is, in very simple terms, just sending ones and zeros from your computer to the computer on the other side and vice versa. Of course, it is much more sophisticated, but for the purposes of this project, you only need to know that you will be communicating via the TCP/IP protocol, which ensures that your ones and zeros reach the destination computer intact.",
+      "theoryDesc2": "For your computer to know which computer out of millions worldwide to send data to, there must be some addressing system. It works similarly to mail - an envelope arrives at a specific street, at a specific mailbox. In terms of this analogy, in the case of the internet, the street and house number are the so-called IP address, and the specific mailbox within the building is called a port. Just as there are multiple people in an apartment building, your computer may run multiple applications that communicate over the internet. Your operating system must therefore know which application to send what to. That is what the port number is for.",
+      "theoryDesc3": "Now find out your IP address. Start the console (the program where you compiled the introductory assignment of the semester) and type:<br>ipconfig In the output, you can find the IP address. As you can see, it consists of four bytes separated by dots:<br>192.168.0.132",
+      "theoryDesc4": "Next, try the ping command. It allows you to test the functionality of a server that has such testing enabled on its side. Try testing, for example:<br><br>ping www.google.com<br><br>The output will look similar to this (Notice how short the entire operation takes. The ones and zeros travel from your computer to Google's server and back in a fraction of a second):",
+      "assignmentTitle": "BASIC OVERVIEW OF THE ASSIGNMENT",
+      "assignmentDesc1": "<li>Connect to the server with IP address 147.175.115.34 on port 777 using the TCP protocol.</li><li>Send the initial message (display it in the console).</li><li>Receive the response (display it in the console).</li><li>Follow further commands received during communication with the server. The communication works such that every time the server sends you something, it expects some response from you.</li>",
+      "assignmentDesc2": "(point evaluation is comprehensive and will be summarized below; the entire project is evaluated: code structure and functionality, visual aspect, as well as task completion)"
+    },
+    "labels": {
+      "tip": "💡 Tip: ",
+      "definition": "Definition:",
+      "otherDefinition": "Other definition:",
+      "example": "Example:"
+    },
+    "tasks": {
+      "sockets": {
+        "title": "SOCKETS",
+        "description1": "To communicate over the internet from your program, you will use so-called sockets. In Windows OS, we will use the Winsock implementation. Support within the course is provided exclusively for Windows. However, if you dare, you can try on a Linux-based operating system. An example of implementing socket communication is <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://www.linuxhowtos.org/data/6/client.c\">here.</a> In Visual Studio, you need to add the following libraries:",
+        "description2": "If you are working in Dev-C++, you need to link the libraries via Tools -> Compiler Options and enter what is shown in <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/link_veci_k_devku.png\">this</a> screenshot.<br>If you are working in CLion, you need to link the libraries by modifying CMakeLists.txt and adding target libraries as in <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/linkovanieVclione.png\">this</a> screenshot."
+      },
+      "step1": {
+        "title": "1. Initial settings",
+        "description": "First, set the basic parameters of the socket structures, the server's IP address, and the port you want to communicate on. Go through each line of code; do not just work with a \"copy/paste\" approach."
+      },
+      "step2": {
+        "title": "2. Connecting",
+        "description": "In this part of the code, we attempt to connect to the server in the manner defined in the previous section."
+      },
+      "step3": {
+        "title": "3. Sending data",
+        "description": "When sending data, we essentially work with strings as in previous blocks. We send characters, which are ultimately ones and zeros that the server receives. You must choose an appropriate string length, fill it with the characters you want to send each time, and then \"pass\" the string to the created socket, which will attempt to send the data."
+      },
+      "step4": {
+        "title": "4. Receiving data",
+        "description": "For the server to be able to respond, you need to prepare a buffer to store the data it sends you. In our case, it will almost always be characters, so you can store them in a string."
+      },
+      "step5": {
+        "title": "5. Closing the socket",
+        "description": "After communication ends, it is necessary to close the socket."
+      },
+      "tips": {
+        "title": "TIPS, TRICKS AND CONDITIONS",
+        "description1": "<h3 class=\"student-page-h3-title\">1. Reading input from the console including spaces</h3>The scanf() function will normally terminate reading a string from input at the first space. If you want to store input including spaces, it is better to use the fgets() function:<br>char name[1024];<br>int size = 1024;<br>fgets(name, size, stdin);<br>printf(\"%s\\n\", name);",
+        "description2": "<h3 class=\"student-page-h3-title\">2. Working with received data</h3>From the socket's perspective, received data is just a sequence of bytes, not strings. The received data may not even contain a terminating null (you all know what terminates a string, right?). So how do you know when the data sent by the server ends in our case? In most messages, they are terminated by the character <strong class=\"text-green-400\">'\\n'</strong>. To avoid any mess when printing received data in the console, you must replace this character with the terminating null <strong class=\"text-green-400\">'\\0'</strong>. You can use, for example, <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://www.w3schools.com/c/ref_string_strchr.php\">this function.</a> Locate the '\\n' character and replace it with the terminating null. In one specific case, however, you will not be able to rely on the '\\n' character. Then you will have to manually place the terminating null based on information that will be delivered to you in time.",
+        "description3": "<h3 class=\"student-page-h3-title\">3. If placing characters at desired coordinates does not work in Windows 11</h3>You can move letters to the right by the required number of spaces, for example like this: printf(\"%60cMorpheus:\", ' ');"
+      },
+      "grading": {
+        "title": "POINT EVALUATION",
+        "description": "To get the full number of points, you must reach the last message from the server. The tasks must be solved algorithmically - especially the task with splitting text into left and right sides, and the task with prime numbers (these are the highest scored). The prime number task must work for any length of message."
+      }
+    }
+  },
+  "blok1-epsilon": {
+    "title": "Why my epsilon doesn't match…",
+    "info": {
+      "description1": "When solving task 1.3, you certainly noticed among yourselves that you are getting different results. How is that possible? Why doesn't it match? Of course, we answer with a counter-question: How do you know that your result is incorrect?<br>One way to verify the correct result is to look into &lt;float.h&gt;:<br>FLT_EPSILON = 0.00000011920928955078125000000000 = 1.19209E-007<br>DBL_EPSILON = 0.00000000000000022204460492503131 = 2.22045E-016<br><br>Besides these two results, you often find machine epsilon equal to 1.0842E-019 and sometimes it doesn't even depend on whether the variable is of type float or double. Which of these three numbers is correct? All three – it depends on what and how you are actually calculating.",
+      "description2": "If you have a test in your program similar to this one:<br>while ( Sum > 1.0 )<br>&#123; Sum = 1.0 + Epsilon; …<br>then you will probably get one of the numbers mentioned above, depending on the type of the variables Sum and Epsilon. The result is then the machine epsilon for the given number type according to IEEE.",
+      "description3": "But if you have a more economical construct in your program, for example:<br>while ( (1 + Epsilon/2) > 1.0)<br>then you will probably get the third, smallest number. This is because, in the first case, the computer had to store the result in a variable of type float or double, and only then compare it with the number 1. In the second case, however, the computer does not have to store the result anywhere; it only compares two expressions. This can be done in the processor registers, where many more bits are used to make the results as accurate as possible. So in this case, the machine epsilon is not determined by the IEEE format, but by the implementation of floating-point arithmetic in the processor…",
+      "description4": "Finally, just a note that machine epsilon is not the smallest number in the computer. You can easily verify that there are even smaller numbers, e.g., 1.000000e-030. And the absolute smallest is 2.22507E-308 (DBL_MIN from float.h)."
+    }
+  },
+  "blok2-asm1": {
+    "title": "Explanations for the example",
+    "info": {
+      "intro": "To avoid having to deal too much with the structure of an assembly program, i.e., everything besides our algorithm that it must contain to even run on a given operating system, we will use so-called embedded assembler. This means it will only be a sort of code fragment inserted into a standard C program."
+    },
+    "compilers": {
+      "msvc": {
+        "title": "Microsoft Visual C++",
+        "description": "In Visual C, assembly is inserted between curly braces preceded by the keyword <strong class=\"text-green-400\">__asm &#123; &#125;</strong>. Individual instructions follow, possibly with comments. You can use variables from the C program directly. However, you must keep in mind that you can only move variables of the corresponding size into registers. So you cannot, for example, move a variable of type double into the EAX register. You can also simply pass the result of the program's work back to the C program via variables."
+      },
+      "devcpp": {
+        "title": "DEV-C++ (gcc)",
+        "description": "The gcc compiler has a slightly different syntax for inline assembly. It is essentially a function <strong class=\"text-green-400\">asm (\"string\")</strong>, where the instructions themselves must be written as a text string. Because such a block is directly passed to the assembler, the embedded piece must look exactly like source code for the assembler. This means each instruction must end with \\n. An annoying complication is that gcc uses a different syntax (so-called AT&T), quite different from Intel syntax. For example, the source and destination operands are listed in reverse order. Fortunately, this can be re-learned with the command .intel_syntax noprefix. You can use variables from the C program directly, but you must add an underscore character before the variable name. However, variables from the C program that you want to use in assembly must be defined as global. Similarly to Visual C, you must keep in mind that you can only move variables of the corresponding size into registers. So you cannot, for example, move a variable of type double into the EAX register. You can also simply pass the result of the program's work back to the C program via variables. Example:"
+      },
+      "clion": {
+        "title": "CLion",
+        "description": "Students working in the CLion environment used to have problems with both of the previous syntaxes. There is a third option. Example:"
+      },
+      "debugging": {
+        "title": "Microsoft Visual C++ Debugging",
+        "description": "When working with assembler, you might appreciate the option to run the program step by step, while monitoring changes in individual registers. Debugging is started after compiling the program from the menu by navigating Debug >> Start Debug >> Step Into. You move forward in the program using the F10 key (Step Over). Your window might look, for example, like this:"
+      }
+    }
+  },
+  "blok2-asm2": {
+    "title": "Asse…, Assem… What? What assembler?",
+    "info": {
+      "description1": "<strong>Assembler</strong> is a computer program used for translating assembly language into machine code. Each instruction directly tells the machine - the processor - what to execute. It follows that assembly language (mov, add, sub, etc.) is always intended for a specific type of processor; programs are not portable and always depend on the specific configuration and architecture.",
+      "description2": "In the exercises, we will write very simple programs that use only a small part of the complete instruction set of x86 family processors. All of them (except CPUID) should work on the oldest 8086 processor up to the latest Intel Core i9.",
+      "description3": "The following picture shows the internal structure of the 80386 processor. It is the foundation that can also be found in its successors. Since practically everything the processor does takes place in registers, we find several of them here.<br>Registers of x386 processors.",
+      "description4": "First and foremost, there is a set of general-purpose registers A-D, which do practically all the work. Some have special purposes, but in most instructions you can use any of them. In the original 8086 processor, these registers were 16-bit (AX, BX, CX, and DX), and each of them could also be used as 8-bit (e.g., AX = AH + AL). With the advent of 32-bit processors, these registers were also extended, so today they are all 32-bit, while retaining the ability to access the lower half of the content through the original designation (so, for example, the 32-bit register EAX has its lower 16 bits designated as AX, which can in turn be split into two halves, AH and AL).",
+      "description5": "Besides the general-purpose registers, the processor has two index registers, ESI and EDI, which are used, for example, in counters. Furthermore, there are three pointer registers: EBP, ESP, and EIP (EBP is the base pointer, used in address calculation; ESP is the stack pointer, which points to the top of the stack; and EIP is the instruction pointer, which points to the currently executing instruction).",
+      "description6": "When working with memory, another group is intensively used, the so-called segment registers (SS - stack segment, CS - code segment, DS - data segment, ES - extra segment, FS, and GS).",
+      "description7": "A significant position is held by the so-called flags register (FLAGS), where each bit has a special meaning. For example, the zeroth, lowest bit CF (Carry Flag) is automatically set to logic 1 if an arithmetic operation resulted in a carry to a higher order. Individual bits of this register can be tested, allowing the program to branch based on various conditions."
+    }
+  },
+  "blok2-asm3": {
+    "title": "Assembler for x86 processors",
+    "info": {
+      "description": "In this document you will find a selection of instructions along with descriptions that you will need to solve tasks 2.1 a - d. The list is by no means complete, those interested in deeper study can refer, for example, to the book by Rudolf Marek: Učíme se programovat v jazyce Assembler pro PC. Vydavatelství Computer Press, Brno, 2005."
+    },
+    "list-titles": {
+      "by-function": "By function:",
+      "move": "Moves",
+      "al": "Arithmetic-logical",
+      "shifts": "Shifts",
+      "jumps": "Jumps",
+      "special": "Special",
+      "by-alphabet": "Alphabetically:"
+    },
+    "instructions": {
+      "mov": {
+        "title": "MOV Move",
+        "description": "<strong>Description:</strong> The instruction moves content from one place to another. The most frequently occurring instruction. The processor essentially just keeps moving something somewhere."
+      },
+      "add": {
+        "title": "ADD Addition",
+        "description": "<strong>Description:</strong> The instruction adds both operands and stores the result in the first one."
+      },
+      "sub": {
+        "title": "SUB Subtraction",
+        "description": "<strong>Description:</strong> The instruction subtracts the second operand from the first and stores the result in the first one."
+      },
+      "inc": {
+        "title": "INC Increment by 1",
+        "description": "<strong>Description:</strong> The instruction increases the content of the operand by one. It is faster than ADD source,1."
+      },
+      "dec": {
+        "title": "DEC Decrement by 1",
+        "description": "<strong>Description:</strong> The instruction decreases the content of the operand by one. It is faster than SUB source,1."
+      },
+      "shl": {
+        "title": "SHL Shift Logical Left",
+        "description": "<strong>Description:</strong> The instruction shifts a register or memory content left by a number of places. Zeros are filled in from the right, and the highest bit 'overflows' into the CF (carry flag) bit. Note: the count is stored in the CL register."
+      },
+      "shr": {
+        "title": "SHR Shift Logical Right",
+        "description": "<strong>Description:</strong> The instruction shifts a register or memory content right by a number of places. Zeros are filled in from the left, and the lowest bit 'overflows' into the CF (carry flag) bit. Note: the count is stored in the CL register."
+      },
+      "cmp": {
+        "title": "CMP Compare",
+        "description": "<strong>Description:</strong> The instruction subtracts the second operand from the first but does not store the result anywhere, only sets flags similarly to the SUB instruction. It is used for decision-making, usually followed by a conditional jump instruction."
+      },
+      "jz": {
+        "title": "JZ/JE Jump if Zero / Jump if Equal",
+        "description": "<strong>Description:</strong> The instruction performs a jump to a label if the result of a previous operation is zero. More precisely, if ZF is set, the jump is executed. It does not have to be the result of the immediately preceding instruction. It is usually used in combination with the CMP instruction. In that case, it means that both of its operands were equal. Therefore, this instruction is also used as JE. However, the generated code is the same. The processor performs the jump very simply — it moves the new address into the IP (instruction pointer) register."
+      },
+      "jg": {
+        "title": "JG/JNLE Jump if Greater Than / Jump if Not Less Or Equal",
+        "description": "<strong>Description:</strong> The instruction performs a jump to a label if the result of some previous operation sets the SF and OF flags to the same value and it is not zero. It is usually used in combination with the CMP instruction. In that case, it means that its first operand is greater (hence JG). But we can also interpret that as it is not less or equal, and therefore this instruction is also used as JNLE. However, the generated code is the same."
+      },
+      "jmp": {
+        "title": "JMP Jump",
+        "description": "<strong>Description:</strong> The instruction performs a jump to a label. The processor performs the jump very simply — it moves the new address into the IP (instruction pointer) register."
+      },
+      "cpuid": {
+        "title": "CPUID CPU Identification",
+        "description": "<strong>Description:</strong> The instruction stores a 12-character string in xxx, xxx, and xxx registers, uniquely identifying the processor manufacturer. More details about the CPUID instruction…"
+      },
+      "nop": {
+        "title": "NOP No Operation",
+        "description": "<strong>Description:</strong> An instruction that does nothing. It is used as a small delay, fine-tuning timing loops, etc."
+      }
+    }
+  },
+  "blok2-asm4": {
+    "cpuid_instruction": {
+      "title": "CPUID",
+      "info": {
+        "description1": "After introducing MMX instructions, Intel also introduced one new instruction (cpuid), which made it possible to identify their new processors and thus utilize instructions intended for them. This enabled code optimization.<br>This simple assembly instruction allows the programmer to obtain a lot of information: the CPU manufacturer (e.g., Intel, AMD, Cyrix,…), what \"extra\" features it supports (e.g., MMX, FPU, 3DNow,…), and more.<br>The instruction is available from Pentium processors onwards.",
+        "description2": "The instruction has no parameters; before calling it, the desired function is set by writing an appropriate number into EAX. The term \"function\" here simply means - what you want the CPUID instruction to \"do\" for you. It can \"do\" several things; you choose in advance what you \"want\" from it.",
+        "description3": "Function 0 returns the Vendor String, a 12-character string identifying the processor manufacturer. The first four characters are in EBX, the next in EDX, and the last four in ECX. The EAX register returns the highest function that can still be used. (12 chars = 3 x 4 bytes = 3 x 4 x 8 bits = 3 x 32 bits)",
+        "description4": "Other functions, obtained by writing the appropriate number into EAX before calling the function, are:<br>Function 1 returns Signature<br>Function 2 returns Config<br>Function 3 returns Serial Number<br><br>Higher numbers are reserved."
+      }
+    }
+  },
+  "blok2-asm5": {
+    "title": "Error C2443: operand size conflict",
+    "description": "Meaning: the instruction requires both operands to be the same size. You must change one of the operands so that both have the same size.<br>This error can also mean that the compiler DOES NOT KNOW what size you mean; you need to give it a hint to precisely specify the size of the variable.<br>Example:<br>"
+  },
+  "blok2-asm6": {
+    "title": "Differences in Slovak encodings",
+    "info": {
+      "intro": "According to the International Organization for Standardization (ISO), the standard for encoding Central European languages is the ISO 8859-2 standard. Microsoft chose its own encoding for the Windows system, which is practically identical, except for the codes of 8 characters. Their codes are given in the table:",
+      "task": "The task of your transcoding program is to replace characters with the code in the left column with codes from the right column. For example, the word 'uši' is stored on disk in a file as a sequence of ASCII codes in ISO-8859-2 encoding as [75 B9 69]H, or (117 185 105)D, and it needs to be replaced with the sequence [75 9A 69]H, or (117 154 105)D."
+    }
+  },
+  "blok2-asm7": {
+    "title": "Multimedia in Windows",
+    "info": {
+      "history": "It is probably hard to imagine Windows without multimedia. They usefully expand the capabilities of the PC beyond traditional work with numbers and text. But they haven't always been a part of it. First, in 1991, the so-called Multimedia Extensions were added; in 1992, they were incorporated into Windows 3.1. Today, they are a completely standard component (but, for example, a CD-ROM was still quite a rarity in 1993)."
+    },
+    "devices": {
+      "title": "Multimedia devices",
+      "description": "It probably doesn't need special explanation that a sound card is used for audio output from a computer. It converts a sequence of numbers (samples) into analog values that form the resulting acoustic \"wave.\" In addition, the sound card is capable of converting data in the opposite direction, i.e., from a source (microphone) into a sequence of numbers, samples. These are then saved to a file (e.g., voice.wav).<br>A CD-ROM drive is also capable of playing audio, referred to as audio CD.<br>A special part capable of playing video is referred to as video avi, or Video for Windows.<br>All these devices can be accessed through the so-called Media Control Interface (MCI). It is a \"higher\" level interface that contains a set of commands common to all devices. They are based on the principle that they can all be controlled similarly to a tape recorder — start/stop, record/play, open/close, etc.<br>A list of several commands (all <a class=\"student-link\" href=\"https://docs.microsoft.com/en-us/previous-versions//ms712587(v=vs.85)?redirectedfrom=MSDN\">mci commands</a> on the msdn page).",
+      "test_program": "First, we will explore the possibilities using the TESTmci.exe program (<a class=\"student-link\" href=\"content/TestMCI.exe\">download</a>) - it doesn't install, just runs. Save it in the same directory as your audio or video file. After launching, you will see a window with three areas. In the first, you can write commands, which are executed immediately. The second window shows return codes (if it's not 1, something is wrong) and the third shows their meaning (error messages)."
+    },
+    "examples": {
+      "title": "Examples",
+      "intro_video": "If you have already created a directory and saved both the program and the video in it, let's try to view it:",
+      "intro_cd": "Another example: playing a CD (insert a CD and close the player that started automatically).",
+      "c_program": "Now you can write your own program in C. Instead of the TestMCI program windows, you will use the command:<br><strong>error = mciSendString(\"command\", szReturn, sizeof(szReturn)/sizeof(TCHAR), hwnd);</strong><br>In addition, the mciGetErrorString function will also be useful. Don't forget to tell the compiler before compiling that you also need to link the WINMM.LIB library (Project / Settings / Links).<br>An example of use is a short program that opens the CD drive tray:"
+    }
+  },
+  "blok2-asm8": {
+    "title": "Support for Linux",
+    "info": {
+      "intro": "On Linux you can use the Libsdl library.<br><br>1. downloading and installing the libraries:<br>",
+      "compiling": "2. compiling and linking:<br>",
+      "example": "Example program:<br>",
+      "more_commands": "More commands:<br>"
+    }
+  },
+  "blok2-asm9": {
+    "handle_section": {
+      "title": "Handle",
+      "intro": "A handle is used frequently in Windows. It is a number (usually 32-bit) that refers to some object. You will encounter handle of icons, handle of mouse cursor, or handle of console. A program obtains a handle by calling some Windows function. It then uses this handle in other functions if it wants to work with that object. The actual value of the handle is insignificant for the programmer within the program.",
+      "gdi": "Graphical Device Interface — GDI. The functions of this interface are used for drawing in the client area of a window.",
+      "hdc": "Handle to a device context (HDC). It is like a ticket for the window to access GDI functions. Practically every function requires an HDC as one of its parameters. It is a structure that GDI maintains internally. Some of the values in this structure are effectively graphical 'attributes' (text color, background color, ...).",
+      "drawing": "When a program needs to draw something in the client area, it must first obtain a handle to a device context. Windows fills the internal HDC structure with default attribute values (black text, white background, etc.). By using certain functions, it is of course possible to change these attributes. Using another function, we draw what we need, and then we should release the HDC again."
+    },
+    "hungarian_notation_section": {
+      "title": "Hungarian Notation",
+      "description": "Sometimes variable names are formed so that the name begins with a lowercase letter (or letters) that specifies the type of variable. For example, cChar is a variable of type char, iNumber is an integer, hInstance is a handle. Hungarian notation is named in honor of the legendary Microsoft programmer of Hungarian origin, Charles Symonyi."
+    }
+  },
+  "blok2-asm10": {
+    "title": "Semigraphics",
+    "info": {
+      "intro": "If we create graphics not by drawing lines, but by appropriately combining characters from the extended ASCII character set, then we are talking about so-called semigraphics.",
+      "characters": "How do we know which characters can be used?<br>The simplest way is to create a short program that prints all characters along with their corresponding code (see task 1.1).",
+      "color": "How do I make green text?<br>The same way as in task 2.5.1",
+      "position": "But how do I write text to the center of the screen when printf prints wherever it wants?<br>To print the character '!' at position [x,y] using, for example, the command <strong class=\"text-green-400\">putchar('!');</strong>, you need to use the function:<br>SetConsoleCursorPosition(hConsole, point);<br>where hConsole is the console handle as in task 2.6 and the variable point is a structure with two components X and Y:<br>x = 4; y =5; COORD point = &#123;x,y&#125;; or also point.X = x; point.Y = y;<br>This is best seen in the example program.",
+      "coordinates": "And what do x, y mean?<br>The standard dimensions of a console window are 25×80 (rows x columns). The window coordinates start in the top-left corner; downwards, y increases from 0 to 24; to the right, x increases from 0 to 79."
+    }
+  },
+  "blok2-asm11": {
+    "title": "Making the program sleep",
+    "info": {
+      "description": "Usually we need to speed up the computer's operation, not slow it down. But when communicating with the user, it is sometimes really appropriate to give them more time. To pause the program's work for a defined period, we simply use the function <strong class=\"text-green-400\">Sleep(milliseconds)</strong>, which is defined either in <strong class=\"text-green-400\">windows.h</strong> or <strong class=\"text-green-400\">unistd.h</strong> (Unix).<br><strong class=\"text-green-300\">static void Sleep(int millisecondsTimeout)</strong><br>The variable <strong class=\"text-green-400\">millisecondsTimeout</strong> specifies for how many ms the program execution will be suspended. During the suspension, however, other programs, or possibly other threads of the same program, can run.",
+      "tip": "<span class=\"important-icon\">💡 Tip: </span><span class=\"important-text\">Try the <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha26delay.c.html\">example program</a> for working with time.</span>"
+    }
+  },
+  "blok2-asm12": {
+    "title": "Basic work with time",
+    "info": {
+      "intro": "Everything we need to work with time is prepared in the time.h library.<br>To measure the time the processor spent on a process, we advantageously use the function <strong class=\"text-green-400\">clock();</strong>, declared in <strong class=\"text-green-400\">time.h</strong>. The function returns the elapsed processor time. The typical use of this function is illustrated by the following example. We call the function at the beginning and at the end of the interval whose length we want to measure and subtract the two values. This tells us how many clock ticks the processor made during that interval. However, the number of ticks per second is not the same on every system. Therefore, the constant <strong class=\"text-green-400\">CLOCKS_PER_SEC</strong> is defined, by which we must divide the calculated difference. This gives us the time directly in seconds.",
+      "system_differences": "Different computers and different operating systems differ substantially in tracking processor time. The resolution is usually between hundredths and millionths of a second. The implementation of variables also varies, so a special type clock_t is defined, which on some computers is equivalent to the type <strong class=\"text-green-400\">long int</strong> and the constant <strong class=\"text-green-400\">CLOCKS_PER_SEC</strong> is also an integer. On other systems, both may be of type <strong class=\"text-green-400\">float</strong>.",
+      "definitions": "Macro: <strong class=\"text-green-400\">int CLOCKS_PER_SEC</strong><br>The value of this constant represents the number of clock ticks per second measured by the clock function.<br>Data type: <strong class=\"text-green-400\">clock_t</strong><br>This is the type of value returned by the <strong class=\"text-green-400\">clock</strong> function. Values of variables of type <strong class=\"text-green-400\">clock_t</strong> are given in number of clock ticks.<br>Function:<strong class=\"text-green-400\">clock_t clock (void)</strong> <br>This function returns the elapsed processor time.",
+      "warning": "Caution: first try to understand the program, then study how the given functions work in MSDN, and only then use them in your own program."
+    }
+  },
+  "blok2-asm13": {
+    "title": "conio.h, or ENTER and its problems",
+    "info": {
+      "intro": "Many of you encountered a problem when solving tasks: how to read the currently pressed key without having to confirm the key press. Typically, this involves program control (menu choices, program termination, F1, F2 keys, etc.).<br>When using classic functions like getchar(), you must press Enter at the end of data entry. Without it, the function doesn't finish, unnecessarily complicating communication.<br>One possible solution is to use input-output functions from the conio.h library, similar to the following example.",
+      "warning": "Caution: first try to understand the program, then study how the given functions work in MSDN, and only then use them in your own program.",
+      "special_keys": "When working with these functions, you'll find they have other pleasant properties compared to <strong class=\"text-green-400\">getchar()</strong> - for example, they can also detect codes for function and special keys. However, there's a small catch: if you press, say, [F1], the function <strong class=\"text-green-400\">getch()</strong> returns 0 (signaling that something special was pressed) and you must determine the key code with another read. Similarly, if you press, for example, the up arrow: two characters are also read, but the first is not zero but 0xE0, and the second is again the key code.",
+      "enter_key": "Another small catch is with the Enter key, which also always returns two characters: carriage return (CR) and line feed (LF). Fortunately, in C, these two characters correspond to just one character: <strong class=\"text-green-400\">\\n</strong>.",
+      "tip": "<span class=\"important-icon\">💡 Tip: </span><span class=\"important-text\">The best way to understand this is to try it yourself. Download and try the <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29conio.c.html\">example program</a> for working with the keyboard and the <strong class=\"text-green-400\">conio.h</strong> library. It shows how regular and special characters are read from the keyboard.</span>"
+    }
+  },
+  "contacts": {
+    "title": "Contacts",
+    "contacts_table": {
+      "lecturer": {
+        "role": "Lecturer"
+      },
+      "exercise_leader": {
+        "role": "Exercise Leader"
+      }
+    },
+    "schedule_title": "SCHEDULE:"
+  },
+  "first_exercise": {
+    "title": "Introductory Exercise",
+    "info": {
+      "intro": "Programming is your weapon. Through programming, you can force the computer to do exactly what you want. As you surely know, the computer is capable of a huge number of things, from sending information to the opposite side of the globe in a fraction of a second via the internet to controlling robotic systems.<br>You will only learn to program by struggling through it yourself by trial and error. No one else will do it for you. Getting inspired by existing code can be good and useful, but mindless copying of other people's solutions will not advance you anywhere and, in the end, it will catch up with you sooner or later. Therefore, you need to grit your teeth, persevere, and learn from your own mistakes.<br>Your first task is to get acquainted with the compiler that you will be using in the command line. A compiler is a software tool capable of translating (\"compiling\") source code understandable to a programmer into code understandable to a computer. Copy the file cli.bat from the directory J:\\Programs\\mingw to your Desktop. (If you are working on a private computer, follow the guide \"Using the gcc compiler on your own computer\" in the \"Manuals\" section and skip the next two pictures)",
+      "warning": "<span class=\"important-icon\">⚠️ ATTENTION: </span><span class=\"important-text\">if you are a repeating student, overwrite the year in the script with the year you started your studies.</span>",
+      "step_1": "Save the file and run it.",
+      "step_2": "You will see something like this (but your output is slightly different because your directories are on the network drive N):",
+      "step_3": "Next, start the Notepad++ program and rewrite the following code into it.",
+      "step_4": "Save it to the Documents directory and compile it using the following command, replacing myFile.c with the name of your file.",
+      "step_5": "Using the dir command you can view the contents of the directory. After successful compilation, you should also see program.exe among the listed files.",
+      "step_6": "You run it by simply typing its name and pressing Enter.",
+      "step_7": "Your next task is to program a function that prints the numbers from one to one hundred on the screen.",
+      "step_8": "The output should look something like this.",
+      "step_9": "Next, program a function that prints either all even or all odd numbers in the range from 1 to 30. Use the modulo operation for this. Once you have it, call your exercise instructor and you will thus earn your first 2 points. Then start working on the assignments from Block 1."
+    }
+  },
+  "computer_architecture": {
+    "title" : "Computer architecture",
+    "tutorial_intro": "For those interested, we recommend this tutorial to gain a good foundation in the C language:"
+  },
+  "manuals": {
+    "title": "Manuals",
+    "gcc_setup": {
+      "intro": "If you want to use the compiler on a private computer, download gcc <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-12.0.0-ucrt-r3/winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64ucrt-12.0.0-r3.zip\">here.</a> The file gcc.exe is located in the mingw64\\bin directory. Ideally, add the mingw64\\bin directory to your PATH, and then you can use gcc.exe from anywhere. You do it like this:",
+      "steps": "<li> Open \"System Settings\":<ul class=\"list\"><li> Right-click on This PC or Computer (or press Windows + Pause/Break) and select Properties.</li><li>Or press Windows + I, go to System → About → System info → Advanced system settings.</li></ul></li><li>Click on Advanced system settings.</li><li>In the Advanced tab, click the Environment Variables button.</li><li>Find the system variable Path:<ul class=\"list\"><li>Under System variables, select the Path variable and click Edit.</li></ul></li><li> Add a new directory:<ul class=\"list\"><li>Click New and paste the path to the directory you want to add.</li><li>For example: C:\\mingw64\\bin.</li></ul></li><li>Click OK to save the changes.</li><li>Restart your terminal (command line/PowerShell) for the changes to take effect.</li>"
+    },
+    "visual_studio_setup": {
+      "title": "Creating a project in MS Visual Studio",
+      "step_1": "1. Click on File/New/Project",
+      "step_2": "2. Click on Visual C++ on the left, then on Windows Console Application. Choose a project name and save it to the Documents directory.",
+      "step_3": "3. To use the scanf function without problems in MS Visual Studio, you need to write the line from the picture below exactly in the specified place."
+    }
+  },
+  "control_questions": {
+    "title": "Questions",
+    "warning_info": "Starting from the second exercise of the semester, you must be able to answer the following control questions at any time during the exercises or when submitting assignments. These are the absolute fundamental knowledge of any programmer.<br><strong>If you cannot answer, you risk losing 0.5 - 1 point per question!</strong>",
+    "q1": {
+      "question": "What is a bit?",
+      "answer": "A bit (b) is the basic and smallest data unit in a computer. It can have a binary value of 0 or 1."
+    },
+    "q2": {
+      "question": "What is a byte?",
+      "answer": "A byte (B) is a unit of digital information. It consists of eight bits."
+    },
+    "q3": {
+      "question": "How many values can we encode into one byte?",
+      "answer": "2 to the power of 8, i.e., 256 values."
+    },
+    "q4": {
+      "question": "What range of values (positive including zero) can we encode into one byte?",
+      "answer": "0 - 255."
+    },
+    "q5": {
+      "question": "What is a compiler?",
+      "answer": "A compiler is a software tool capable of translating source code written by a programmer into machine code executable by a computer."
+    },
+    "q6": {
+      "question": "What is the difference between assembly language, an assembler, and machine code?",
+      "answer": "* Assembly language is a form of machine code suitable for humans to read. * Machine code is essentially almost the same as assembly language. However, the processor can only work with ones and zeros. So each instruction is assigned a specific binary sequence. For the 8086 processor from the 1970s, the CMP instruction looks, for example, like this: 0x38 in hexadecimal, i.e., 00111000 in binary. * An assembler is a computer program used for translating assembly language into machine code. (Colloquially, however, assembly language is often called assembler - \"I coded it in assembler…\")"
+    },
+    "q7": {
+      "question": "What is an instruction?",
+      "answer": "An instruction is the \"basic element of operation\" that the processor executes (e.g., mov, cmp, add, sub)."
+    },
+    "q8": {
+      "question": "What is a register?",
+      "answer": "A register is a small, very fast memory area located inside the processor (e.g., EAX, EBX, SP). It can be 8, 32, 64 bits, etc."
+    },
+    "q9": {
+      "question": "What is an address?",
+      "answer": "An address is an integer pointing to a location in memory. So if your laptop has, for example, 8 GB of RAM, the address is a number using which you can access (read/write), for instance, the sequence of ones and zeros stored in the third GB."
+    },
+    "q10": {
+      "question": "What is encoding (in the sense of - character encoding in a computer)?",
+      "answer": "<a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://sk.wikipedia.org/wiki/K%C3%B3dovanie_(informatika)\">https://sk.wikipedia.org/wiki/<wbr>K%C3%B3dovanie_(informatika)</a>"
+    },
+    "q11": {
+      "question": "What is the difference between a string and an array?",
+      "answer": ""
+    },
+    "q12": {
+      "question": "What is Microsoft Learn? How is it useful to you in relation to the assignments of the second block?",
+      "answer": "Microsoft Learn (until 2022 it was MSDN - Microsoft Developer Network) is a set of resources and information intended for developers working on the Microsoft platform. Simply put - if you want to program specifically for the Windows operating system, you need to know how to use the libraries that allow you to \"force\" this operating system to do exactly what you want. Using your programming knowledge and the documentation on Microsoft Learn, you can \"code\" anything for your Windows. You will often encounter the abbreviation API (Application Programming Interface). It is a collection of functions and classes (but also other programs) that determine how library functions should be called from the program's source code. So, if you \"want\" something from Windows, you need to know its API to know which functions to put into your source code. And you can read about them precisely on Microsoft Learn."
+    }
+  },
+  "rules": {
+    "title": "Rules",
+    "general_rules": "<strong>!!! During exercises, it is forbidden to use social networks and AI!!!</strong><br> The exercises consist of three blocks, with the first lasting four weeks, the second five, and the third 3 weeks of the semester. To receive credit, you must obtain at least half of the maximum points from each block.<br> <strong>Attendance at exercises is mandatory.<br> Absence and substitution of an exercise is only possible due to illness (in other exceptional cases, contact your exercise instructor in advance).<br> In case of absence, you must make up the exercise at another term (if you have a legitimate medical excuse in AIS).</strong>",
+    "grading": {
+      "title": "Exercise point evaluation:",
+      "blocks": "Tasks from the first block (weeks 1 - 4): 10 + 2 (for the introductory exercise) points (you must obtain at least 6)<br> Tasks from the second block (weeks 5 - 9): 16 points (you must obtain at least 8)<br> Tasks from the third block (weeks 10 - 12): 12 points (you must obtain at least 6)<br>",
+      "submission_intro": "You earn points continuously by submitting assignments during the exercises. Submission proceeds as follows:",
+      "submission_steps": "a) For the given task, you prepare a debugged and functional source code.<br> b) You call the exercise instructor and present your solution to them. It must be your own code, you must understand it and be able to explain it.<br> c) The instructor may ask you follow-up questions about your solution.<br> d) At the end, they will ask you one or more questions (section Control Questions) listed on the website. If you cannot answer, you risk losing points.<br> e) The instructor will award you points, or suggest reworking part of the assignment so you can get the full number.<br>"
+    },
+    "plagiarism_warning": "<strong>At each exercise, you must submit at least one assignment.<br> Having functional code that you do not understand at all is not sufficient; on the contrary, it constitutes plagiarism. Plagiarism is penalized! Zero points will be given to both the person who provided the assignment and the person who used someone else's code.</strong>",
+    "physical_submission": {
+      "title": "Physical submission of source codes:",
+      "description": "At the end of each block, you will submit your source codes via AIS. You submit only one .c file for the entire given block. No .zip or .sln files. The submission deadline will be stated in AIS. Do not forget to submit on time, otherwise you will lose points!<br> <strong>After the end of the semester, an anti-plagiarism check will be conducted. If two students have identical source codes (except for the simplest assignments), both students will lose all points.</strong>"
+    }
+  },
+  "student": {
+    "title": "Computer Architecture",
+    "first_exercise": "Introductory Exercise",
+    "block_1": "Block 1",
+    "block_2": "Block 2",
+    "block_3": "Block 3",
+    "questions": "Control Questions",
+    "manuals": "Manuals",
+    "rules": "Rules",
+    "contacts": "Contacts"
+  }
+}

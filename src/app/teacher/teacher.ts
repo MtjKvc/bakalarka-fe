@@ -19,6 +19,7 @@ import { SearchBarModalComponent } from './components/search-bar-modal/search-ba
 import { Logs } from './components/logs/logs';
 import { SidebarButton } from '../shared/models/interfaces';
 import { StudentBasic } from '../shared/models/interfaces';
+import { SubstitutionComponent } from './components/substitution/substitution';
 
 @Component({
   selector: 'app-teacher',
@@ -37,6 +38,7 @@ import { StudentBasic } from '../shared/models/interfaces';
     Attendance,
     GradingComponent,
     Logs,
+    SubstitutionComponent,
     SearchBarModalComponent
   ],
   templateUrl: './teacher.html',
@@ -52,7 +54,6 @@ export class Teacher implements OnInit {
     rola: 'USER'
   }
 
-  public activeView: string = 'default';
   public isSidebarOpen: boolean = false;
   public selectedStudent: StudentBasic | null = null;
 
@@ -60,6 +61,7 @@ export class Teacher implements OnInit {
     { label: 'Dochádzka', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false, },
     { label: 'Hodnotenie', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: true, },
     { label: 'Záznamy', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false, },
+    { label: 'Suplovanie', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false, },
     { label: 'Nahrávanie', isAdminAvailable: true, isTeacherAvailable: true, isHelperAvailable: false, },
     { label: 'Používatelia', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false, },
     { label: 'Študenti', isAdminAvailable: true, isTeacherAvailable: false, isHelperAvailable: false, },
@@ -98,6 +100,10 @@ export class Teacher implements OnInit {
     });
   }
 
+  public get activeView(): string {
+    return this.contextService.activeView();
+  }
+
   public onLogout(): void {
     this.contextService.clearContext();
     this.authService.logout();
@@ -132,7 +138,7 @@ export class Teacher implements OnInit {
   }
 
   public onSidebarButtonClick(buttonLabel: string): void {
-    this.activeView = buttonLabel;
+    this.contextService.setActiveView(buttonLabel);
     this.isSidebarOpen = false;
   }
 }

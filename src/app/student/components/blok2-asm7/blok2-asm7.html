@@ -1,44 +1,18 @@
-<main class="main-student">
-    <article
-        class="assignment">
+<main class="main-student" *transloco="let t; read: 'blok2-asm7'">
+    <article class="assignment">
         <h2 class="student-page-h2-title">
-            Multimédiá vo Windows
+            {{ t('title') }}
         </h2>
-        <section>
-            Bez multimédií si Windows asi nedokážeme predstaviť. Užitočným spôsobom rozširujú možnosti PC od tradičnej
-            práce s číslami a textom. Ale nie je to ich súčasťou odjakživa. Najprv v r. 1991 pribudli tzv. Multimedia
-            Extensions, v r. 1992 boli vložené do Windows 3.1. Dnes sú ich úplne bežnou súčasťou (ale napr. CD-ROM bol
-            ešte r. 1993 vcelku raritou).
+        <section [innerHTML]="t('info.history')">
         </section>
     </article>
-    <article
-        class="assignment">
+    <article class="assignment">
         <h2 class="student-page-h2-title">
-            Multimediálne zariadenia
+            {{ t('devices.title') }}
         </h2>
-        <section>
-            Asi netreba špeciálne vysvetĺovať, že na výstup zvuku z počítača slúži zvuková karta. Prevádza postupnosť
-            čísiel (vzoriek) na analógové hodnoty, ktoré tvoria výslednú akustickú “vlnu”. Okrem toho je zvuková karta
-            schopná prevádzať dáta aj opačným smerom, teda zo zdroja (mikrofón) na postupnosť čísiel, vzoriek. Tie sa
-            potom uložia do súboru, (napr. hlas.wav).<br>
-
-            CD-ROM mechanika je tiež schopná prehrávať zvuk, označuje sa ako audio cd.<br>
-
-            Špeciálna časť, ktorá je schopná prehrávať video sa označuje ako video avi, resp. Video for Windows.<br>
-
-            K všetkým týmto zariadeniam možno pristupovať prostredníctvom tzv. Media Control Interface (mci). Je to
-            rozhranie “vyššej” úrovne, ktoré obsahuje sadu príkazov, ktoré sa zhodujú pre všetky zariadenia. Vychádzajú
-            z princípu, že všetky možno ovládať podobne ako magnetofón — štart/stop, nahrávaj/prehrávaj, otvor/zatvor a
-            pod.<br>
-
-            Zoznam niekoľkých príkazov (všetky <a
-                class="student-link"
-                href="https://docs.microsoft.com/en-us/previous-versions//ms712587(v=vs.85)?redirectedfrom=MSDN">mci
-                príkazy
-            </a> na stránke msdn).<br>
+        <section [innerHTML]="t('devices.description')">
         </section>
-        <div
-            class="copy-code">
+        <div class="copy-code">
             <pre #text01>
 open / close
 play / pause / stop
@@ -46,21 +20,13 @@ status / set
             </pre>
             <app-copy-button [sourceElement]="text01"></app-copy-button>
         </div>
-        <section>
-            Najprv preskúmame možnosti pomocou programu TESTmci.exe (<a
-                class="student-link"
-                href="http://ap.urk.fei.stuba.sk/wp-content/TestMCI.exe">download
-            </a>) - neinštaluje sa, len spustí. Uložte si
-            ho do rovnakého adresára ako zvukový, resp. video- súbor Po spustení vidíte okno s troma oblasťami. Do prvej
-            môžete zapisovať príkazy, ktoré sa ihneď vykonajú. V druhom okienku vidno návratové kódy (ak nie je 1, niečo
-            je zle) a v treťom ich význam (chybové hlásenia).
+        <section [innerHTML]="t('devices.test_program')">
         </section>
         <h2 class="student-page-h2-title">
-            Príklady
+            {{ t('examples.title') }}
         </h2>
-        k máte už vytvorený adresár a v ňom uložený program aj video, skúsime si ho pozrieť:
-        <div
-            class="copy-code">
+<span [innerHTML]="t('examples.intro_video')"></span>
+        <div class="copy-code">
             <pre #text02>
 open mys.mpg alias file1   — otvoríte súbor, zároveň zistíte, či sa dá
 play file1                 — začne sa prehrávať od začiatku
@@ -70,9 +36,8 @@ close file 1               — skončíme
             </pre>
             <app-copy-button [sourceElement]="text02"></app-copy-button>
         </div>
-        Iný príklad: prehrávanie CD (vložte CD a ukončite prehrávač, ktorý sa vám automaticky spustil).
-        <div
-            class="copy-code">
+<span [innerHTML]="t('examples.intro_cd')"></span>
+<div class="copy-code">
             <pre #text03>
 open cdaudio               — otvoríte zariadenie, zistíte, či sa dá
 play cdaudio               — začne sa prehrávať prvá skladba na CD
@@ -138,26 +103,15 @@ status cdaudio position    — ak áno, kde sme teraz?
             </pre>
             <app-copy-button [sourceElement]="text03"></app-copy-button>
         </div>
-        <section>
-            Teraz môžete napísať svoj vlastný program v jazyku C. Len namiesto okienok programu TestMCI použijete
-            príkaz:<br>
-
-            <strong>error = mciSendString(“prikaz”,szReturn, sizeof(szRetrun)/sizeof(TCHAR), hwnd);</strong> <br>
-
-            okrem toho sa zíde aj funkcia mciGetErrorString Nezabudnite pred kompiláciou povedať prekladaču, že
-            potrebujete prilinkovať aj knižnicu WINMM.LIB (Project / Settings / Links)<br>
-
-            Príkladom použitia je krátky program, ktorý otvorí dvierka na CD mechanike:<br>
-        </section>
-        <div
-    class="copy-code">
-    <pre #text04>
+        <section [innerHTML]="t('examples.c_program')"></section>
+        <div class="copy-code">
+            <pre #text04>
 mciSendString(“open CDAudio”, NULL, 0, NULL);          // otvor pristup k zariadeniu
 mciSendString(“set CDAudio door open”, NULL, 0, NULL); // otvor dvierka
 mciSendString(“close CDAudio”, NULL, 0, NULL);         // ukonci pristup k zariadeniu
 
             </pre>
-    <app-copy-button [sourceElement]="text04"></app-copy-button>
-</div>
+            <app-copy-button [sourceElement]="text04"></app-copy-button>
+        </div>
     </article>
 </main>

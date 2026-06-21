@@ -1,0 +1,658 @@
+{
+  "blok1": {
+    "title": "Blok 1",
+    "info": {
+      "description1": "Z nasledovných úloh neriešte všetky. Získať z nich môžete maximálne 10 bodov, čiže si vyberte takú kombináciu, aby ste dokopy získali aspoň 10.<br><strong>Úlohy prvého bloku kompilujete pomocou kompilátora v príkazovom riadku. Tak, ako v prípade úvodného cvičenia.</strong><br>Ak chcete použiť kompilátor na vlastnom počítači, stiahnit si gcc <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-12.0.0-ucrt-r3/winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64ucrt-12.0.0-r3.zip\">tu.</a> Súbor gcc.exe sa nachádza v adresári mingw64\\bin. Ideálne je pridať si adresár mingw64\\bin do PATH a potom môžete gcc.exe používať odkiaľkoľvek. Podrobnejší návod je v sekcii Návody.<br><strong>Všetky úlohy musia byť vypracované ako samostatné funkcie v jednom súbore.</strong> Na konci bloku teda odovzdávate len jeden súbor podľa tohto vzoru:",
+      "description2": "Zadania je treba cvičiacim odovzdávať priebežne, po štvrtom týždni semestra už úlohy z tohto bloku odovzdávať nebude možné. V prípade čiastočného splnenia úlohy získate za danú úlohu menej bodov.<br><strong>Na získanie zápočtu potrebujete minimálne polovicu bodov z každého bloku.</strong>",
+      "importantWarning": "⚠️ Dôležité: ",
+      "importantText": "Je kľúčové uvedomiť si, že Visual Studio Vám v zásade umožňuje to isté, čo kompilátor gcc (úvodné cvičenie), ale ponúka aj iné nástroje. V zásade sa však pri kompilácii deje vždy to isté - z Vášho zdrojového súboru sa vytvára súbor spustiteľný a vykonateľný počítačom. Počítač vie pracovať len s jednotkami a nulami. Z „jeho pohľadu“ je všetko len postupnosť jednotiek a núl, napríklad 10101111000011000100. Preto aj keď z Vášho pohľadu pracujete s číslami alebo písmenami, počítač vždy „vidí“ len jednotky a nuly. Preto je úplne kľúčové, aby ste vedeli pracovať s <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://sk.wikipedia.org/wiki/Dvojkov%C3%A1_%C4%8D%C3%ADseln%C3%A1_s%C3%BAstava\">dvojkovou sústavou.</a>"
+    },
+    "labels": {
+      "tip": "💡 Tip: ",
+      "definition": "Definícia:",
+      "otherDefinition": "Iná definícia:",
+      "example": "Príklad:"
+    },
+    "tasks": {
+      "task1": {
+        "title": "Úloha 1.1",
+        "points": "2b",
+        "description": "Napíšte program, ktorý zobrazí nasledovné dva vstupy:<br>číslo 33777<br>ASCII kód znaku 'X'<br>v <strong>dvojkovej, desiatkovej a šestnástkovej sústave.</strong> Program musí fungovať tak, aby bolo vstupy možné meniť (stačí v zdrojovom súbore).",
+        "tip1": "Použite čo najmenší počet premenných; využite možnosti, ktoré poskytuje funkcia <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://alvinalexander.com/programming/printf-format-cheat-sheet/\">printf</a>, prevod do dvojkovej sústavy však budete musieť naprogramovať."
+      },
+      "task2": {
+        "title": "Úloha 1.2",
+        "points": "2b",
+        "description": "Napíšte program, ktorý vykoná rotačný posun bitov doprava pre celé kladné číslo. Používateľ zadá číslo, počet bitov na posun (a ak chcete, smer posunu, ale stačí doprava).<br>Príklad:<br>Číslo 9 (v binárnej forme 1001) pri rotačnom posune doprava o 1 bit sa stane 1100.",
+        "tip1": "Rotačný posun bitov (tiež známy ako cyklický posun) je operácia, pri ktorej sa bity v binárnom čísle posúvajú o určitý počet miest doprava alebo doľava, pričom bity, ktoré “vypadnú” na jednom konci, sa vrátia na opačný koniec. Začnite teda operáciou bitového posunu. Pred programovaním si pár príkladov napíšte na papier.",
+        "tip2": "Ako použiť bitové operácie v jazyku C sa dozviete <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://uim.fei.stuba.sk/wp-content/uploads/2020/04/p11.pdf\">tu.</a> Zaujímavé video na túto tému je <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://www.youtube.com/watch?v=igIjGxF2J-w\">tu.</a>",
+        "tip3": "Použite dátový typ unsigned int (celé číslo bez znamienka)."
+      },
+      "task3": {
+        "title": "Úloha 1.3",
+        "points": "2b",
+        "description": "Napíšte program, ktorý spočíta počet jednotiek (nastavených bitov) v binárnej reprezentácii zadaného čísla.<br><br>Príklad:<br><br>Vstup: 13 (binárne 1101)<br><br>Výstup: 3 jednotky",
+        "tip1": "Využite bitový AND a bitový posun. Ako použiť bitové operácie v jazyku C sa dozviete <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://uim.fei.stuba.sk/wp-content/uploads/2020/04/p11.pdf\">tu.</a> Zaujímavé video na túto tému je <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://www.youtube.com/watch?v=igIjGxF2J-w\">tu.</a>"
+      },
+      "task4": {
+        "title": "Úloha 1.4",
+        "points": "3b",
+        "description": "Napíšte program, ktorý zistí a vypíše na obrazovku strojové epsilon pre dátové typy float a double. Zároveň vypíšte aj hodnoty __FLT_EPSILON__ a __DBL_EPSILON__ zadefinované vo float.h. Pripomenutie - slovné spojenie dátový typ hovorí o tom, ako kompilátor „rozumie“ jednotkám a nulám, s ktorými pracujete. Identifikujete tak, či pracujete s celými číslami, písmenami, reálnymi číslami a podobne.<br><strong>Na získanie plného počtu bodov musíte cvičiacemu vedieť vysvetliť, čo je to strojové epsilon a tiež akúkoľvek časť Vášho kódu.</strong>",
+        "def1": "<h3>Definícia:</h3><br>Strojové epsilon je najmenšie také číslo, ktoré po pripočítaní k jednotke dá niečo iné ako jednotku. Zjednodušene povedané, pomocou obmedzeného počtu jednotiek a núl viete vyjadriť veľmi veľmi veľa čísel, ale stále je ich konečný počet. Preto sa zákonite stane, že „vedľa“ čísla jeden existuje aj také reálne číslo, ktoré Váš počítač vyjadriť nevie.",
+        "def2": "<h3>Iná definícia:</h3><br>Strojové epsilon je „vzdialenosť“ medzi číslom 1 a jeho bezprostredným pravým susedom.<br>Pracujeme v dvojkovej sústave (desiatková je v zátvorke):<br><br>1 + 0,1 = 1,1 (1 + 1/2 = 1,5)<br><br>1 + 0,01 = 1,01 (1 + 1/4 = 1,25)<br><br>1 + 0,001 = 1,001 (1 + 1/8 = 1,125)<br><br>potom kvôli obmedzenej presnosti počítača pri istom počte desatinných miest nastane situácia, že 1 + 0,0…001 = 1 (namiesto správneho 1,0…001). Potom to predošlé číslo 0,0…01 sa nazýva strojové epsilon. Je zrejmé, že na rôznych počítačoch môže byť jeho hodnota rôzna. Strojové epsilon však nie je najmenšie číslo v danej reprezentácii.",
+        "tip1": "Strojové epsilon hľadáte tak, že začnete deliť číslo jeden. Nedelíte však desiatimi, ale dvomi, pretože pracujeme v dvojkovej sústave!",
+        "tip2": "Porovnajte si výsledok s konštantami FLT_EPSILON a DBL_EPSILON, (alebo __FLT_EPSILON__ a __DBL_EPSILON__) zadefinovanými vo float.h. Ak vám vypočítané hodnoty nesedia, skúste vypnúť všetky optimalizácie. Ak máte možnosť, vyskúšajte program aj na inej platforme ako Win32/Intel.",
+        "tip3": {
+          "text": "Ak vám to stále nevychádza, možno nájdete vysvetlenie",
+          "link_text": "tu."
+        }
+      },
+      "task5": {
+        "title": "Úloha 1.5",
+        "points": "4b",
+        "description1": "Napíšte program na výpočet funkcie sin(x) alebo cos(x) pomocou rozvoja do Taylorovho radu v okolí bodu 0. Inými slovami, budete programovať funkciu sínus alebo kosínus sami, bez toho, aby ste použili iné existujúce riešenie. Uhly môžete zadávať v stupňoch alebo v radiánoch.<strong> Program musí fungovať pre akékoľvek vstupy, napr. -4500° alebo +8649°.</strong> Funkcia bude mať dva argumenty:<br><br>float sinus(float radians, float epsilon);<br><br>Na Vašu vlastnú implementáciu použite jeden z nasledovných vzťahov (stačí programovať buď sínus alebo kosínus, netreba obe):",
+        "description2": "<strong>Aby ste získali plný počet bodov, funkcia musí fungovať správne pre akýkoľvek vstupný uhol (pozri tretí Tip.). Správnosť Vašich výsledkov si viete skontrolovať porovnaním s výsledkami, čo Vám dá bežná kalkulačka.</strong>",
+        "tip1": "Samozrejme, že nemôžete počítať súčet nekonečného radu donekonečna. Vidíte (ak nie, tak si pozrite v programe), že členy sa stále zmenšujú, takže isto raz nastane taká situácia, že keď pripočítate ďalší člen, výsledok to už nijako nezmení (viď úloha 1.3 - strojové epsilon). Výpočet však môžete skončiť ešte skôr - keď sa výsledok v dvoch po sebe idúcich iteráciách zmení o menej ako epsilon (vopred zadané, dostatočne malé číslo, napr. 0.000001).",
+        "tip2": "Je dôležité uvedomiť si, že epsilon nevyjadruje presnosť vypočítanej aproximácie.",
+        "tip3": "Uvedomte si, že uvedené rady aproximujú dobre len v okolí nuly, čo znamená, že pre väčšie vstupné uhly Vám to „prestane fungovať“ (viď. obrázok nižšie - čím väčší stupeň polynómu, tým lepšia aproximácia).",
+        "description3": "Pre ostatné argumenty využite periodicitu funkcie sínus, resp. kosínus."
+      },
+      "task6": {
+        "title": "Úloha 1.6",
+        "points": "4b",
+        "description1": "Napíšte program na výpočet kontrolnej sumy (checksum) pre zadaný riadok tzv. IntelHex súboru.<br><strong>Na získanie plného počtu bodov musíte cvičiacemu vedieť vysvetliť aj jednotlivé časti IntelHex riadka (viď. dolu), a tiež akúkoľvek časť Vášho kódu.</strong>",
+        "def1": "<h3>Definícia:</h3><br>Kontrolný súčet sa vypočíta ako dvojkový doplnok súčtu jednotlivých bajtov od začiatku riadku až po kontrolný súčet.<br><br>Príklad:<br><br>Ak zadáte tento reťazec:",
+        "description2": "Musí vám vyjsť namiesto XX kontrolný súčet 40.<br>Splnenie úlohy demonštrujte výpočtom kontrolných súm napr. pre tieto reťazce:",
+        "intelHexQuestion": "Čo je to Intel HEX formát?",
+        "intelHexDesc1": "Intel HEX formát je bežný ASCII textový súbor, ktorého riadky tvoria tzv. záznamy, ktoré sú tvorené hexadecimálnymi číslami (ak náhodou stále netušíte, čo je to ASCII, tak si to veľmi rýchlo vygooglite a vstrebajte ;). Tie reprezentujú dáta v pamäti, či už konštanty, alebo strojový kód. Tento formát sa používa na prenos skompilovaných programov alebo dát do pamätí typu EPROM, FLASH, EEPROM a pod. Väčšina programovacích zariadení tento formát podporuje.",
+        "intelHexDesc2": "Každý riadok IntelHex súboru predstavuje jeden záznam a skladá sa zo šiestich častí:",
+        "intelHexFormat": "<strong class=\"text-green-400\">:LLAAAATT[DD…]CC</strong><br><strong class=\"text-green-400\">:</strong> Znak začiatku (start), jeden bajt, jeden ASCII znak dvojbodka ':'.<br><strong class=\"text-green-400\">LL </strong>Počet bajtov, dve hexa číslice. Predstavuje počet bajtov (párov hexa znakov) v jednom zázname. Obvyklá hodnota je 16 (0x10).<br><strong class=\"text-green-400\">AAAA</strong> Adresa, štyri hexa znaky, predstavujú 16-bitovú adresu od ktorej sa majú nasledujúce data ukladať do pamäti. Adresa je v tvare big endian.<br><strong class=\"text-green-400\">TT</strong> Typ záznamu, dva bajty - znaky od 00 do 05, určujú význam nasledujúcich dát. Typ 00 sú čisté data, typ 01 je koniec záznamu, posledný riadok. Ostatné sú špeciálne typy.<br><strong class=\"text-green-400\">DD</strong> Dáta, postupnosť n bajtov samotných dát.<br><strong class=\"text-green-400\">CC</strong> Kontrolný súčet (checksum), dva hexa znaky - je to dvojkový doplnok súčtu hodnôt celého záznamu okrem polí 1 a 6 (: a kontrolný súčet).<br>Príklad:",
+        "exampleMeaning": "Takýto riadok (záznam) má nasledovný význam:<br><br><strong class=\"text-green-400\">10</strong> (t.j. 16 dekadicky) je počet datových bajtov v zázname.<br><br><strong class=\"text-green-400\">0100</strong> je adresa, na ktorú sa tieto dáta majú začať zapisovať.<br><br><strong class=\"text-green-400\">00</strong> znamená záznam typu 00 (t.j. sú to čisté dáta).<br><br><strong class=\"text-green-400\">2146</strong> … toto sú tie dáta.<br><br><strong class=\"text-green-400\">40</strong> je kontrolný súčet celého záznamu.",
+        "calculation": "Výpočet kontrolného súčtu:<br>10 + 01 + 00 + 00 + 21 + 46 + 01 + 36 + 01 + 21 + 47 + 01 + 36 + 00 + 7E + FE + 09 + D2 + 19 + 01 = 3C0<br>Súčet mod 256: <strong class=\"text-green-400\">C0</strong><br>Komplement: <strong class=\"text-green-400\">3F</strong><br>Kontrolný súčet: <strong class=\"text-green-400\">40</strong> (dvojkový doplnok je komplement + 1), čiže FF - C0 + 1, vyskúšajte si to na programátorskej kalkulačke",
+        "exampleMicrocomputer": "Jednoduchý program pre mikropočítač Atmel AVR a jeho výsledný preklad v IntelHEX formáte:"
+      }
+    }
+  },
+  "blok2": {
+    "title": "Blok 2",
+    "intro": {
+      "vs_community": {
+        "title": "POUŽÍVAJTE MS VISUAL STUDIO COMMUNITY:",
+        "text": "V druhom bloku cvičení už budete používať vývojové prostredie (IDE). Na súkromných počítačoch odporúčame používať MS Visual Studio Community, ktoré si môžete stiahnuť",
+        "link_text": "tu."
+      },
+      "task_for_everyone": {
+        "title": "ÚLOHA PRE KAŽDÉHO",
+        "text_1": "Počas tohto bloku sa musíte naučiť krokovať, resp. “debuggovať”. Ide o spôsob kontroly kódu (hľadania chýb - “bugov”). Váš kód si v tomto režime viete prechádzať krok za krokom a pozerať sa, aké sú hodnoty premenných, čo sa deje v pamäti, vnárať sa do funkcií a pod. Na úvod si pozrite tento",
+        "link_text": "návod.",
+        "text_2": "Aby ste nestratili body, musíte počas druhého alebo na začiatku tretieho bloku predviesť cvičiacemu, že viete program krokovať. Konkrétne:<br>1, Stanovenie breakpointov.<br>2, Krokovanie (F10).<br>3, Pridanie premennej do zoznamu “pozorovaných” premenných (pravý klik myšou a z menu vybrať Add watch)<br>4, Vnorenie sa do funkcie (F11).<br>5, Ukázanie adresy aspoň jednej premennej/poľa."
+      },
+      "description": "Druhý blok cvičení je navrhnutý tak, aby ste sa v jednotlivých úlohách postupne “dotkli” jednotlivých komponentov počítača. Keďže počítač sa skladá z mnohých podsystémov, aj úloh je relatívne veľa. <strong>Tak isto ako v prvom bloku, všetky úlohy musíte mať naprogramované ako samostatné funkcie v jednom .c súbore, ktorý odovzdáte na konci bloku do AIS. Nemusíte riešiť všetky, vyberte si tie, ktoré vás zaujmú tak, aby ste získali potrebný počet 16 bodov. Celkove je tu 12 úloh za 27 bodov. Viac ako 16 nemôžete získať.</strong> Úlohy odovzdávajte priebežne (primerne jednu-dve úlohy za cvičenie), najneskôr však v deviatom týždni semestra.",
+      "note": {
+        "title": "Poznámka",
+        "text": "Úlohy na cvičeniach prednášky dopĺňajú a rozširujú - predmet nefunguje takým spôsobom, že prednáška je “návod” a cvičenia priestor pre realizáciu. Vedomosti získavate tam aj tam."
+      }
+    },
+    "sections": {
+      "cpu": {
+        "title": "PROCESOR - CPU",
+        "subtitle": "Programovaním viete „prinútiť“ procesor robiť to, čo chcete Vy, aby robil aj na tej najnižšej úrovni!"
+      },
+      "ram": {
+        "title": "PAMÄŤ - RAM",
+        "subtitle": "Pri práci s pamäťou zapisujete jednotky a nuly na konkrétne miesta (adresy) v pamäťových moduloch!"
+      },
+      "hdd": {
+        "title": "DISK - HDD",
+        "subtitle": "Znalosť programovacieho jazyka Vám umožňuje zapísať Vami vytvorený súbor fyzicky na disk!"
+      },
+      "media": {
+        "title": "ZVUK A VIDEO",
+        "subtitle": "Použitím vhodných knižníc viete vytvoriť zdrojový kód schopný manipulovať videom či zvukom!"
+      },
+      "pixel": {
+        "title": "PIXEL - PICTURE ELEMENT",
+        "subtitle": "Aj keď programujete zdanlivo bežnú vec akou je zmena farby písma, v konečnom dôsledku viete prinútiť monitor zmeniť farbu stoviek pixelov na presne takú, akú chcete, v zlomku sekundy!"
+      },
+      "keyboard": {
+        "title": "KLÁVESNICA"
+      }
+    },
+    "tasks": {
+      "task_2_1_1": {
+        "title": "Úloha 2.1.1 - procesor",
+        "points": "1b",
+        "description": "Vložte do C-programu kúsok assemblerovského kódu, ktorým vypočítate súčet dvoch premenných.",
+        "tip": {
+          "text1": "Ako základ môžete použiť",
+          "link_text": "tento program",
+          "text2": ", ktorý inkrementuje premennú. Stačí doplniť druhú premennú a vymeniť inštrukciu INC za ADD. Ak vám vzorový program nejde skompilovať v MS Visual Studio, zmeňte cieľovú architektúru z x64 na x86 v combo box-e na hlavnej lište."
+        },
+        "source": {
+          "link_text1": ".., Assem… Čo? Aký assembler?",
+          "link_text2": "Výber strojových inštrukcií s popisom."
+        }
+      },
+      "task_2_1_2": {
+        "title": "Úloha 2.1.2 - procesor",
+        "points": "1b",
+        "description": "Napíšte pomocou vloženého (embedded) asembleru C-program v ktorom použijete vlastnú funkciu na násobenie dvomi bez použitia súčinu.",
+        "tip": {
+          "text1": "Stačí ak si spomeniete, že násobenie dvoma v binárnej sústave znamená posunúť číslo o jedno miesto doľava. Ako základ môžete použiť opäť ",
+          "link_text": "vzorový program",
+          "text2": "z predošlej úlohy, ktorý inkrementuje premennú. Stačí vymeniť inštrukciu INC za SHL."
+        }
+      },
+      "task_2_1_3": {
+        "title": "Úloha 2.1.3 - procesor",
+        "points": "3b",
+        "description": "Napíšte pomocou vloženého (embedded) asembleru C-program s funkciou na prevod číslice (0 - 15) na príslušný ASCII znak predstavujúci hodnotu v hexadecimálnej sústave. Pre čísla 0 - 9 bude výstupom znak '0' - '9', pre čísla 10 - 15 znaky 'A' - 'F'. Celé jadro programu musí byť napísané v jazyku symbolických inštrukcií, nesmietie použiť polia. Jazyk C smiete použiť len na výpis výsledku.",
+        "tip_1": "Tento kus programu v C urobí to isté:",
+        "code": "znak = cislo < 10 ? cislo + '0' : cislo + 55;",
+        "tip_2": {
+          "text1": "Ako základ môžete použiť znova",
+          "link_text": "tento program",
+          "text2": ", ktorý inkrementuje premennú. Stačí vymeniť inštrukciu INC za ADD a doplniť test (CMP) s nejakým podmieneným skokom. <strong>Pri odovzdávaní zadania musíte preukázať znalosť <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://sk.wikipedia.org/wiki/ASCII\">ASCII tabuľky</a>.</strong>"
+        }
+      },
+      "task_2_1_4": {
+        "title": "Úloha 2.1.4 - procesor",
+        "points": "2b",
+        "description": "Napíšte pomocou inline asembleru a inštrukcie cpuid program, ktorý zistí, aký typ procesora máte v počítači (Intel, AMD, Cyrix,…). Výstup musí byť uložený v poli.",
+        "tip": "Inštrukcia cpuid očakáva v registri EAX číslo funkcie, v našom prípade 0. Výsledkom sú tri registre, ktoré treba uložiť do poľa a vypísať ako reťazec.",
+        "note": "<strong>Pri odovzdávaní zadania musíte vedieť vysvetliť, prečo tam tú nulu dávate.</strong>",
+        "source": {
+          "link_text1": "viac o inštrukcii CPUID",
+          "link_text2": "error C2443: operand size conflict",
+          "link_text3": "<br> <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://www.paradicesoftware.com/specs/cpuid/index.htm\">Ešte viac o inštrukcii cpuid</a><br>"
+        }
+      },
+      "task_2_2": {
+        "title": "Úloha 2.2 - pamäť",
+        "points": "3b",
+        "description": "Viete už pracovať so smerníkmi (pointre). Viete ale, čo je naozaj v pointri uložené? Samozrejme, reálna adresa.<br>1. Deklarujte pole znakov, priraďte doň hodnoty (napr. “architektura_pocitacov_je_super_predmet”) a vypíšte výsledok na obrazovku.<br>2. Ďalej deklarujte smerník na toto pole a vypíšte na obrazovku skutočnú adresu na ktorú ukazuje (napr. printf(“%p”,pointer); ).<br>3. Potom zmeňte hodnotu adresy (pripočítajte jednotku). Zapíšte nejakú hodnotu na túto adresu a opäť vypíšte reťazec na obrazovku. Čo sa stalo?<br>4. Nakoniec zmeňte hodnotu adresy na veľmi vysokú hodnotu (v miliónoch) a opäť sa pokúste na ňu niečo zapísať. Čo sa stane? Program by mal spadnúť. Porozmýšľajte prečo.<br>5. Zakomentujte riadok z bodu 4 a doprogramujte body 1-3 aj pre pole dátového typu int. Pri odovzdávaní musíte vedieť vysvetliť, čo sú to smerníky/pointre a na čo slúžia.",
+        "source": "Zdroj:<br>Horovčák, P. a Podlubný, I.: Úvod do programovania v jazyku C — kapitola Smerníky. 1998. Učebnica prístupná on-line: <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://www.tuke.sk/podlubny/C/Kap9.htm\">http: //www.tuke.sk/podlubny/C/</a>"
+      },
+      "task_2_3_1": {
+        "title": "Úloha 2.3.1 - disky",
+        "points": "2b",
+        "description": "So súbormi ste už pracovali. Stiahnite a uložte si do súboru <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/poviedka.html\">tento text</a> poviedky. Je napísaný v kódovaní ISO-8859-2, ale aby ste ho vo Windows mohli poriadne prečítať, musí byť v kódovaní CP-1250. Našťastie sa tieto dve kódovania líšia len v niekoľkch znakoch. Napíšte program, ktorý text prevedie do správneho kódovania. Čo to je kódovanie máte vysvetlené v kontrolných otázkach. Pre plný počet bodov zo zadania musíte tento termín vedieť vysvetliť.",
+        "tip_1": "Ako stiahnuť a uložiť súbor s poviedkou? Kliknite pravým tlačidlom, zvoľte 'Uložiť ako' (Save as…) a uložte si súbor na disk aj s príponou .html. Výstupný súbor bude tiež mať príponu .html, takže text ľahko skontrolujete v internetovom prehliadači.",
+        "tip_2": {
+          "text": "Tu nájdete kompletnú tabuľku kódovania <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://www.jakpsatweb.cz/cestina-tabulky.html\">ISO-8859-2, Win-1250</a> ale zrejme vystačíte s tabuľkou, kde je len tých ",
+          "link_text": "8 rozdielnych znakov"
+        },
+        "tip_3": "V prípade práce s dátovým typom signed char budete musieť čísla väčšie ako 127 pretypovať:<br>if (c == (char)165) c = (char)188;.",
+        "source": "Zdroj:<br>Práca so súbormi - Horovčák, P. a Podlubný, I.: Úvod do programovania v jazyku C — kapitola Súbory. 1998. Učebnica prístupná on-line:<br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://www.tuke.sk/podlubny/C/Kap9.htm\">http: //www.tuke.sk/podlubny/C/</a><br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://www.cestina.cz/kodovani/\">Prehľad kódovaní češtiny</a>Prehľad kódovaní češtiny (platí aj pre slovenčinu)"
+      },
+      "task_2_3_2": {
+        "title": "Úloha 2.3.2 - disky",
+        "points": "1b",
+        "description": "Zaujíma vás, ako to dopadlo v príbehu z úlohy 2.3? Pokračovanie si môžete stiahnuť <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/koniec_poviedky.html\">odtiaľto.</a> Aha, že sa nedá prečítať? Musíte ho rozšifrovať. Našťastie je použitá veľmi jednoduchá šifra. Na každý znak je aplikovaná operácia logický XOR s číslom 27. Napíšte program, ktorý prečíta text zo súboru a každý znak pred výpisom dešifruje.",
+        "tip_1": "Šifrovanie pomocou exkluzívneho súčtu (Exclusive OR, XOR) sa používa hlavne preto, lebo ak platí Kod = Znak XOR Cislo, potom Znak = Kod XOR Cislo. Čiže Znak = (Znak XOR Cislo) XOR Cislo.",
+        "tip_2": "Ako stiahnuť a uložiť súbor s poviedkou? Kliknite pravým tlačidlom, zvoľte 'Uložiť ako' (Save as…) a uložte si súbor na disk aj s príponou .html. Výstupný súbor bude tiež mať príponu .html, takže text ľahko skontrolujete v internetovom prehliadači.",
+        "tip_3": "Keďže v zašifrovanom súbore sa môžu vyskytnúť všelijaké znaky, odporúčame takýto súbor otvoriť nie v textovom (“r”), ale binárnom (“rb”) režime. Pre istotu ešte pripomeňme, že operátor XOR v jazyku C je ^."
+      },
+      "task_2_3_3": {
+        "title": "Úloha 2.3.3 - RAID",
+        "points": "3b",
+        "description": "Na diskovom poli bol uložený text o škodlivosti alkoholu. Žiaľ, v dôsledku poruchy jedného z diskov sa text poškodil. Našťastie to bolo RAIDové pole, takže text je možné zrekonštruovať. Z diskov sa podarilo prečítať bloky, ktoré patrili súboru s textom. Bloky sú štyri, je medzi nimi aj ten pokazený. Všetko, čo sa podarilo zachrániť je k dispozícii zabalené <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/liehoviny.zip\">tu.</a> Zrekonštruujte chýbajúci text.<br><strong>Aby ste získali plný počet bodov, musíte vedieť opísať jednotlivé typy RAID-ov - aj ktorý typ je v zadaní použitý. POZOR - zadanie v súčasnej forme funguje len pod OS Windows a súbory je nutné čítať v textovom režime.</strong>",
+        "tip_1": "Prečítajte si čo je to vlastne <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://sk.wikipedia.org/wiki/RAID\">RAID</a>",
+        "tip_2": "Nie je tu síce uvedené, aká RAID štruktúra bola v poli použitá, ale skúste na to prísť sami. Pre istotu ešte pripomeňme, že operátor XOR v jazyku C je ^."
+      },
+      "task_2_4": {
+        "title": "Úloha 2.4 - multimédiá",
+        "points": "4b",
+        "description": {
+          "text1": "Napíšte program v jazyku C, ktorý dokáže prehrať <a class=\"student-link\" href=\"content/audio.mp3\">pesničku</a>, alebo <a class=\"student-link\" href=\"content/video.mpg\">video</a> (vy si môžete vybrať).<br>Najprv si prečítajte, ",
+          "link_text": "ako sa pracuje s multimédiami vo Windows API",
+          "text2": "Potom si vyskúšajte niektoré príkazy v interaktívnom programe <a class=\"student-link\" href=\"content/TestMCI.exe\">TestMCI.exe</a> (do okienka zadáte príkaz, ten sa hneď vykoná). Potom napíšte program na prehrávanie v jazyku C. Program musí mať možnosť zadať meno prehrávaného súboru, spustiť, pozastaviť a ukončiť prehrávanie.<br>Úvodná obrazovka programu musí mať v rámci možností pekný dizajn s vysvetlením jednotlivých funkcií. POUŽITE ASCII ZNAKY na vytvorenie grafického ohraničenia. Po ukončení prehrávania sa obrazovka vyčistí a opäť sa zobrazí úvodná obrazovka."
+        },
+        "tip_1": "Ak vám už v <a class=\"student-link\" href=\"content/TestMCI.exe\">TestMCI.exe</a> všetko funguje, prepíšte to do programu v jazyku C. Práca s multimediálnymi zariadeniami sa robí pomocou funkcie mciSendString() (treba #include ). Jednoducho vložte reťazce, ktoré ste zadávali v <a class=\"student-link\" href=\"content/TestMCI.exe\">TestMCI.exe</a> ako argumenty do funkcie mciSendString().",
+        "warning": "Musíte si prilinkovať knižničný súbor winmm.lib (vo Visual C++: Project >> Settings >> Link >> Object/library modules, dopíšte na koniec riadku winmm.lib). (Pre Dev-C++: Project >> Project Options >> Parameters >> Add Lib >> libwinmm.a)",
+        "tip_2": "Aby ste sa nemuseli prehrabávať v hlbinách menu, môžete knižnicu pripojiť aj príkazom pre kompilátor priamo do záhlavia vášho zdrojového kódu: #pragma comment( lib, “winmm.lib” )",
+        "tip_3": "Aby program nemusel pracovať s UNICODE, nastavte si projekt pre prácu v znakovom režime MultiByte:(<a class=\"student-link\" href=\"https://senzor.robotika.sk/ap/images/SetMultiByte.png\">viď. obrázok</a>)",
+        "source": "Zdroj:<br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/dd757161%28v=vs.85%29.aspx\">mciSendString() - popis funkcie [msdn]</a><br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/dd743458%28v=vs.85%29.aspx\">Zoznam mci príkazov [msdn]</a>",
+        "support": "PRIDALI SME PODPORU PRE LINUX (click on me)"
+      },
+      "task_2_5_1": {
+        "title": "Úloha 2.5.1 grafika - farby",
+        "points": "1b",
+        "description": "Napíšte program, ktorý bude postupne vypisovať čísla od 0 po 50, pričom v závislosti od veľkosti čísla sa bude meniť jeho farba, napríklad pre čísla od 0 po 10 bude zelená, 11 až 22 červená a 23 až 35 modrá, atď. Rýchlosť výpisu na obrazovku obmedzte na cca 1 znak/sekundu.<br>Výpis musí byť v cykle a vo formáte 001 002 ako je na obrázku.",
+        "tip_1": "V konzolovom režime je možné meniť aj farbu vypisovaného textu pomocou funkcie SetConsoleTextAttribute(hConsole, k); Pričom hConsole je handle konzoly, k je atribút farieb od 0 po 255.",
+        "text": "Aby ste mohli meniť farby, musíte najprv pomocou funkcie GetStdHandle získať handle na konzolu, je to podobné, ako keď pred prácou so súborom najprv získate smerník na súbor. Robí sa to napr. takto:<br>",
+        "text2": "<strong class=\"text-green-400\">HANDLE hConsole;<br>hConsole = GetStdHandle(STD_OUTPUT_HANDLE);</strong>",
+        "text3": "Horeuvedené funkcie sú definované vo windows.h<br>",
+        "tip_2": "Napíšte si pomocný program, ktorým zistíte farby prislúchajúce všetkým kombináciam k od 0 do 255.",
+        "tip_3": {
+          "link_text": "Návod",
+          "text": "a <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx\">vzorový program</a> na prácu s časom."
+        },
+        "source_link": "Čo je to handle?",
+        "source_text": "<br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686047%28v=vs.85%29.aspx\">SetConsoleTextAttribute() [msdn]</a><br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms682073%28v=vs.85%29.aspx\"> Console functions [msdn]</a><br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686971%28v=vs.85%29.aspx\">Using the console [msdn]</a><br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms682088%28v=vs.85%29.aspx\">Colors and text attributes [msdn]</a>"
+      },
+      "task_2_5_2": {
+        "title": "Úloha 2.5.2 - semigrafika",
+        "points": "3b",
+        "description": "Napíšte program, ktorý na miesto v okne zadané pri spustení súradnicami [x,y] vypíše tabuľku s informáciami o Vašej osobe. Parametre uvedené na obrázku sú ilustračné, ale musia byť zadané v premenných, nemôže byť celý výpis “natvrdo” naprogramovaný. Parametrom zobrazenia teda bude pozícia v okne a premenné s hodnotami vypisovaných údajov. Pri zmene niektorého údaja (napr. meno) sa musí rámik prispôsobiť textu, nie naopak.",
+        "tip": "Farby viete meniť z úlohy 2.6. Ako sa text vypíše na konkrétnu pozíciu sa naučte z tohoto <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha27.htm\">vzorového programu</a>. Rámik vytvorte zo znakov s ASCII kódom > 127. Na zistenie, ktoré znaky potrebujete využite upravený program z úlohy 1.1, ktorým si vypíšete celú tabuľku ASCII znakov.",
+        "source_link": "vysvetlivky k vzorovému programu",
+        "source_text": "<br><a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx\">SetConsoleCursorPosition() [msdn]</a>"
+      },
+      "task_2_6": {
+        "title": "Úloha 2.6 - klávesnica a myš",
+        "points": "4b",
+        "description": "Napíšte program, ktorý po stlačení klávesy F1 vypíše návod na použitie, F2 spustí meranie a program skončí F10 alebo ESC. Meranie bude spočívať v tom, že program vygeneruje náhodný znak (stačí písmená), zobrazí ho do stredu okna a spustí meranie času. Meranie sa zastaví v okamihu, keď užívateľ stlačí rovnakú klávesu. Ak užívateľ stlačí niečo iné, program to bude ignorovať. Napokon program vypíše zmeraný čas, ktorý uplynie od vypísania po stlačenie rovnakej klávesy. Po prvom meraní ide ďalšie meranie a po ňom ďalšie, až kým používateľ program neukončí (použite cyklus). Návod na použitie musí mať pekný dizajn, použite nejaké ASCII znaky na vytvorenie ohraničenia návodu.<br>Príklad:<br>Stlač: X …. 1,25 s stlačené X<br>Stlač: Z ….. 33,12 s stlačené postupne ABCDEF…Z<br>Koniec stlačené F10",
+        "tip_1_link": "Návod",
+        "tip_1": "a <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29time.c.html\">vzorový program</a> na prácu s časom a knižnicou time.h",
+        "tip_2_link": "Návod",
+        "tip_2": "a <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29conio.c.html\">vzorový program</a> na prácu s klávesnicou a knižnicou conio.h",
+        "tip_3": "Namiesto knižnice conio.h môžete použiť aj iné, napríklad curses.h, prípadne ncurses, používané v Unixovom svete.",
+        "tip_4": "Win32 <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29.htm\">Vzorový program</a> na detekciu kláves Alt, Ctrl a Shift vrátane rozpoznávania pohybu myši. Pozn.: treba kompilovať ako C++ projekt, nestačí obyčajné C. Používa štandartné funkcie WinApi. Na rozdiel od predošlého vie pracovať aj s myšou.",
+        "tip_macos": "Vďaka vášmu iniciatívnemu kolegovi pridávame experimentálny support pre macOS/Linux k Tipu2. Môžete použiť <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/kbhit.c\">túto</a> implementáciu funkcie kbhit(). Klávesy F1,F2 atď. vám však nebudú fungovať, použite preto iné.",
+        "source": {
+          "source_text": "Zdroj:<br>Snáď postačí tento ",
+          "source_link": "Vzorový program",
+          "source_text2": " a popis funkcie <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx\">GetAsyncKeyState() [msdn]</a>. Kódy <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms686025%28v=vs.85%29.aspx\">Virtual Key[msdn].</a>"
+        }
+      }
+    },
+    "ui": {
+      "sources": "Zdroj:<br>",
+      "tip": "💡 Tip:",
+      "warning": "⚠️ Pozor:",
+      "tip_macos": "💡 Tip pre macOS/Linux systémy:"
+    }
+  },
+  "blok3": {
+    "title": "Blok 3",
+    "info": {
+      "description1": "V treťom bloku cvičení budeme komunikovať naprieč internetom so serverom. Vašou úlohou bude naprogramovať \"klientský program\" schopný posielať a prijímať textové správy. Jedná sa o jeden rozsiahlejší projekt, ktorý budete riešiť počas celého tretieho bloku. V prvej fáze budete mať za úlohu pripojiť sa na server a identifikovať sa svojím osobným číslom. Ďalej musíte vedieť prijať správu zo servera a zobraziť ju na obrazovke. Ak sa Vám to podarí, tak Vás Morfeus osloví Vaším vlastným menom a zadá Vám úlohy, ktoré musíte splniť. Ak sa Vám podarí všetky splniť, plný počet 12 bodov za tretí blok je Váš :).",
+      "theoryTitle": "NUTNÝ MALÝ TEORETICKÝ ÚVOD",
+      "theoryDesc1": "Komunikácia počítačov cez internet je veľmi zjednodušene povedané len posielanie jednotiek a núl z Vášho počítača na počítač na druhej strane a opačne. Je to samozrejme oveľa sofistikovanejšie, no pre potreby tohto projektu Vám stačí vedieť, že budete komunikovať prostredníctvom protokolu TCP/IP, ktorý zabezpečuje, aby sa Vaše jednotky a nuly dostali na počítač na druhej strane v poriadku.",
+      "theoryDesc2": "Aby Váš počítač vedel, na ktorý počítač z miliónov strojov na celom svete má dáta poslať, musí existovať nejaký systém adresovania. Funguje to podobne ako pošta - obálka Vám príde na konkrétnu ulicu, do konkrétnej schránky. Z hľadiska tejto analógie je v prípade internetu ulica a číslo domu tzv. IP adresa, a konkrétna schránka v rámci domu sa nazýva port. Tak ako v paneláku býva viacero ľudí, tak aj vo Vašom počítači môže bežať viacero aplikácií, ktoré prostredníctvom internetu komunikujú. Váš operačný systém preto musí vedieť, ktorej aplikácii má čo poslať. Práve na to slúži číslo portu.",
+      "theoryDesc3": "Teraz zistite Vašu IP adresu. Spustite si konzolu (program, v ktorom ste kompilovali úvodné zadanie semestra) a napíšte:<br>ipconfig Vo výpise viete nájsť IP adresu. Ako vidíte, skladá sa zo štyroch bajtov oddelených bodkami:<br>192.168.0.132",
+      "theoryDesc4": "Ďalej si vyskúšajte príkaz ping. Pomocou neho viete otestovať funkčnosť servera, ktorý má takéto testovanie povolené na svojej strane. Skúste otestovať napríklad:<br><br>ping www.google.com<br><br>Výstup bude vyzerať podobne tomuto (Všimnite si ako krátko celá operácia trvá. Jednotky a nuly sa dostanú z Vášho počítača na server google-u a späť v zlomku sekundy):",
+      "assignmentTitle": "ZÁKLADNÝ POHĽAD NA ZADANIE",
+      "assignmentDesc1": "<li>Pripojiť sa na server s IP adresou 147.175.115.34 na port 777 pomocou protokolu TCP.</li><li>Poslať úvodnú správu (zobraziť ju v konzole).</li><li>Prijať odpoveď (zobraziť ju v konzole).</li><li>Postupovať podľa ďalších príkazov prijatých v komunikácii so serverom. Komunikácia funguje tak, že vždy po tom, čo Vám server niečo pošle očakáva nejakú odpoveď od Vás.</li>",
+      "assignmentDesc2": "(bodové hodnotenie je komplexné a bude zhrnuté dolu, hodnotí sa celý projekt, štruktúra a funkčnosť kódu, vizuálna stránka, ako aj splnenie úloh)"
+    },
+    "ui": {
+      "tip": "💡 Tip: ",
+      "definition": "Definícia:",
+      "otherDefinition": "Iná definícia:",
+      "example": "Príklad:"
+    },
+    "tasks": {
+      "sockets": {
+        "title": "SOCKETY",
+        "description1": "Na komunikáciu cez internet z Vášho programu budete používať tzv. sockety, v OS Windows budeme používať implementáciu Winsock. Podpora v rámci predmetu sa poskytuje výlučne pre Windows. Kto si však trúfa, môže skúsiť v operačnom systéme na báze Linux-u. Príklad na implementáciu socket komunikácie je <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://www.linuxhowtos.org/data/6/client.c\">tu.</a> Vo Visual Studio treba pridať nasledovné knižnice:",
+        "description2": "Ak pracujete v Dev-C++, musíte nalinkovať knižnice cez Tools -> Compiler Options a tam napísať to, čo je na <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/link_veci_k_devku.png\">tomto</a> screenshote.<br>Ak pracujete v CLione, musíte si nalinkovať knižnice modifikovaním CMakeLists.txt a doplnit target libraries ako v <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/linkovanieVclione.png\">tomto</a> screenshote."
+      },
+      "step1": {
+        "title": "1. Úvodné nastavenia",
+        "description": "Najprv treba nastaviť základné parametre štruktúr socketu, IP adresu servera a port, na ktorom chcete komunikovať. Prejdite si každý riadok kódu, nepracujte len systémom \"copy/paste\"."
+      },
+      "step2": {
+        "title": "2. Pripojenie sa",
+        "description": "V tejto časti kódu sa snažíme pripojiť na server spôsobom, ktorý sme definovali v časti predošlej."
+      },
+      "step3": {
+        "title": "3. Posielanie dát",
+        "description": "Pri posielaní dát v zásade pracujeme z reťazcami ako aj v predošlých blokoch. Posielame znaky, čo sú v konečnom dôsledku jednotky a nuly, ktoré server prijme. Musíte si zvoliť vhodnú dĺžku reťazca, za každým ho naplniť znakmi, ktoré chcete poslať a následne \"posunút\" reťazec vytvorenému socketu, ktorý sa pokúsi dáta poslať."
+      },
+      "step4": {
+        "title": "4. Prijímanie dát",
+        "description": "Aby Vám server vedel odpovedať, musíte si nachystať buffer, do ktorého si budete ukladať dáta, ktoré Vám pošle. V našom prípade sa bude takmer vždy jednať o znaky, takže si ich môžete ukladať do reťazca."
+      },
+      "step5": {
+        "title": "5. Zavretie socketu",
+        "description": "Po ukončení komunikácie je potrebné socket zavrieť."
+      },
+      "tips": {
+        "title": "TIPY, TRIKY A PODMIENKY",
+        "description1": "<h3 class=\"student-page-h3-title\">1. Načítanie vstupu s konzoly aj s medzerami</h3>Funkcia scanf() Vám štandardne ukončí načítanie reťazca zo vstupu po výskyte prvej medzery. Ak chcete uložiť vstup vrátane medzier je lepšie použiť funkciu fgets():<br>char name[1024];<br>int size = 1024;<br>fgets(name, size, stdin);<br>printf(\"%s\\n\", name);",
+        "description2": "<h3 class=\"student-page-h3-title\">2. Práca s prijatými dátami</h3>Z pohľadu socketu sú prijaté dáta len postupnosťou bajtov, nie reťazce. V prijatých dátach sa ani nemusí nachádzať ukončovacia nula (všetci viete, čím je ukončený reťazec, však?). Ako teda zistiť, kedy \"končia\" dáta, ktoré Vám server posiela v našom prípade? Vo väčšine správ sú ukončené znakom <strong class=\"text-green-400\">'\\n'</strong>. Aby sa Vám v konzole pri vypísaní prijatých dát nevyskytol nejaký neporiadok, musíte tento znak nahradiť ukončovacou nulou <strong class=\"text-green-400\">'\\0'</strong>. Môžete na to použiť napríklad <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://www.w3schools.com/c/ref_string_strchr.php\">túto funkciu.</a> Lokalizujete znak '\\n' a nahradíte ho ukončovacou nulou. V jednom špecifickom prípade sa však nebudete môcť spoľahnút ani na znak '\\n'. Vtedy budete musieť ukončovaciu nulu umiestniť manuálne na základe informácie, ktorá Vám bude včas doručená.",
+        "description3": "<h3 class=\"student-page-h3-title\">3. Ak vám vo Windows 11 nefunguje umiestňovanie znakov na požadované súradnice</h3>Môžete posúvať písmená doprava o požadovaný počet medzier napríklad takto: printf(\"%60cMorpheus:\", ' ');"
+      },
+      "grading": {
+        "title": "BODOVÉ OHODNOTENIE",
+        "description": "Na získanie plného počtu bodov sa musíte dostať až po poslednú správu zo servera. Úlohy musíte mať riešené algoritmicky - predovšetkým úlohu s rozdeľovaním textu na ľavú a pravú stranu, a úlohu s prvočíslami (tie sú najvyššie bodovo hodnotené). Úloha s prvočíslami musí fungovať pre akúkoľvek dlhú správu."
+      }
+    }
+  },
+  "blok1-epsilon": {
+    "title": "Prečo mi nevychádza to epsilon…",
+    "info": {
+      "description1": "Pri riešení úlohy 1.3 ste si medzi sebou istotne všimli, že dostávate rozličné výsledky. Ako je to možné? Prečo to nevychádza? Samozrejme, že odpovieme protiotázkou: Ako viete, že Vám to nevychádza?<br>Jednou z možností ako si overiť správny výsledok, je pozrieť sa do &lt;float.h&gt;:<br>FLT_EPSILON = 0.00000011920928955078125000000000 = 1.19209E-007<br>DBL_EPSILON = 0.00000000000000022204460492503131 = 2.22045E-016<br><br>Okrem týchto dvoch výsledkov často zistíte strojové epsilon rovné 1.0842E-019 a niekedy dokonca nezávisí od toho, či je premenná typu float, alebo double. Ktoré z týchto troch čísel je správne? Všetky tri – záleží na tom, čo a ako vlastne počítate.",
+      "description2": "Ak máte v programe test podobný tomuto:<br>while ( Sum > 1.0 )<br>&#123; Sum = 1.0 + Epsilon; …<br>potom pravdepodobne dostanete niektoré z horeuvedených čísel, podľa toho akého typu sú premenné Sum a Epsilon. Výsledkom je potom strojové epsilon pre daný typ čísla podľa IEEE.",
+      "description3": "Ale ak máte v programe úspornejšiu konštrukciu, napríklad:<br>while ( (1 + Epsilon/2) > 1.0)<br>potom zrejme dostanete to tretie, najmenšie číslo. Je to preto, že v prvom prípade počítač výsledok musel uložiť do premennej typu float, resp. double a až potom ho porovnával s číslom 1. V druhom prípade ale počítač nemusí výsledok nikam ukladať, porovnáva len dva výrazy. To sa dá urobiť v registroch procesora, pričom tam sa používa oveľa viac bitov, aby výsledky boli čo najpresnejšie. Takže v tomto prípade nie je strojové epsilon určené formátom IEEE, ale implementáciou float point aritmetiky v procesore…",
+      "description4": "Na záver len upozornenie, že strojové epsilon nie je najmenšie číslo v počítači. Veď ľahko overíte, že sú aj menšie čísla, napr. 1.000000e-030. A celkom najmenšie je 2.22507E-308 (DBL_MIN z float.h)"
+    }
+  },
+  "blok2-asm1": {
+    "title": "Vysvetlivky k vzorovému príkladu",
+    "info": {
+      "intro": "Aby sme sa nemuseli príliš detailne zaoberať štruktúrou programu v assembleri, t.j. čo všetko okrem nášho algoritmu musí obsahovať, aby sa vôbec dal spustiť v danom operačnom systéme, budeme používať tzv. vložený (embedded) assembler. To znamená, že to bude len akýsi fragment kódu vložený do štandartného C-programu."
+    },
+    "compilers": {
+      "msvc": {
+        "title": "Microsoft Visual C++",
+        "description": "Vo Visual C sa vkladá assembler medzi krútené zátvorky uvedené kľúčovým slovom <strong class=\"text-green-400\">__asm &#123; &#125;</strong> . Nasledujú jednotlivé inštrukcie, prípadne s komentárom. Premenné z C-programu, môžete používať priamo. Je však potrebné mať na pamäti, že do registrov môžete presúvať len premenné zodpovedajúcej veľkosti. Nemôžete teda napr. do registra EAX presunúť premennú typu double. Výsledok práce programu odovzdáte C-programu tiež jednoducho cez premenné."
+      },
+      "devcpp": {
+        "title": "DEV-C++ (gcc)",
+        "description": "Kompilátor gcc má trocha odlišnú syntax pre vložený assembler. Je to vlastne funkcia <strong class=\"text-green-400\">asm (\"retazec\")</strong> , kde samotné inštrukcie musíme písať ako textový reťazec. Pretože takýto blok sa priamo podsunie prekladaču assembleru, musí vložený kúsok vyzerať presne rovnako ako zdrojový kód pre assembler. To znamená, že každá inštrukcia musí končiť \\n. Nepríjemná komplikácia je, že gcc používa inú syntax (tzv. AT&T), dosť odlišnú od Intel syntaxe. Napríklad operandy zdroj, cieľ sa uvádzajú v opačnom poradí. Našťastie sa to dá prenaučiť príkazom .intel_syntax noprefix. Premenné z C-programu, môžete používať priamo, len musíte pridať znak podtržítko pred názov premennej. Premenné z C-programu, ktoré chcete používať v assembleri však musia byť zadefinované ako globálne. Podobne ako vo Visual C však musíte mať na pamäti, že do registrov môžete presúvať len premenné zodpovedajúcej veľkosti. Nemôžete teda napr. do registra EAX presunúť premennú typu double. Výsledok práce programu odovzdáte C-programu tiež jednoducho cez premenné. Príklad:"
+      },
+      "clion": {
+        "title": "CLion",
+        "description": "Študenti pracujúci v prostredí CLion mávali problém s oboma predošlými syntaxami. Existuje ešte tretia možnosť. Príklad:"
+      },
+      "debugging": {
+        "title": "Microsoft Visual C++ Ladenie",
+        "description": "Pri práci s assemblerom možno oceníte možnosť spustenia programu krok za krokom, pričom môžete sledovať zmeny v jednotlivých registroch. Debugovanie sa spustí po preložení programu z menu postupnosťou Debug >> Start Debug >> Step Into. V programe sa pohybujete vpred klávesou F10 (Step Over). Vaše okno môže vyzerať napr. takto:"
+      }
+    }
+  },
+  "blok2-asm2": {
+    "title": "Asme…, Assem… Čo? Aký assembler?",
+    "info": {
+      "description1": "<strong>Assembler</strong> (angl. assembler) je počítačový program na preklad z jazyka symbolických inštrukcií do strojového kódu. Každá inštrukcia priamo hovorí stroju - procesoru, čo má vykonať. Z toho vyplýva, že jazyk symbolických inštrukcií (mov, add, sub a pod.) je vždy určený pre konkrétny typ procesora, programy nie sú prenositeľné a závisia vždy na konkrétnej konfigurácii a architektúre.",
+      "description2": "Na cvičeniach budeme písať veľmi jednoduché programy, ktoré využívajú len malú časť z kompletného inštrukčného súboru procesorov rodiny x86. Všetky (okrem CPUID) by mali fungovať aj na najstaršom procesore 8086 až po najnovšie Intel Core i9.",
+      "description3": "Na nasledujúcom obrázku je nakreslená vnútorná štruktúra procesora 80386. Je to základ, ktorý možno nájsť aj v jeho nasledovníkoch. Keďže prakticky všetko, čo procesor robí sa odohráva v registroch, nájdeme ich tu hneď niekoľko.<br>Registre procesorov x386.",
+      "description4": "Predovšetkým je tu sada univerzálnych registrov A-D, ktoré vykonávajú prakticky všetku prácu. Niektoré majú špeciálne určenie, ale vo väčšine inštrukcií môžete použiť ľubovoľný z nich. V pôvodnom procesore 8086 boli tieto registre 16-bitové (AX, BX, CX a DX), pričom každý z nich sa dal použiť aj ako 8-bitový (napr. AX = AH + AL). S nástupom 32-bitových procesorov sa rozšírili aj tieto registre, takže dnes sú všetky 32-bitové, pričom ale ostala zachovaná možnosť pristúpiť k spodnej polovici obsahu cez pôvodné označenie (teda napr. 32-bitový register EAX má spodných 16 bitov označených ako AX, ktoré sa dajú rozdeliť zasa na dve polovice AH a AL).",
+      "description5": "Okrem univerzálnych registrov sú v procesore dva indexové registre ESI a EDI, ktoré sa používajú napríklad pri počítadlách. Ďalej tri ukazovacie registre EBP, ESP a EIP (EBP je bázový pointer, ktorý sa používa pri výpočte adresy, ESP je zásobníkový - stack pointer, ktorý ukazuje na vrchol zásobníka a EIP je inštrukčný, ktorý ukazuje na práve vykonávanú inštrukciu).",
+      "description6": "Pri práci s pamäťou sa intenzívne využíva ďalšia skupina, tzv. segmentových registrov (SS - stack segment, CS - code segment, DS - data segment, ES - extra segment, FS a GS).",
+      "description7": "Významné postavenie má tzv. príznakový register (FLAGS), v ktorom má každý bit špeciálny význam. Napríklad nultý, najnižší bit CF (Carry Flag) sa automaticky nastaví do log. 1, ak pri aritmetickej operácii nastal prenos do vyššieho rádu. Jednotlivé bity tohoto registra je možné testovať a vetviť tak program na základe rozličných podmienok."
+    }
+  },
+  "blok2-asm3": {
+    "title": "Assembler procesorov x86",
+    "info": {
+      "description": "V tomto dokumente nájdete výber inštrukcií aj s popisom, ktoré budete potrebovať na riešenie úloh 2.1 a - d. Zoznam nie je ani zďaleka kompletný, záujemcovia o hlbšie štúdium môžu čerpať napríklad z knihy Rudolf Marek: Učíme se programovat v jazyce Assembler pro PC. Vydavateľstvo Computer Press, Brno, 2005."
+    },
+    "list-titles": {
+      "by-function": "Podľa funkcie:",
+      "move": "Presuny",
+      "al": "Aritmeticko-logické",
+      "shifts": "Posuny",
+      "jumps": "Skoky",
+      "special": "Špeciálne",
+      "by-alphabet": "Podľa abecedy:"
+    },
+    "instructions": {
+      "mov": {
+        "title": "MOV Move",
+        "description": "<strong>Popis:</strong> Inštrukcia presunie obsah z jedného miesta na druhé. Najčastejšie sa vyskytujúca inštrukcia. Procesor vlastne stále len niečo niekam presúva."
+      },
+      "add": {
+        "title": "ADD Addition",
+        "description": "<strong>Popis:</strong> Inštrukcia spočíta oba operandy a výsledok uloží do prvého z nich."
+      },
+      "sub": {
+        "title": "SUB Subtraction",
+        "description": "<strong>Popis:</strong> Inštrukcia odpočíta druhý operand od prvého a výsledok uloží do prvého z nich."
+      },
+      "inc": {
+        "title": "INC Increment by 1",
+        "description": "<strong>Popis:</strong> Inštrukcia zväčší obsah operandu o jednotku. Je to rýchlejšie ako ADD zdroj,1."
+      },
+      "dec": {
+        "title": "DEC Decrement by 1",
+        "description": "<strong>Popis:</strong> Inštrukcia zmenší obsah operandu o jednotku. Je to rýchlejšie ako SUB zdroj,1."
+      },
+      "shl": {
+        "title": "SHL Shift Logical Left",
+        "description": "<strong>Popis:</strong> Inštrukcia posunie register, alebo obsah pamäti o pocet miest doľava. Sprava sa doplní nula a najvyšší bit “prepadne” do príznakového bitu CF (carry flag). Pozn.: pocet sa uloží v registri CL."
+      },
+      "shr": {
+        "title": "SHR Shift Logical Right",
+        "description": "<strong>Popis:</strong> Inštrukcia posunie register, alebo obsah pamäti o pocet miest doprava. Zľava sa doplní nula a najvyšší bit “prepadne” do príznakového bitu CF (carry flag). Pozn.: pocet sa uloží v registri CL."
+      },
+      "cmp": {
+        "title": "CMP Compare",
+        "description": "<strong>Popis:</strong> Inštrukcia odpočíta druhý operand od prvého ale výsledok neuloží nikam, iba nastaví príznaky podobne ako inštrukcia SUB. Používa sa pri rozhodovaní, obvykle nasleduje inštrukcia podmieneného skoku."
+      },
+      "jz": {
+        "title": "JZ/JE Jump if Zero / Jump if Equal",
+        "description": "<strong>Popis:</strong> Inštrukcia vykoná skok na návestie ak je výsledok predošlej operácie nula. Presnejšie povedané, ak ZF je nastavený skok sa vykoná. Nemusí to byť výsledok bezprostredne predošlej inštrukcie. Obvykle sa používa v kombinácii s inštrukciou CMP. Vtedy to znamená, že oba jej operandy boli rovnaké. Preto sa táto inštrukcia používa aj ako JE. Vygenerovaný kód je však rovnaký. Skok samotný procesor zrealizuje veľmi jednoducho — presunie novú adresu do registra IP (instruction pointer)."
+      },
+      "jg": {
+        "title": "JG/JNLE Jump if Greater Than / Jump if Not Less Or Equal",
+        "description": "<strong>Popis:</strong> Inštrukcia vykoná skok na návestie ak výsledok niektorej predošlej operácie nastaví príznaky SF a OF na rovnakú hodnotu a nie je to nula. Obvykle sa používa v kombinácii s inštrukciou CMP. Vtedy to znamená, že prvý jej operand je väčší (preto JG). To ale môžeme interpretovať aj tak, že nie je menší alebo rovný a preto sa táto inštrukcia používa aj ako JNLE. Vygenerovaný kód je však rovnaký."
+      },
+      "jmp": {
+        "title": "JMP Jump",
+        "description": "<strong>Popis:</strong> Inštrukcia vykoná skok na návestie. Skok samotný procesor zrealizuje veľmi jednoducho — presunie novú adresu do registra IP (instruction pointer)."
+      },
+      "cpuid": {
+        "title": "CPUID CPU Identification",
+        "description": "<strong>Popis:</strong> Inštrukcia uloží do registrov xxx, xxx a xxx 12 znakový reťazec, jednoznačne identifikujúci výrobcu procesora. Podrobnejšie o inštrukcii CPUID…"
+      },
+      "nop": {
+        "title": "NOP No Operation",
+        "description": "<strong>Popis:</strong> Inštrukcia, ktorá nerobí nič. Používa sa ako malé oneskorenie, doladenie časových slučiek a pod."
+      }
+    }
+  },
+  "blok2-asm4": {
+    "cpuid_instruction": {
+      "title": "CPUID",
+      "info": {
+        "description1": "Firma Intel po uvedení MMX inštrukcií zaviedla aj jednu novú inštrukciu (cpuid), ktorá umožnila rozpoznať svoje nové procesory a využívať tak inštrukcie pre ne. Tým sa umožnila optimalizácia kódu.<br>Táto jednoduchá asemblerovská inštrukcia umožňuje programátorovi získať mnoho informácií: výrobcu CPU (napr. Intel, AMD, Cyrix,…), aké “extra” vlastnosti podporuje (napr. MMX, FPU, 3DNow,…) a ďalšie.<br>Inštrukcia je k dispozícii od procesorov Pentium vyššie.",
+        "description2": "Inštrukcia nemá žiadne parametre, pred volaním sa nastaví požadovaná funkcia zapísaním vhodného čísla do EAX. Slovom “funkcia” sa tu myslí zjednodušene - čo chcete, aby pre Vás inštrukcia CPUID “urobila”. Vie “robiť” viacero vecí; Vy si vopred volíte, čo od nej “chcete”.",
+        "description3": "Funkcia 0 vracia Vendor String, reťazec 12 znakov identifikujúci výrobcu procesora. Prvé štyri znaky sú v EBX, ďalšie v EDX a posledné štyri v ECX. V registri eax sa vráti najvyššia funkcia, ktorú ešte môžeme použiť. (12 chars = 3 x 4 bytes = 3 x 4 x 8 bits = 3 x 32 bits)",
+        "description4": "Ďalšie funkcie, ktoré dostaneme zapísaním príslušného čísla do EAX pred volaním funkcie sú:<br>Funkcia 1 vracia Signature<br>Funkcia 2 vracia Config<br>Funkcia 3 Serial Number<br><br>Vyššie čísla sú rezervované."
+      }
+    }
+  },
+  "blok2-asm5": {
+    "title": "Error C2443: operand size conflict",
+    "description": "Význam: inštrukcia vyžaduje, aby oba operandy boli rovnakej veľkosti. Musíte jeden z operandov zmeniť tak, aby oba mali rovnakú veľkosť.<br>Táto chyba môže znamenať aj to, že kompilátor NEVIE akú veľkosť máte na mysli, musíte mu dať pomôcku ktorou presne špecifikujete veľkosť premennej.<br>Príklad:<br>"
+  },
+  "blok2-asm6": {
+    "title": "Rozdiely v kódovaniach slovenčiny",
+    "info": {
+      "intro": "Podľa medzinárodnej normalizačnej organizácie ISO je štandardom pre kódovanie stredoeurópskych jazykov norma ISO 8859-2. Firma Microsoft si pre systém Windows vybrala svoje vlastné kódovanie, ktoré je prakticky zhodné, až na kódy 8 znakov. Ich kódy sú uvedené v tabuľke:",
+      "task": "Úloha vášho prekódovacieho programu spočíva v nahradení znakov s kódom v ľavom stĺpci kódmi z pravého stĺpca. Napríklad slovo uši je na disku v súbore uložené ako postupnosť ASCII kódov v kódovaní ISO-8859-2 takto [75 B9 69]H, resp. (117 185 105)D a treba ju nahradiť postupnosťou [75 9A 69]H, resp. (117 154 105)D."
+    }
+  },
+  "blok2-asm7": {
+    "title": "Multimédiá vo Windows",
+    "info": {
+      "history": "Bez multimédií si Windows asi nedokážeme predstaviť. Užitočným spôsobom rozširujú možnosti PC od tradičnej práce s číslami a textom. Ale nie je to ich súčasťou odjakživa. Najprv v r. 1991 pribudli tzv. Multimedia Extensions, v r. 1992 boli vložené do Windows 3.1. Dnes sú ich úplne bežnou súčasťou (ale napr. CD-ROM bol ešte r. 1993 vcelku raritou)."
+    },
+    "devices": {
+      "title": "Multimediálne zariadenia",
+      "description": "Asi netreba špeciálne vysvetľovať, že na výstup zvuku z počítača slúži zvuková karta. Prevádza postupnosť čísiel (vzoriek) na analógové hodnoty, ktoré tvoria výslednú akustickú “vlnu”. Okrem toho je zvuková karta schopná prevádzať dáta aj opačným smerom, teda zo zdroja (mikrofón) na postupnosť čísiel, vzoriek. Tie sa potom uložia do súboru, (napr. hlas.wav).<br>CD-ROM mechanika je tiež schopná prehrávať zvuk, označuje sa ako audio cd.<br>Špeciálna časť, ktorá je schopná prehrávať video sa označuje ako video avi, resp. Video for Windows.<br>K všetkým týmto zariadeniam možno pristupovať prostredníctvom tzv. Media Control Interface (mci). Je to rozhranie “vyššej” úrovne, ktoré obsahuje sadu príkazov, ktoré sa zhodujú pre všetky zariadenia. Vychádzajú z princípu, že všetky možno ovládať podobne ako magnetofón — štart/stop, nahrávaj/prehrávaj, otvor/zatvor a pod.<br>Zoznam niekoľkých príkazov (všetky <a class=\"student-link\" href=\"https://docs.microsoft.com/en-us/previous-versions//ms712587(v=vs.85)?redirectedfrom=MSDN\">mci príkazy</a> na stránke msdn).",
+      "test_program": "Najprv preskúmame možnosti pomocou programu TESTmci.exe (<a class=\"student-link\" href=\"content/TestMCI.exe\">download</a>) - neinštaluje sa, len spustí. Uložte si ho do rovnakého adresára ako zvukový, resp. video súbor. Po spustení vidíte okno s troma oblasťami. Do prvej môžete zapisovať príkazy, ktoré sa ihneď vykonajú. V druhom okienku vidno návratové kódy (ak nie je 1, niečo je zle) a v treťom ich význam (chybové hlásenia)."
+    },
+    "examples": {
+      "title": "Príklady",
+      "intro_video": "Ak máte už vytvorený adresár a v ňom uložený program aj video, skúsime si ho pozrieť:",
+      "intro_cd": "Iný príklad: prehrávanie CD (vložte CD a ukončite prehrávač, ktorý sa vám automaticky spustil).",
+      "c_program": "Teraz môžete napísať svoj vlastný program v jazyku C. Len namiesto okienok programu TestMCI použijete príkaz:<br><strong>error = mciSendString(“prikaz”,szReturn, sizeof(szRetrun)/sizeof(TCHAR), hwnd);</strong><br>okrem toho sa zíde aj funkcia mciGetErrorString. Nezabudnite pred kompiláciou povedať prekladaču, že potrebujete prilinkovať aj knižnicu WINMM.LIB (Project / Settings / Links)<br>Príkladom použitia je krátky program, ktorý otvorí dvierka na CD mechanike:"
+    }
+  },
+  "blok2-asm8": {
+    "title": "Podpora pre Linux",
+    "info": {
+      "intro": "Na Linuxe môžete použiť knižnicu Libsdl.<br><br>1. stiahnutie a inštalácia knižníc:<br>",
+      "compiling": "2. kompilovanie a linkovanie:<br>",
+      "example": "Ukážkový program:<br>",
+      "more_commands": "Ďalšie príkazy:<br>"
+    }
+  },
+  "blok2-asm9": {
+    "handle_section": {
+      "title": "Handle",
+      "intro": "Handle sa vo Windows používa často. Je to číslo (obvykle 32-bitové), ktoré odkazuje na nejaký objekt. Stretnete sa s handle ikony, handle kurzoru myši, alebo handle konzoly. Program získa handle volaním nejakej funkcie Windows. Potom túto handle používa v ďalších funkciách, ak chce s daným objektom pracovať. Skutočná hodnota handle je pre programátora v programe nevýznamná.",
+      "gdi": "Rozhranie grafického zariadenia — GDI (Graphical device interface) Funkcie tohoto rozhrania sa používajú na kreslenie v klientskej oblasti okna.",
+      "hdc": "Handle kontextu zariadenia (hdc) Je to akoby vstupenka okna pre prístup k funkciám GDI. Prakticky každá funkcia vyžaduje ako jeden z parametrov hdc. Je to nejaká štruktúra, ktorú GDI interne udržiava. Niektoré z hodnôt tejto štruktúry sú vlastne grafické “atribúty” (farba textu, pozadia,…).",
+      "drawing": "Keď program potrebuje niečo vykresliť do klientskej oblasti, najprv musí získať handle kontextu zariadenia. Windows vyplní internú štruktúru hdc prednastavenými hodnotami atribútov (čierny text, biele pozadie, atď.) Istými funkciami je samozrejme možné tieto atribúty zmeniť. Pomocou inej funkcie vykreslíme čo potrebujeme a potom by sme mali hdc zasa uvoľniť."
+    },
+    "hungarian_notation_section": {
+      "title": "Maďarská notácia",
+      "description": "Niekedy sa názvy premenných tvoria tak, že názov začína malým písmenom (alebo písmenami), ktoré špecifikujú, o aký typ premennej ide. Napríklad cZnak je premenná typu char, iNumber je typu integer, hInstance je handle. Maďarská notácia má názov na počesť legendárneho programátora Microsoftu maďarského pôvodu Charlesa Symonyiho."
+    }
+  },
+  "blok2-asm10": {
+    "title": "Semigrafika",
+    "info": {
+      "intro": "Ak vytvárame grafiku nie kreslením čiar, ale vhodným skladaním znakov rozšírenej ASCII znakovej sady, potom hovoríme o tzv. semigrafike.",
+      "characters": "Odkiaľ vieme, ktoré znaky sa dajú použiť?<br>Najjednoduchšia cesta je spraviť si krátky program, ktorý vypíše všetky znaky aj s prislúchajúcim kódom (viď. úloha 1.1).",
+      "color": "Ako urobím zelený text?<br>Tak isto ako v úlohe 2.5.1",
+      "position": "Ale ako napíšem text do stredu obrazovky, keď printf si tlačí kam chce?<br>Aby ste napr. príkazom <strong class=\"text-green-400\">putchar('!');</strong> vypísali znak '!' na pozíciu [x,y], musíte použiť funkciu:<br>SetConsoleCursorPosition(hConsole, point);<br>kde hConsole je handle konzoly ako v úlohe 2.6 a premenná point je štruktúra s dvoma zložkami X a Y:<br>x = 4; y =5; COORD point = &#123;x,y&#125;; alebo aj point.X = x; point.Y = y;<br>Najlepšie to vidno vo vzorovom programe.",
+      "coordinates": "A čo znamenajú x, y?<br>Štandardné rozmery konzolového okna sú 25×80 (riadky x stĺpce). Súradnice okna začínajú v ľavom hornom rohu, smerom nadol sa y zväčšuje od 0 až po 24, smerom doprava rastie x od 0 až po 79."
+    }
+  },
+  "blok2-asm11": {
+    "title": "Uspávanie programu",
+    "info": {
+      "description": "Väčšinou potrebujeme beh počítača urýchliť a nie spomaliť. Ale pri komunikácii s užívateľom je niekedy naozaj vhodné dopriať mu viac času. Na definované pozdržanie práce programu použijeme jednoducho funkciu <strong class=\"text-green-400\">Sleep(milliseconds)</strong>, ktorá je definovaná buď vo <strong class=\"text-green-400\">windows.h</strong>, alebo <strong class=\"text-green-400\">unistd.h</strong> (Unix).<br><strong class=\"text-green-300\">static void Sleep(int millisecondsTimeout)</strong><br>Premenná <strong class=\"text-green-400\">millisecondsTimeout</strong> udáva, na koľko ms bude vykonávanie programu pozastavené. Počas pozastavenia však môžu pracovať iné programy, prípadne aj iné vlákna toho istého programu.",
+      "tip": "<span class=\"important-icon\">💡 Tip: </span><span class=\"important-text\">Vyskúšajte <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha26delay.c.html\">vzorový program</a> na prácu s časom.</span>"
+    }
+  },
+  "blok2-asm12": {
+    "title": "Základná práca s časom",
+    "info": {
+      "intro": "Všetko, čo potrebujeme pre prácu s časom je pripravené v knižnici time.h<br>Na zmeranie času, ktorý procesor spotreboval na nejaký proces s výhodou použijeme funkciu <strong class=\"text-green-400\">clock();</strong>, deklarovanú v <strong class=\"text-green-400\">time.h</strong>. Funkcia vráti uplynutý čas procesora. Typické použitie tejto funkcie ilustruje nasledujúci príklad. Funkciu zavoláme na začiatku a na konci intervalu, ktorého dĺžku chceme merať a obe hodnoty odčítame. Tým zistíme, koľko hodinových tikov procesor za daný interval spravil. Lenže nie na každom systéme je počet tikov za sekundu rovnaký. Preto je zadefinovaná konštanta <strong class=\"text-green-400\">CLOCKS_PER_SEC</strong>, ktorou musíme vypočítaný rozdiel vydeliť. Tým dostaneme priamo čas v sekundách.",
+      "system_differences": "Rôzne počítače a rôzne operačné systémy sa podstatne líšia v sledovaní procesorového času. Rozlíšenie býva obvykle medzi stotinami až milióntinami sekundy. Aj implementácia premenných býva rôzna, preto je zadefinovaný špeciálny typ clock_t, ktorý je na niektorých počítačoch ekvivalentný s typom <strong class=\"text-green-400\">long int</strong> a konštanta <strong class=\"text-green-400\">CLOCKS_PER_SEC</strong> je tiež celočíselná. Na iných systémoch môžu byť obe typu <strong class=\"text-green-400\">float</strong>.",
+      "definitions": "Makro: <strong class=\"text-green-400\">int CLOCKS_PER_SEC</strong><br>Hodnota tejto konštanty predstavuje počet hodinových tikov za sekundu meraných funkciou clock.<br>Datový typ: <strong class=\"text-green-400\">clock_t</strong><br>Toto je typ hodnoty, ktorú vracia funkcia <strong class=\"text-green-400\">clock</strong>. Hodnoty premenných typu <strong class=\"text-green-400\">clock_t</strong> sa udávajú v počte tikov hodín.<br>Funkcia:<strong class=\"text-green-400\">clock_t clock (void)</strong> <br>Táto funkcia vracia uplynutý čas procesora.",
+      "warning": "Pozor: najprv sa snažte program pochopiť, potom si naštudujte ako dané funkcie fungujú v msdn a až potom ich použite vo vlastnom programe."
+    }
+  },
+  "blok2-asm13": {
+    "title": "conio.h, alebo ENTER a problémy s ním",
+    "info": {
+      "intro": "Viacerí z vás narazili pri riešení úloh na problém, ako načítať aktuálne stlačenú klávesu bez toho, aby ste museli jej stlačenie potvrdiť. Typicky ide o ovládanie programu (voľby z menu, koniec programu, klávesy F1, F2 a pod.).<br>Pri použití klasických funkcií ako napr. getchar() musíte na konci zadávaní údajov stlačiť Enter. Bez toho funkcia neskončí a zbytočne tak komplikuje komunikáciu.<br>Jedno z možných riešení je použitie vstupno-výstupných funkcií z knižnice conio.h podobne ako v nasledujúcej ukážke.",
+      "warning": "Pozor: najprv sa snažte program pochopiť, potom si naštudujte ako dané funkcie fungujú v msdn a až potom ich použite vo vlastnom programe.",
+      "special_keys": "Pri práci s týmito funkciami zistíte, že majú oproti <strong class=\"text-green-400\">getchar()</strong> aj ďalšie príjemné vlastnosti - napríklad dokážu zistiť aj kódy funkčných a špeciálnych kláves. Je tu však malý zádrhel: v prípade, že stlačíte napríklad [F1], funkcia <strong class=\"text-green-400\">getch()</strong> vráti hodnotu 0 (čím signalizuje stlačenie niečoho špeciálneho) a kód klávesy musíte zistiť ešte jedným čítaním. Podobne je to aj ak stlačíte napríklad šípku nahor: tiež sa prečítajú dva znaky, lenže prvý nie je nula, ale 0xE0 a druhý je opäť kód klávesy.",
+      "enter_key": "Ešte jeden malý zádrhel je s klávesou Enter, ktorá vracia tiež vždy dva znaky: návrat na začiatok riadku (CR) a posun na ďalší riadok (LF). Našťastie v C-čku týmto dvom znakom zodpovedá zasa len jeden znak: <strong class=\"text-green-400\">\\n</strong>.",
+      "tip": "<span class=\"important-icon\">💡 Tip: </span><span class=\"important-text\">Najlepšia možnosť, ako to pochopiť, je skúsiť si to. Stiahnite a vyskúšajte si <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"content/uloha29conio.c.html\">vzorový program</a> na prácu s klávesnicou a knižnicou <strong class=\"text-green-400\">conio.h</strong> V ňom je vidno, ako sa načítavajú bežné i špeciálne znaky z klávesnice.</span>"
+    }
+  },
+  "contacts": {
+    "title": "Kontakty",
+    "contacts_table": {
+      "lecturer": {
+        "role": "Prednášajúci"
+      },
+      "exercise_leader": {
+        "role": "Vedúci cvičení"
+      }
+    },
+    "schedule_title": "ROZVRH:"
+  },
+  "first_exercise": {
+    "title": "Úvodné cvičenie",
+    "info": {
+      "intro": "Programovanie je Vaša zbraň. Programovaním viete prinútiť počítač, aby robil presne to, čo chcete. Ako iste viete, počítač je schopný obrovského množstva vecí od posielania informácií v zlomku sekundy na opačný koniec zemegule prostredníctvom internetu až po ovládanie robotických systémov.<br>Programovať sa naučíte len tak, že sa s tým sami vytrápite spôsobom pokus-omyl. Nik iný to za Vás nespraví. Inšpirovať sa existujúcimi kódmi môže byť dobré a užitočné, ale bezduché kopírovanie cudzích riešení Vás nikam neposunie a v konečnom dôsledku Vás skôr či neskôr dobehne. Preto sa treba zaťať, prekonávať a učiť sa na vlastných chybách.<br>Vašou prvou úlohou je zoznámiť sa s kompilátorom, ktorý budete používať v príkazovom riadku. Kompilátor je softvérový nástroj, ktorý je schopný preložiť („skompilovať“) zdrojový kód zrozumiteľný programátorovi do kódu zrozumiteľnému počítaču. Skopírujte si súbor cli.bat z adresára J:\\Programs\\mingw na Plochu. (Ak pracujete na súkromnom počítači, postupujte podľa návodu “Použitie gcc kompilátora vo vlastnom počítači” v sekcii “Návody” a preskočte nasledujúce dva obrázky)",
+      "warning": "<span class=\"important-icon\">⚠️ POZOR: </span><span class=\"important-text\">ak ste opakovaný študent, tak v skripte prepíšte rok na rok, kedy ste nastúpili na štúdium.</span>",
+      "step_1": "Uložte súbor a spustite ho.",
+      "step_2": "Uvidíte niečo takéto (Váš výstup je ale trochu iný, pretože máte adresáre na sieťovom disku N):",
+      "step_3": "Ďalej spustite program Notepad++ a prepíšte doň nasledovný kód.",
+      "step_4": "Uložte si ho do adresára Documents a skompilujte pomocou nasledovného príkazu, kde miesto myFile.c uvediete názov Vášho súboru.",
+      "step_5": "Pomocou príkazu dir si viete zobraziť obsah adresára. Po úspešnej kompilácii by ste mali medzi uvedenými súbormi vidieť aj program.exe.",
+      "step_6": "Spustíte ho tak, že jednoducho napíšete jeho názov a stlačíte Enter.",
+      "step_7": "Vašou ďalšou úlohou je naprogramovať funkciu, ktorá na obrazovku vypíše čísla od jeden do sto.",
+      "step_8": "Výstup by mal vyzerať nejak takto.",
+      "step_9": "Ďalej doprogramujte funkciu, ktorá vypíše buď všetky párne, alebo všetky nepárne čísla v rozsahu od 1 do 30. Využite na to operáciu modulo. Keď to budete mať, zavolajte svojho cvičiaceho a získate tým svoje prvé 2 body. Potom začnite pracovať na zadaniach z Bloku 1."
+    }
+  },
+  "computer_architecture": {
+    "title": "Architektúra počítačov",
+    "tutorial_intro": "Pre záujemcov odporúčame tento tutoriál na získanie dobrých základov v jazyku C:"
+  },
+  "manuals": {
+    "title": "Návody",
+    "gcc_setup": {
+      "intro": "Ak chcete použiť kompilátor na súkromnom počítači, stiahnite si gcc <a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-12.0.0-ucrt-r3/winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64ucrt-12.0.0-r3.zip\">tu.</a> Súbor gcc.exe sa nachádza v adresári mingw64\\bin. Ideálne je pridať si adresár mingw64\\bin do PATH a potom môžete gcc.exe používať odkiaľkoľvek. To spravíte takto:",
+      "steps": "<li> Otvorte “Nastavenia systému”:<ul class=\"list\"><li> Kliknite pravým tlačidlom myši na Tento počítač alebo Počítač (alebo stlačte klávesy Windows + Pause/Break) a vyberte Vlastnosti.</li><li>Alebo stlačte Windows + I, prejdite na Systém → O aplikácii → Systémové informácie → Rozšírené nastavenia systému.</li></ul></li><li>Kliknite na Rozšírené nastavenia systému.</li><li>V časti Rozšírené kliknite na tlačidlo Premenné prostredia.</li><li><br>Nájdite systémovú premennú Path:<ul class=\"list\"><li>V časti Systémové premenné vyberte premennú Path a kliknite na Upraviť.</li></ul></li><li> Pridajte nový adresár:<ul class=\"list\"><li>Kliknite na Nový a vložte cestu k adresáru, ktorý chcete pridať.</li><li>Napríklad: C:\\mingw64\\bin.</li></ul></li><li>Kliknite na OK, aby sa zmeny uložili.</li><li>Reštartujte terminál (príkazový riadok/PowerShell), aby sa zmeny prejavili.</li>"
+    },
+    "visual_studio_setup": {
+      "title": "Založenie projektu v MS Visual Studio",
+      "step_1": "1. Kliknite na File/New/Project",
+      "step_2": "2. Kliknite vľavo na Visual C++ a potom na Windows Console Application. Zvoľte si názov projektu a uložte si ho do adresára Documents.",
+      "step_3": "3. Aby ste mohli v MS Visual Studio bez problémov používať funkciu scanf je potrebné napísať riadok z obrázka dolu presne na dané miesto."
+    }
+  },
+  "control_questions": {
+    "title": "Otázky",
+    "warning_info": "Počnúc druhým cvičením semestra musíte byť schopní odpovedať na nasledovné kontrolné otázky kedykoľvek počas cvičení, či odovzdávaní zadania. Jedná sa o úplné základné vedomosti akéhokoľvek programátora.<br><strong>Ak nebudete vedieť odpovedať, tak riskujete stratu 0,5 - 1 boda za otázku!</strong>",
+    "q1": {
+      "question": "Čo je to bit?",
+      "answer": "Bit (b) je základná a najmenšia dátová jednotka v počítači. Môže nadobúdať binárnu hodnotu 0 alebo 1."
+    },
+    "q2": {
+      "question": "Čo je to bajt (byte)?",
+      "answer": "Bajt (B) je jednotka digitálnej informácie. Pozostáva z ôsmich bitov."
+    },
+    "q3": {
+      "question": "Koľko hodnôt vieme zakódovať do jedného bajtu?",
+      "answer": "2 na ôsmu, čiže 256 hodnôt."
+    },
+    "q4": {
+      "question": "Aký rozsah hodnôt (kladných vrátane nuly) vieme zakódovať do jedného bajtu?",
+      "answer": "0 - 255."
+    },
+    "q5": {
+      "question": "Čo je to kompilátor?",
+      "answer": "Kompilátor je softvérový nástroj schopný preložiť zdrojový kód napísaný programátorom do strojového kódu vykonateľného počítačom."
+    },
+    "q6": {
+      "question": "Aký je rozdiel medzi jazykom symbolických inštrukcí, assemblerom a strojovým kódom?",
+      "answer": "* Jazyk symbolických inštrukcií je pre ľudí na čítanie vhodná forma strojového kódu. * Strojový kód je v podstate takmer to isté čo jazyk symbolických inštrukcií. Procesor však vie pracovať len s jednotkami a nulami. Čiže každej inštrukcii je priradená konkrétna binárna postupnosť. Pre procesor 8086 zo 70-tych rokov 20. storočia inštrukcia CMP vyzerá napr. takto: 0x38 hexadecimálne, čiže 00111000 binárne * Assembler je počítačový program na preklad z jazyka symbolických inštrukcií do strojového kódu. (Hovorovo sa však jazyku symbolických inštrukcií často hovorí assembler - “nakódil som to v assembleri…”)"
+    },
+    "q7": {
+      "question": "Čo je to inštrukcia?",
+      "answer": "Inštrukcia je “základný prvok činnosti”, ktorú vykonáva procesor (napr. mov, cmp, add, sub)."
+    },
+    "q8": {
+      "question": "Čo je to register?",
+      "answer": "Register je malá, veľmi rýchla pamäťová oblasť umiestnená vo vnútri procesora (napr. EAX, EBX, SP). Môže mať 8, 32,64 bitov a pod."
+    },
+    "q9": {
+      "question": "Čo je to adresa?",
+      "answer": "Adresa je celé číslo ukazujúce na miesto v pamäti. Čiže keď Váš “noťas” má napr. 8 GB RAM-ky, tak adresa je číslo pomocou ktorého viete pristupovať (čítať/zapisovať) napr. k postupnosti jednotiek a núl uloženie na treťom GB."
+    },
+    "q10": {
+      "question": "Čo je to kódovanie (v zmysle - kódovanie znakov v počítači)?",
+      "answer": "<a rel=\"noopener noreferrer\" class=\"student-link\" href=\"https://sk.wikipedia.org/wiki/K%C3%B3dovanie_(informatika)\">https://sk.wikipedia.org/wiki/<wbr>K%C3%B3dovanie_(informatika)</a>"
+    },
+    "q11": {
+      "question": "Aký je rozdiel medzi reťazcom a poľom?",
+      "answer": ""
+    },
+    "q12": {
+      "question": "Čo je to Microsoft Learn? Na čo Vám to je v súvislosti so zadaniami druhého bloku?",
+      "answer": "Microsoft Learn (do roku 2022 to bolo MSDN - Microsoft Developer Network) je súbor zdrojov a informácií určených pre developerov pracujúcich na Microsoft platforme. Zjednodušene povedané - ak chcete programovať napr. špecificky pre operačný systém Windows, tak potrebujete vedieť ako používať knižnice, ktoré Vám umožnia tento operačný systém “prinútiť” urobiť, presne to, čo chcete. Pomocou Vašich znalostí programovania a dokumentácie na Microsoft Learn viete pre Váš Windows “nakódiť” hocičo. Často sa stretnete so skratkou API (Application Programming Interface). Ide o zbierku funkcií a tried (ale aj iných programov), ktoré určujú akým spôsobom sa majú funkcie knižníc volať zo zdrojového kódu programu. Čiže, ak niečo “chcete” od Windows-u, musíte poznať jeho API, aby ste vedeli, aké funkcie máte do Vášho “zdrojáku” dať. A o nich sa dočítate práve na Microsoft Learn."
+    }
+  },
+  "rules": {
+    "title": "Pravidlá",
+    "general_rules": "<strong>!!! Počas cvičení je zakázané používať sociálne siete a AI!!!</strong><br> Cvičenia pozostávajú z troch blokov, pričom prvý trvá štyri týždne, druhý päť a tretí 3 týždne semestra. Na získanie zápočtu musíte z každého bloku získať aspoň polovicu z maximálneho počtu bodov.<br> <strong>Účasť na cvičeniach je povinná.<br> Absencia a nahrádzanie cvičenia je možné len pre chorobu (v iných výnimočných prípadoch kontaktujte svojho cvičiaceho vopred).<br> V prípade absencie si cvičenie musíte nahradiť v inom termíne (ak máte legitímne ospravedlnenie od lekára v AIS-e).</strong>",
+    "grading": {
+      "title": "Bodové hodnotenie cvičení:",
+      "blocks": "Úlohy z prvého bloku (1. - 4. týždeň): 10 + 2 (za úvodné cvičenie) bodov (musíte získať aspoň 6)<br> Úlohy z druhého bloku (5. - 9. týždeň): 16 bodov (musíte získať aspoň 8)<br> Úlohy z tretieho bloku (10. - 12. týždeň): 12 bodov (musíte získať aspoň 6)<br>",
+      "submission_intro": "Body získavate priebežne za odovzdávanie zadaní počas cvičení. Odovzdanie prebieha nasledovne:",
+      "submission_steps": "a) Pre danú úlohu si prichystáte odladený a funkčný zdrojový kód.<br> b) Zavoláte cvičiaceho a odprezentujete mu svoje riešenie. Musí ísť o Váš vlastný kód, musíte mu rozumieť a vedieť ho vysvetliť.<br> c) Cvičiaci sa Vás môže spýtať doplňujúce otázky k Vášmu riešeniu.<br> d) Na záver sa Vás spýta jednu alebo viac otázok (sekcia Kontrolné otázky) uvedených na webe. Ak nebudete vedieť<br> odpovedať riskujete stratu bodov.<br> e) Cvičiaci Vám udelí body, príp. navrhne prepracovanie časti zadania, aby ste mohli získať plný počet.<br>"
+    },
+    "plagiarism_warning": "<strong>Na každom cvičení musíte odovzdať aspoň jedno zadanie.<br> Mať funkčný kód, ktorému nerozumiete vôbec nestačí, práve naopak, jedná sa o plagiát. Plagiátorstvo je penalizované! Nula bodov získa ten, kto zadanie poskytol, aj ten kto použil cudzí kód.</strong>",
+    "physical_submission": {
+      "title": "Fyzické odovzdávanie zdrojových kódov:",
+      "description": "Na záver každého bloku odovzdáte Vaše zdrojové kódy prostredníctvom AIS. Odovzdávate len jeden .c súbor za celý daný blok. Žiadne .zip alebo .sln súbory. V AIS bude uvedený deadline odovzdania. Nezabudnite odovzdať včas, inak prídete o body!<br> <strong>Po skončení semestra prebehne anti-plagiátorská kontrola. V prípade, že dvaja študenti budú mať zhodné zdrojové kódy (okrem prípadu najjednoduchších zadaní), prídu obaja študenti o všetky body.</strong>"
+    }
+  },
+  "student": {
+    "title": "Architektúra počítačov",
+    "first_exercise": "Úvodné cvičenie",
+    "block_1": "Blok 1",
+    "block_2": "Blok 2",
+    "block_3": "Blok 3",
+    "questions": "Kontrolné otázky",
+    "manuals": "Návody",
+    "rules": "Pravidlá",
+    "contacts": "Kontakty"
+  }
+}

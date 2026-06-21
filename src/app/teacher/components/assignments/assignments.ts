@@ -200,20 +200,28 @@ export class AssignmentsComponent implements OnInit {
 
 
     public async onBlockChange(assign: Assignment, newBlockId: number): Promise<void> {
-        if (assign.block?.id === newBlockId) return;
-        this.isLoading = true; this.error = null; this.message = null;
+        const currentAssign = this.assignments.find(a => a.id === assign.id);
+        if (!currentAssign || currentAssign.block?.id === newBlockId) return;
 
-        const payload: UpdateAssignmentPayload = { blockId: Number(newBlockId), name: assign.name, maxPoints: assign.maxPoints };
+        this.isLoading = true;
+        this.error = null;
+        this.message = null;
+
+        const payload: UpdateAssignmentPayload = {
+            blockId: Number(newBlockId),
+            name: currentAssign.name,
+            maxPoints: currentAssign.maxPoints,
+        };
 
         try {
-            const url = `${this.assignmentsApiUrl}/${assign.id}`;
-            const response = await lastValueFrom(this.http.put<{ data: Assignment }>(url, payload));
-            const updatedAssign = response.data || response;
+            const url = `${this.assignmentsApiUrl}/${currentAssign.id}`;
+            await lastValueFrom(this.http.put(url, payload));
 
-            this.updateLocalAssignment(assign.id, updatedAssign);
             this.message = `Blok zmenený.`;
             setTimeout(() => this.message = null, 2000);
-            this.sortData();
+
+            await this.loadData();
+
         } catch (err: unknown) {
             this.handleError(err, 'Chyba: Nepodarilo sa zmeniť blok.');
             await this.loadData();
@@ -249,25 +257,35 @@ export class AssignmentsComponent implements OnInit {
         const field = this.editingField;
         const rawVal = this.editingValue;
 
-        if (String(assign[field]) === String(rawVal).trim()) {
+        const currentAssign = this.assignments.find(a => a.id === assign.id);
+        if (!currentAssign) {
             this.resetEditState();
             return;
         }
 
-        const blockId = assign.block?.id;
+        const newValue = String(rawVal).trim();
+        if (String(currentAssign[field]) === newValue) {
+            this.resetEditState();
+            return;
+        }
+
+        const blockId = currentAssign.block?.id;
         if (!blockId) {
-            this.error = 'Chyba: Zadanie nemá blok.';
+            this.error = 'Chyba: Zadanie nemá priradený blok.';
             this.resetEditState();
             return;
         }
 
-        const payload: UpdateAssignmentPayload = { blockId: blockId, name: assign.name, maxPoints: assign.maxPoints };
-        const cleanVal = String(rawVal).trim();
+        const payload: UpdateAssignmentPayload = {
+            blockId: blockId,
+            name: currentAssign.name,
+            maxPoints: currentAssign.maxPoints,
+        };
 
         if (field === 'name') {
-            payload.name = cleanVal;
+            payload.name = newValue;
         } else if (field === 'maxPoints') {
-            const num = parseFloat(cleanVal);
+            const num = parseFloat(newValue);
             if (isNaN(num)) {
                 this.error = "Max body musí byť číslo.";
                 return;
@@ -279,15 +297,13 @@ export class AssignmentsComponent implements OnInit {
         this.isLoading = true;
 
         try {
-            const url = `${this.assignmentsApiUrl}/${assign.id}`;
-            const response = await lastValueFrom(this.http.put<{ data: Assignment }>(url, payload));
-            const updatedAssign = response.data || response;
+            const url = `${this.assignmentsApiUrl}/${currentAssign.id}`;
+            await lastValueFrom(this.http.put(url, payload));
 
-            this.updateLocalAssignment(assign.id, updatedAssign);
-            this.logger.log(`Cell '${field}' updated for ID ${assign.id}`, payload);
             this.message = `Zadanie aktualizované.`;
             setTimeout(() => this.message = null, 2000);
-            this.sortData();
+
+            await this.loadData();
 
         } catch (err: unknown) {
             this.handleError(err, 'Chyba: Aktualizácia zlyhala.');
@@ -302,13 +318,6 @@ export class AssignmentsComponent implements OnInit {
     private resetEditState() {
         this.editingId = null;
         this.editingField = null;
-    }
-
-    private updateLocalAssignment(id: number, updatedData: Partial<Assignment>) {
-        const index = this.assignments.findIndex(a => a.id === id);
-        if (index !== -1) {
-            this.assignments[index] = { ...this.assignments[index], ...updatedData };
-        }
     }
 
     private handleError(err: unknown, defaultMsg: string) {

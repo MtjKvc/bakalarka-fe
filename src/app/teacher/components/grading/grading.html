@@ -1,39 +1,42 @@
 <div class="teacher-div">
 
-  <div class="teacher-div-line">
-    <div class="flex flex-col lg:flex-row items-center mb-4 gap-3 w-full">
-      <h1 class="teacher-bigger-title">
-        <svg class="teacher-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-          </path>
-        </svg>
-        {{ isSemesterMode ? 'Celosemestrálne hodnotenie' : 'Hodnotenie bloku' }}
-      </h1>
-      <div class="grading-button-layout scrollbar-hide">
-        <button (click)="selectSemester()" [class.bg-emerald-600]="isSemesterMode" [class.text-white]="isSemesterMode"
-          [class.bg-gray-100]="!isSemesterMode" [class.text-gray-700]="!isSemesterMode" class="blok-select">
-          Semester (Spolu)
-        </button>
+<div class="teacher-div-line">
+  <div class="flex flex-col lg:flex-row items-center mb-4 gap-3 w-full">
+    <h1 class="teacher-bigger-title">
+      <svg class="teacher-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+        </path>
+      </svg>
+      {{ isSemesterMode ? 'Celosemestrálne hodnotenie' : 'Hodnotenie bloku' }}
+    </h1>
+    
+    <div class="grading-button-layout scrollbar-hide">
+      
+      <button (click)="selectSemester()" 
+        [class.bg-emerald-600]="isSemesterMode" [class.text-white]="isSemesterMode"
+        [class.bg-gray-100]="!isSemesterMode" [class.text-gray-700]="!isSemesterMode" class="blok-select">
+        Semester (Spolu)
+      </button>
 
-        <div class="w-px h-8 bg-gray-200 mx-1"></div>
+      <div class="w-px h-8 bg-gray-200 mx-1"></div>
 
-        <button *ngFor="let block of contextService.blocks()" (click)="contextService.selectBlock(block)"
-          [class.bg-emerald-600]="!isSemesterMode && contextService.selectedBlock()?.id === block.id"
-          [class.text-white]="!isSemesterMode && contextService.selectedBlock()?.id === block.id"
-          [class.bg-gray-100]="isSemesterMode || contextService.selectedBlock()?.id !== block.id"
-          [class.text-gray-700]="isSemesterMode || contextService.selectedBlock()?.id !== block.id" class="blok-select">
+      <ng-container *ngFor="let block of contextService.blocks()">
+        
+        <button (click)="selectLocalBlock(block.id)"
+          [class.bg-emerald-600]="!isSemesterMode && ((explicitExerciseId && localSelectedBlockId === block.id) || (!explicitExerciseId && contextService.selectedBlock()?.id === block.id))"
+          [class.text-white]="!isSemesterMode && ((explicitExerciseId && localSelectedBlockId === block.id) || (!explicitExerciseId && contextService.selectedBlock()?.id === block.id))"
+          [class.bg-gray-100]="isSemesterMode || !((explicitExerciseId && localSelectedBlockId === block.id) || (!explicitExerciseId && contextService.selectedBlock()?.id === block.id))"
+          [class.text-gray-700]="isSemesterMode || !((explicitExerciseId && localSelectedBlockId === block.id) || (!explicitExerciseId && contextService.selectedBlock()?.id === block.id))" 
+          class="blok-select">
           {{ block.name }}
         </button>
-      </div>
+
+      </ng-container>
+      
     </div>
-
-
-
-
   </div>
-
-  <div *ngIf="isLoading" class="flex justify-center items-center py-10">
+</div> <div *ngIf="isLoading" class="flex justify-center items-center py-10">
     <div class="flex flex-col items-center space-y-2">
       <svg class="animate-spin h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none"
         viewBox="0 0 24 24">
@@ -56,53 +59,48 @@
     </svg>
     <span>{{ message }}</span>
   </div>
-  <div class="flex items-center w-full max-w-md relative">
+
+
+  <div class="flex items-center w-full max-w-md relative mb-4">
     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
       <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
     </div>
-
     <input type="text" [ngModel]="studentSearchQuery" (ngModelChange)="onSearchInput($event)"
       placeholder="Hľadať študenta podľa mena..." class="search-bar">
   </div>
+
+
   <div class="table-div" *ngIf="!isLoading">
     <table class="teacher-table">
       <thead class="table-header">
         <tr>
-          <th class="student-head">
-            Študent</th>
+          <th class="student-head">Študent</th>
 
           <th *ngFor="let assign of assignments" class="assignment-head">
             <div class="flex flex-col items-center">
-              <span class="text-emerald-700 font-bold block mb-1 truncate max-w-[110px]" [title]="assign.name">{{
-                assign.name }}</span>
-
-              <span *ngIf="!isSemesterMode" class="assignment-head-mp">Max: {{ assign.maxPoints
-                }}</span>
+              <span class="text-emerald-700 font-bold block mb-1 truncate max-w-[110px]" [title]="assign.name">
+                {{ assign.name }}
+              </span>
+              <span *ngIf="!isSemesterMode" class="assignment-head-mp">Max: {{ assign.maxPoints }}</span>
             </div>
           </th>
 
           <th class="assignment-head-added">
             <div class="flex flex-col items-center justify-center h-full space-y-1">
-
               <span class="block">Spolu</span>
-
               <div *ngIf="!isSemesterMode" class="flex flex-col w-full px-2 space-y-0.5">
-
                 <div class="assignment-head-mp">
                   <span class="text-gray-800 font-medium mr-1">Max:</span>
                   <span class="text-gray-800 font-bold">{{ blockMaxPoints }}</span>
                 </div>
-
                 <div class="assignment-head-mp">
                   <span class="text-emerald-700 font-medium mr-1">Min:</span>
                   <span class="text-emerald-700 font-bold">{{ blockRequiredPoints }}</span>
                 </div>
-
               </div>
-
             </div>
           </th>
         </tr>
@@ -112,18 +110,23 @@
         <tr *ngFor="let student of studentRows" class="table-hover">
           <td class="student-collumn">
             <div class="flex flex-col">
-           <span> {{ student.studentFullName }} </span>
-          <span class="text-[10px] text-gray-400 font-normal" *ngIf="student.aisId != null">AIS: {{ student.aisId }}</span>
-        </div>  
-        </td>
+              <span> {{ student.studentFullName }} </span>
+              <span class="text-[10px] text-gray-400 font-normal" *ngIf="student.aisId != null">
+                AIS: {{ student.aisId }}
+              </span>
+            </div>
+          </td>
+          
           <td *ngFor="let assign of assignments" class="assignment-data">
             <ng-container *ngIf="getAssignmentRecord(student, assign.id) as record; else emptyCell">
               <div class="w-full h-full flex items-center justify-center transition-colors"
                 [class.bg-emerald-50]="isEditing(record)" (click)="onCellClick(record)">
+                
                 <ng-container *ngIf="isEditing(record); else viewMode">
                   <input #pointInput type="number" [(ngModel)]="editingValue" (blur)="onCellSave(record)"
                     (keydown.enter)="onCellSave(record)" class="editing-table-data">
                 </ng-container>
+                
                 <ng-template #viewMode>
                   <div class="flex items-center justify-center h-full w-full rounded relative group/cell"
                     [class.cursor-pointer]="!isSemesterMode" [class.hover:bg-gray-100]="!isSemesterMode">
@@ -134,12 +137,8 @@
                       class="absolute right-1 top-1/2 -translate-y-1/2 z-10 hover:z-20"
                       (click)="openNoteModal(record, $event)" (mouseenter)="showTooltip($event, record.note)"
                       (mouseleave)="hideTooltip()">
-
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                        class="note-button">
-                        <path fill-rule="evenodd"
-                          d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                          clip-rule="evenodd" />
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="note-button">
+                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
                       </svg>
                     </div>
 
@@ -151,18 +150,19 @@
                           d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                       </svg>
                     </button>
+
                   </div>
                 </ng-template>
               </div>
             </ng-container>
-            <ng-template #emptyCell>
-            </ng-template>
+            <ng-template #emptyCell></ng-template>
           </td>
 
           <td class="assignment-data-added">
             {{ calculateTotalPoints(student) }}
           </td>
         </tr>
+
         <tr *ngIf="studentRows.length === 0 && !isLoading">
           <td [attr.colspan]="assignments.length + 2" class="text-center py-12 text-gray-500">
             <div class="flex flex-col items-center">
@@ -170,14 +170,14 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
-              <p class="font-medium">Nenašli sa žiadne výsledky{{ studentSearchQuery ? ' pre "' + studentSearchQuery +
-                '"' : '' }}.</p>
+              <p class="font-medium">Nenašli sa žiadne výsledky{{ studentSearchQuery ? ' pre "' + studentSearchQuery + '"' : '' }}.</p>
             </div>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+
 
   <div *ngIf="isNoteModalOpen && !isSemesterMode" class="teacher-modal-bg" (click)="closeNoteModal()">
     <div class="teacher-modal" (click)="$event.stopPropagation()">
@@ -203,14 +203,12 @@
     </div>
   </div>
 
-</div>
-<div *ngIf="tooltipData"
+</div> <div *ngIf="tooltipData"
   class="fixed z-[9999] w-64 p-3 bg-white text-sm text-gray-700 border border-gray-200 rounded-lg shadow-2xl pointer-events-none"
   [style.left.px]="tooltipData.x" [style.top.px]="tooltipData.y" style="transform: translate(-50%, -115%);">
 
   <p class="italic break-words text-center leading-snug">{{ tooltipData.text }}</p>
 
-  <div
-    class="absolute left-1/2 -bottom-1.5 w-3 h-3 bg-white border-b border-r border-gray-200 rotate-45 -translate-x-1/2">
+  <div class="absolute left-1/2 -bottom-1.5 w-3 h-3 bg-white border-b border-r border-gray-200 rotate-45 -translate-x-1/2">
   </div>
 </div>

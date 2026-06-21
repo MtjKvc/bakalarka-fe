@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ViewChildren, QueryList, AfterViewChecked, ElementRef, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { lastValueFrom } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { catchError, debounceTime, lastValueFrom, Subject, Subscription, switchMap, tap } from 'rxjs';
 import { FormsModule, NgForm } from '@angular/forms';
 import { LongPressDirective } from '../../../shared/directives/long-press.directive';
 import { environment } from '../../../../environments/environment';
@@ -45,12 +45,21 @@ export class UsersComponent implements OnInit, AfterViewChecked {
 
     private usersApiUrl = `${environment.apiUrl}/api/v1/user`;
     private rolesApiUrl = `${environment.apiUrl}/api/v1/enum/role`;
-    private passwordApiUrl = `${environment.apiUrl}/api/v1/user/password`;
+    private passwordApiUrl = `${environment.apiUrl}/api/v1/user/generate-password`;
 
     private exercisesApiUrl = `${environment.apiUrl}/api/v1/exercise`;
     private userExerciseApiUrl = `${environment.apiUrl}/api/v1/user-exercise`;
     public users: UserDTO[] = [];
     public availableRoles: string[] = [];
+
+    public searchName: string = '';
+    public searchEmail: string = '';
+    public searchId: string = '';
+    public sortField: string = 'fullName';
+    public sortDirection: 'asc' | 'desc' = 'asc';
+
+    private searchSubject = new Subject<void>();
+    private searchSubscription?: Subscription;
 
     public isExerciseModalOpen: boolean = false;
     public selectedUserForExercises: UserDTO | null = null;
@@ -80,6 +89,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     public isRemoveExerciseConfirmOpen: boolean = false;
     public assignmentToRemove: UserExerciseAssignment | null = null;
 
+
     @ViewChild('errorContainer') set errorContent(content: ElementRef) {
         if (content) {
             content.nativeElement.scrollIntoView({
@@ -93,27 +103,68 @@ export class UsersComponent implements OnInit, AfterViewChecked {
 
     public ngOnInit(): void {
         this.logger.log('UsersComponent initialized');
-        this.loadData();
+        this.loadRoles();
+
+        this.searchSubscription = this.searchSubject.pipe(
+            debounceTime(300),
+            tap(() => {
+                this.isLoading = true;
+                this.error = null;
+            }),
+            switchMap(() => {
+                let params = new HttpParams();
+                if (this.searchId.trim()) params = params.set('id', this.searchId.trim());
+                if (this.searchEmail.trim()) params = params.set('email', this.searchEmail.trim());
+                if (this.searchName.trim()) params = params.set('fullName', this.searchName.trim());
+
+                params = params.set('sort', `${this.sortField},${this.sortDirection}`);
+
+                return this.http.get<UserDTO[]>(this.usersApiUrl, { params }).pipe(
+                    catchError((err) => {
+                        this.logger.error('Failed to load users', err);
+                        this.error = "Nepodarilo sa načítať dáta.";
+                        return [];
+                    })
+                );
+            })
+        ).subscribe(data => {
+            this.users = data || [];
+            this.isLoading = false;
+            this.cdr.detectChanges();
+        });
+
+        this.triggerSearch();
     }
 
-    public async loadData(): Promise<void> {
-        this.isLoading = true; this.error = null;
-        try {
-            const [usersData, rolesData] = await Promise.all([
-                lastValueFrom(this.http.get<UserDTO[]>(this.usersApiUrl)),
-                lastValueFrom(this.http.get<string[]>(this.rolesApiUrl))
-            ]);
+    public ngOnDestroy(): void {
+        this.searchSubscription?.unsubscribe();
+        this.searchSubject.complete();
+    }
 
-            this.users = usersData || [];
-            this.users.sort((a, b) => a.id - b.id);
+    public triggerSearch(): void {
+        this.searchSubject.next();
+    }
+
+    public onSearchInputChange(): void {
+        this.triggerSearch();
+    }
+
+    public onSort(field: string): void {
+        if (this.sortField === field) {
+            this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortField = field;
+            this.sortDirection = 'asc';
+        }
+        this.triggerSearch();
+    }
+
+    private async loadRoles(): Promise<void> {
+        try {
+            const rolesData = await lastValueFrom(this.http.get<string[]>(this.rolesApiUrl));
             this.availableRoles = rolesData || [];
-            this.logger.log(`Loaded ${this.users.length} users and ${this.availableRoles.length} roles`);
-            this.cdr.detectChanges();
-        } catch (err: unknown) {
-            this.logger.error('Failed to load users data', err);
-            this.error = 'Nepodarilo sa načítať dáta používateľov.';
-        } finally {
-            this.isLoading = false;
+        } catch (err) {
+            this.logger.error('Failed to load roles', err);
         }
     }
 
@@ -283,7 +334,7 @@ export class UsersComponent implements OnInit, AfterViewChecked {
             this.logger.error('Error updating user', err);
             this.error = "Chyba pri aktualizácii používateľa.";
             if (onError) onError();
-            else await this.loadData();
+            else this.triggerSearch();
         } finally { this.isLoading = false; }
     }
 
@@ -316,8 +367,8 @@ export class UsersComponent implements OnInit, AfterViewChecked {
             await lastValueFrom(this.http.post<ApiResponse<unknown>>(this.usersApiUrl, payload));
             this.message = `Používateľ vytvorený.`;
             this.onCloseModal();
+            this.triggerSearch()
             setTimeout(() => this.message = null, 2000);
-            await this.loadData();
         } catch (err: unknown) {
             this.logger.error('Error creating user', err);
             this.error = "Chyba pri vytváraní používateľa.";
@@ -372,6 +423,13 @@ export class UsersComponent implements OnInit, AfterViewChecked {
     public async onCellSave(user: UserDTO): Promise<void> {
         this.error = null;
         this.shouldFocus = false;
+        if (this.editingField === 'email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(this.editingValue)) {
+                this.error = 'Neplatný formát emailu';
+                return;
+            }
+        }
         if (this.isSaving || this.editingId === null || this.editingField === null) return;
 
         const newValue = String(this.editingValue).trim();
@@ -403,7 +461,6 @@ export class UsersComponent implements OnInit, AfterViewChecked {
         } catch (err: unknown) {
             this.logger.error('Error saving cell edit', err);
             this.error = "Chyba pri aktualizácii.";
-            await this.loadData();
         } finally {
             this.editingId = null; this.editingField = null;
             this.isLoading = false; this.isSaving = false;

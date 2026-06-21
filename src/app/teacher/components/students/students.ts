@@ -10,6 +10,7 @@ import { LoggerService } from '../../../core/logging/logger.service';
 import { CloseOnEscDirective } from '../../../shared/directives/close-on-esc.directive';
 import { SearchBarModalComponent, } from '../search-bar-modal/search-bar-modal';
 import { StudentBasic, ApiResponse, Exercise } from '../../../shared/models/interfaces';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface Student {
   id: number;
@@ -51,17 +52,17 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
 
   @ViewChildren('editInput') private editInputsRef!: QueryList<ElementRef<HTMLInputElement>>;
 
-  @ViewChild('errorContainer') set errorContent(content: ElementRef){
-  if (content) {
-      content.nativeElement.scrollIntoView({ 
-        behavior: 'smooth', 
+  @ViewChild('errorContainer') set errorContent(content: ElementRef) {
+    if (content) {
+      content.nativeElement.scrollIntoView({
+        behavior: 'smooth',
         block: 'center',
         inline: 'nearest'
       });
       content.nativeElement.focus({ preventScroll: true });
+    }
   }
-}
-@ViewChild('studentForm') studentForm!: NgForm;
+  @ViewChild('studentForm') studentForm!: NgForm;
 
   private shouldFocus: boolean = false;
   public isSaving: boolean = false;
@@ -76,7 +77,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   public searchName: string = '';
   public searchAisId: string = '';
 
-  public sortField: string = 'id';
+  public sortField: string = 'fullName';
   public sortDirection: 'asc' | 'desc' = 'asc';
 
   private searchSubject = new Subject<void>();
@@ -138,7 +139,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
         params = params.set('sort', sortParam);
 
         this.logger.log(`Fetching students with params: ${params.toString()}`);
-        
+
         return this.http.get<StudentExerciseResponse[]>(this.studentExerciseApiUrl, { params }).pipe(
           map(response => response || []),
           catchError((err) => {
@@ -215,15 +216,15 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   private async loadExercises(): Promise<void> {
-    this.error=null;
+    this.error = null;
     try {
       const response = await lastValueFrom(this.http.get<Exercise[]>(this.exercisesApiUrl));
-      
+
       this.exercises = (response || []).map(e => {
         if (e.firstSessionDate?.includes('T')) e.firstSessionDate = e.firstSessionDate.split('T')[0];
         return e;
       }).sort((a, b) => a.id - b.id);
-      
+
       this.logger.log(`Loaded ${this.exercises.length} exercises`);
     } catch (err) {
       this.logger.error('Failed to load exercises', err);
@@ -232,7 +233,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public async onExerciseChange(student: Student, newExerciseId: string | number): Promise<void> {
-    this.error=null;
+    this.error = null;
     const newId = Number(newExerciseId);
     if (student.exerciseId === newId) return;
     this.isLoading = true;
@@ -253,7 +254,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public async onSubmitNovyStudent(): Promise<void> {
-    this.error=null;
+    this.error = null;
     if (this.studentForm.invalid) {
       this.studentForm.form.markAllAsTouched();
       return;
@@ -270,7 +271,10 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
       this.triggerSearch();
     } catch (err: unknown) {
       this.logger.error('Error creating student', err);
-      this.error = "Chyba pri vytváraní.";
+      if (err instanceof HttpErrorResponse && err.status === 409) {
+        this.error = "Študent s týmto AIS ID už v systéme existuje.";
+      } else
+        this.error = "Chyba pri vytváraní.";
     }
     finally { this.isLoading = false; }
   }
@@ -298,7 +302,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
 
   public isEditing(id: number, field: string): boolean { return this.editingStudentId === id && this.editingField === field; }
   public onCellEdit(student: Student, field: keyof Student): void {
-    this.error=null;
+    this.error = null;
     if (this.isSaving) return;
     this.editingStudentId = student.id;
     this.editingField = field;
@@ -308,7 +312,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public async onCellSave(student: Student): Promise<void> {
-    this.error=null;
+    this.error = null;
     this.shouldFocus = false;
     if (this.isSaving || this.editingStudentId === null || this.editingField === null) return;
 
@@ -351,7 +355,7 @@ export class Students implements OnInit, AfterViewChecked, OnDestroy {
       const payload = { aisId: payloadAisId, fullName: payloadFullName };
 
       await lastValueFrom(this.http.put<ApiResponse<unknown>>(`${this.studentsApiUrl}/${student.id}`, payload));
-      
+
       student.aisId = payloadAisId;
       student.fullName = payloadFullName;
       this.message = "Údaje uložené.";

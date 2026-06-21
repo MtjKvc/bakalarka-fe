@@ -1,29 +1,17 @@
-<main class="main-student">
+<main class="main-student" *transloco="let t; read: 'blok2-asm1'">
     <article
         class="assignment">
         <h2 class="student-page-h2-title">
-            Vysvetlivky k vzorovému príkladu
+           {{ t('title') }}
         </h2>
-        <section>
-            Aby sme sa nemuseli príliš detailne zaoberať štruktúrou programu v assembleri, t.j. čo všetko okrem nášho
-            algoritmu musí obsahovať, aby sa vôbec dal spustiť v danom operačnom systéme, budeme používať tzv. vložený
-            (embedded) assembler. To znamená, že to bude len akýsi fragment kódu vložený do štandartného C-programu.
-        </section>
+        <section [innerHTML]="t('info.intro')"></section>
     </article>
     <article
         class="assignment">
         <h2 class="student-page-h2-title">
-            Microsoft Visual C++
+            {{ t('compilers.msvc.title') }}
         </h2>
-        <section>
-            Vo Visual C sa vkladá assembler medzi krútené zátvorky uvedené kľúčovým slovom <strong
-                class="text-green-400">__asm &#123; &#125;</strong> . Nasledujú jednotlivé
-            inštrukcie, prípadne s komentárom. Premenné z C-programu, môžete používať priamo. Je však potrebné mať na
-            pamäti, že do registrov môžete presúvať len premenné zodpovedajúcej veľkosti. Nemôžete teda napr. do
-            registra
-            EAX presunúť premennú typu double. Výsledok práce programu odovzdáte C-programu tiež jednoducho cez
-            premenné.
-        </section>
+        <section [innerHTML]="t('compilers.msvc.description')"></section>
     </article>
     <article
         class="assignment">
@@ -44,26 +32,9 @@
     <article
         class="assignment">
         <h2 class="student-page-h2-title">
-            DEV-C++ (gcc)
+            {{ t('compilers.devcpp.title') }}
         </h2>
-        <section>
-            Kompilátor gcc má trocha odlišnú syntax pre vložený assembler. Je to vlastne funkcia <strong
-                class="text-green-400">asm ("retazec")</strong> , kde
-            samotné inštrukcie musíme písať ako textový reťazec. Pretože takýto blok sa priamo podsunie prekladaču
-            assembleru, musí vložený kúsok vyzerať presne rovnako ako zdrojový kód pre assembler. To znamená, že každá
-            inštrukcia musí končiť \n. Nepríjemná komplikácia je, že gcc používa inú syntax (tzv. AT&T), dosť odlišnú od
-            Intel syntaxe. Napríklad operandy zdroj, cieľ sa uvádzajú v opačnom poradí. Našťastie sa to dá prenaučiť
-            príkazom .intel_syntax noprefix.
-
-            Premenné z C-programu, môžete používať priamo, len musíte pridať znak podtržítko pred názov premennej.
-            Premenné z C-programu, ktoré chcete používať v assembleri však musia byť zadefinované ako globálne.
-
-            Podobne ako vo Visual C však musíte mať na pamäti, že do registrov môžete presúvať len premenné
-            zodpovedajúcej veľkosti. Nemôžete teda napr. do registra EAX presunúť premennú typu double. Výsledok práce
-            programu odovzdáte C-programu tiež jednoducho cez premenné.
-
-            Príklad:
-        </section>
+        <section [innerHTML]="t('compilers.devcpp.description')"></section>
     </article>
     <article
         class="assignment">
@@ -84,11 +55,9 @@ asm(“.intel_syntax noprefix \n” // Prepneme z AT&T syntaxe na na Intel
     <article
         class="assignment">
         <h2 class="student-page-h2-title">
-            CLion
+            {{ t('compilers.clion.title') }}
         </h2>
-        Študenti pracujúci v prostredí CLion mávali problém s oboma predošlými syntaxami. Existuje ešte tretia možnosť.
-
-        Príklad:
+        <section [innerHTML]="t('compilers.clion.description')"></section>
     </article>
     <article
         class="assignment">
@@ -114,11 +83,9 @@ výstupného operandu sa zapíše späť do pamäte.
     <article
         class="assignment">
         <h2 class="student-page-h2-title">
-            Microsoft Visual C++ Ladenie
+            {{ t('compilers.debugging.title') }}
         </h2>
-        Pri práci s assemblerom možno oceníte možnosť spustenia programu krok za krokom, pričom môžete sledovať zmeny v
-        jednotlivých registroch. Debugovanie sa spustí po preložení programu z menu postupnosťou Debug >> Start Debug >>
-        Step Into. V programe sa pohybujete vpred klávesou F10 (Step Over). Vaše okno môže vyzerať napr. takto:
+        <section [innerHTML]="t('compilers.debugging.description')"></section>
     </article>
     <article
         class="assignment">

@@ -24,8 +24,8 @@
     @apply inline-flex items-center justify-center px-2 py-1 rounded-md text-[10px] font-bold border shadow-sm w-full mx-auto max-w-[80px] transition-colors duration-200;
 }
 .student-head{
-    @apply sticky left-0 px-6 py-3 text-left text-xs font-extrabold bg-gray-50 text-gray-700 uppercase tracking-wider shadow-sm max-w-[160px] md:max-w-none;
+    @apply sticky left-0 px-6 py-3 text-left text-xs font-extrabold bg-gray-50 text-gray-700 uppercase tracking-wider shadow-sm max-w-[160px] md:max-w-none z-30;
 }
 .student-collumn{
-    @apply sticky left-0 px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider bg-white z-30 shadow-sm max-w-[160px] md:max-w-none break-words;
+    @apply sticky left-0 px-6 py-3 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider bg-white z-20 shadow-sm max-w-[160px] md:max-w-none break-words;
 }

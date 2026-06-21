@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1' />
+	<title></title>
+	<style type='text/css' media='all'>
+pre.cppcode
+{
+	background: #FFFFFF;
+	color: #000000;;
+	font: Lucida Console,10pt;
+}
+.cpp01{
+	color: #007F00;
+}
+.cpp02{
+	color: #007F00;
+}
+.cpp03{
+	color: #3F703F;
+}
+.cpp04{
+	color: #007F7F;
+}
+.cpp05{
+	color: #00007F;
+	font: bold;
+}
+.cpp06{
+	color: #7F007F;
+}
+.cpp07{
+	color: #7F007F;
+}
+.cpp08{
+	color: #804080;
+}
+.cpp09{
+	color: #7F7F00;
+}
+.cpp10{
+	font: bold;
+}
+.cpp12{
+	background: #E0C0E0;
+}
+.cpp13{
+	background: #E0FFE0;
+	color: #007F00;
+	font: Courier New;
+}
+.cpp14{
+	background: #E0F0FF;
+	color: #3F7F3F;
+	font: Courier New;
+}
+.cpp15{
+	color: #3F703F;
+}
+.cpp16{
+	color: #B00040;
+}
+.cpp17{
+	color: #3060A0;
+}
+.cpp18{
+	color: #804020;
+}
+.cpp32{
+}
+.cpp34{
+	color: #0000EE;
+	font: bold;
+}
+.cpp35{
+	color: #EE0000;
+	font: bold;
+}
+.cpp36{
+	color: #808080;
+}
+	</style>
+</head>
+<body>
+<pre class='cppcode'><span class='cpp01'>/* ************************************************************************** */</span>
+<span class='cpp01'>/*                                                                            */</span>
+<span class='cpp01'>/*  Architektura pocitacov - Uloha 2.7                                        */</span>
+<span class='cpp01'>/*                                                                            */</span>
+<span class='cpp01'>/*  Program zobrazi do stredu konzoly znak pravy dolny roh ramceka            */</span>
+<span class='cpp01'>/*                                                                            */</span>
+<span class='cpp01'>/*  Autor: Richard Balogh &lt;balogh@elf.stuba.sk&gt;                               */</span>
+<span class='cpp01'>/*  Historia:                                                                 */</span>
+<span class='cpp01'>/*            6. 3. 2006 prva verzia                                          */</span>
+<span class='cpp01'>/*  Prenositelnost:                                                           */</span>
+<span class='cpp01'>/*                                                                            */</span>
+<span class='cpp01'>/* ************************************************************************** */</span>
+
+<span class='cpp09'>#include &lt;stdio.h&gt;</span>
+<span class='cpp09'>#include &lt;windows.h&gt;                          </span><span class='cpp02'>// potrebne pre pracu s WinAPI</span>
+
+<span class='cpp05'>const</span> <span class='cpp05'>unsigned</span> <span class='cpp05'>char</span> RohVpravoDole <span class='cpp10'>=</span> <span class='cpp04'>0xd9</span><span class='cpp10'>;</span>     <span class='cpp02'>// ostatne si zistite sami!</span>
+
+<span class='cpp05'>int</span> main<span class='cpp10'>(</span><span class='cpp05'>int</span> argc<span class='cpp10'>,</span> <span class='cpp05'>char</span><span class='cpp10'>*</span> argv<span class='cpp10'>[])</span>
+
+<span class='cpp10'>{</span>
+  HANDLE  hConsole<span class='cpp10'>;</span>                           <span class='cpp02'>// ziskanie handle konzoly</span>
+          hConsole <span class='cpp10'>=</span> GetStdHandle<span class='cpp10'>(</span>STD_OUTPUT_HANDLE<span class='cpp10'>);</span>
+
+                                              <span class='cpp02'>// Suradnice: X:stlpec, Y:riadok</span>
+  COORD point <span class='cpp10'>=</span> <span class='cpp10'>{</span><span class='cpp04'>39</span><span class='cpp10'>,</span><span class='cpp04'>12</span><span class='cpp10'>};</span>                      <span class='cpp02'>//             point.X = 39; </span>
+                                              <span class='cpp02'>//            point.Y = 12;</span>
+  SetConsoleCursorPosition<span class='cpp10'>(</span>hConsole<span class='cpp10'>,</span> point<span class='cpp10'>);</span>  <span class='cpp02'>// nastavi sa na [39,12]</span>
+  putchar<span class='cpp10'>(</span>RohVpravoDole<span class='cpp10'>);</span>                     <span class='cpp02'>// vytlaci tam znak '_|' </span>
+
+  point<span class='cpp10'>.</span>X <span class='cpp10'>=</span> <span class='cpp04'>0</span><span class='cpp10'>;</span> point<span class='cpp10'>.</span>Y <span class='cpp10'>=</span> <span class='cpp04'>22</span><span class='cpp10'>;</span>                  <span class='cpp02'>// ina moznost zadania suradnice</span>
+  SetConsoleCursorPosition<span class='cpp10'>(</span>hConsole<span class='cpp10'>,</span> point<span class='cpp10'>);</span>  <span class='cpp02'>// nastavi sa na [0,22]</span>
+
+  printf<span class='cpp10'>(</span><span class='cpp06'>&quot;Stlac ENTER a skoncime...\n&quot;</span><span class='cpp10'>);</span>      <span class='cpp02'>// tento vypis je od [0,22] dalej</span>
+  scanf<span class='cpp10'>(</span><span class='cpp06'>&quot;?&quot;</span><span class='cpp10'>);</span>
+  <span class='cpp05'>return</span><span class='cpp10'>(</span><span class='cpp04'>0</span><span class='cpp10'>);</span>
+<span class='cpp10'>}</span>
+</pre>
+</body>
+</html>

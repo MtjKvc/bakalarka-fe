@@ -7,7 +7,7 @@
           d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
         </path>
       </svg>
-      Správa Používateľov
+      Správa používateľov
     </h1>
     <button class="green-button" (click)="onCreateUserClick()">
       <svg class="teacher-button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,14 +46,48 @@
     <table class="teacher-table">
       <thead class="table-header">
         <tr>
-          <th class="table-head">Meno a Priezvisko</th>
-          <th class="table-head">Email</th>
-          <th class="table-head">Rola</th>
+          <th class="table-head" (click)="onSort('fullName')">
+            <div class="flex items-center justify-between">
+              Meno a Priezvisko
+              <span *ngIf="sortField === 'fullName'" class="teacher-asc-desc-icon">
+                {{ sortDirection === 'asc' ? '▲' : '▼' }}
+              </span>
+            </div>
+          </th>
+          <th class="table-head" (click)="onSort('email')">
+            <div class="flex items-center justify-between">
+              Email
+              <span *ngIf="sortField === 'email'" class="teacher-asc-desc-icon">
+                {{ sortDirection === 'asc' ? '▲' : '▼' }}
+              </span>
+            </div>
+          </th>
+          <th class="table-head" (click)="onSort('roleEnum')">
+            <div class="flex items-center justify-between">
+              Rola
+              <span *ngIf="sortField === 'roleEnum'" class="teacher-asc-desc-icon">
+                {{ sortDirection === 'asc' ? '▲' : '▼' }}
+              </span>
+            </div>
+          </th>
           <th class="table-head-center-text">Akcie</th>
         </tr>
       </thead>
       <tbody class="table-body">
-
+        <tr>
+          <td class="table-filter">
+            <input type="text" [(ngModel)]="searchName" (ngModelChange)="onSearchInputChange()"
+              placeholder="Hľadať meno"
+              class="w-full min-w-[100px] p-2 text-xs placeholder-gray-500 border border-emerald-200 rounded outline-none shadow-sm">
+          </td>
+          <td class="table-filter">
+            <input type="text" [(ngModel)]="searchEmail" (ngModelChange)="onSearchInputChange()"
+              placeholder="Hľadať email"
+              class="w-full min-w-[100px] p-2 text-xs placeholder-gray-500 border border-emerald-200 rounded outline-none shadow-sm">
+          </td>
+          <td class="table-filter text-gray-500 text-xs text-center font-normal">Filter</td>
+          <td></td>
+        </tr>
         <tr *ngFor="let user of users" class="table-hover">
 
           <td class="table-data" [ngClass]="{'z-10': isEditing(user.id, 'fullName')}"

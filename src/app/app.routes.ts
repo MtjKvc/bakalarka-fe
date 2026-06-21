@@ -8,6 +8,11 @@ export const routes: Routes = [
       import('./student/student').then(m => m.Student),
     children: [
       {
+        path: '',
+        redirectTo: 'frontpage',
+        pathMatch: 'full',
+      }, 
+      {
         path: 'blok-1',
         loadComponent: () =>
           import('./student/components/blok-1/blok-1').then(m => m.Blok1),
